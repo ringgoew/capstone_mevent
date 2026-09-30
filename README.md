@@ -1,2 +1,2 @@
 # capstone_mevent
-Capstone Project Event Manajement Concert Music
+Capstone Project Management Event
