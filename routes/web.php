@@ -7,8 +7,12 @@ use App\Http\Controllers\EOController;
 Route::get('/', function () {
     return view('welcome');
 });
+
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
 Route::get('/daftar-eo', [EOController::class, 'register'])->name('eo.register');
+
 Route::post('/daftar-eo', [EOController::class, 'store'])->name('eo.register.store');
 Route::get('/daftar-eo/otp', [EOController::class, 'otp'])->name('eo.otp');
 
