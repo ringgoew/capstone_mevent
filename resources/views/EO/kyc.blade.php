@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Daftar sebagai EO</title>
+    <title>Lengkapi Profil EO</title>
 
     <style>
         * {
@@ -34,7 +34,7 @@
         }
 
         .container {
-            width: 500px;
+            width: 600px;
             max-width: 90%;
             margin: 50px auto;
             background: white;
@@ -50,10 +50,11 @@
         .subtitle {
             color: #666;
             margin-bottom: 25px;
+            line-height: 1.5;
         }
 
         .form-group {
-            margin-bottom: 18px;
+            margin-bottom: 20px;
         }
 
         label {
@@ -70,6 +71,12 @@
             font-size: 14px;
         }
 
+        .note {
+            font-size: 12px;
+            color: #777;
+            margin-top: 5px;
+        }
+
         button {
             width: 100%;
             padding: 13px;
@@ -79,19 +86,11 @@
             color: white;
             font-size: 15px;
             cursor: pointer;
+            margin-top: 10px;
         }
 
         button:hover {
             background-color: #333;
-        }
-
-        .back {
-            display: block;
-            margin-top: 15px;
-            text-align: center;
-            color: #555;
-            text-decoration: none;
-            font-size: 14px;
         }
     </style>
 </head>
@@ -106,83 +105,118 @@
 
     <div class="container">
 
-        <h1>Daftar sebagai EO</h1>
+        <h1>Lengkapi Profil EO</h1>
 
         <p class="subtitle">
-            Daftarkan diri kamu sebagai Event Organizer.
+            Lengkapi data profil dan dokumen yang diperlukan
+            untuk proses verifikasi akun EO.
         </p>
 
-        <form action="{{ route('eo.register.store') }}" method="POST">
+        <form
+            action="{{ route('eo.kyc.submit') }}"
+            method="POST"
+            enctype="multipart/form-data"
+        >
             @csrf
 
             <div class="form-group">
                 <label>Nama EO / Organisasi</label>
+
                 <input
                     type="text"
-                    name="nama"
-                    placeholder="Masukkan nama EO"
+                    name="nama_eo"
+                    placeholder="Masukkan nama EO / organisasi"
                     required
                 >
             </div>
 
             <div class="form-group">
-                <label>Nama Penanggung Jawab</label>
+                <label>Alamat EO</label>
+
                 <input
                     type="text"
-                    name="penanggung_jawab"
-                    placeholder="Masukkan nama penanggung jawab"
+                    name="alamat"
+                    placeholder="Masukkan alamat lengkap"
                     required
                 >
             </div>
 
             <div class="form-group">
-                <label>Email</label>
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Masukkan email"
-                    required
-                >
-            </div>
+                <label>No. Rekening Bank</label>
 
-            <div class="form-group">
-                <label>No. Telepon</label>
                 <input
                     type="text"
-                    name="no_telp"
-                    placeholder="Masukkan nomor telepon"
+                    name="rekening"
+                    placeholder="Masukkan nomor rekening"
                     required
                 >
             </div>
 
             <div class="form-group">
-                <label>Password</label>
+                <label>KTP</label>
+
                 <input
-                    type="password"
-                    name="password"
-                    placeholder="Masukkan password"
+                    type="file"
+                    name="ktp"
+                    accept=".jpg,.jpeg,.png,.pdf"
                     required
                 >
+
+                <p class="note">
+                    Format: JPG, PNG, atau PDF
+                </p>
             </div>
 
             <div class="form-group">
-                <label>Konfirmasi Password</label>
+                <label>NPWP</label>
+
                 <input
-                    type="password"
-                    name="password_confirmation"
-                    placeholder="Ulangi password"
+                    type="file"
+                    name="npwp"
+                    accept=".jpg,.jpeg,.png,.pdf"
                     required
                 >
+
+                <p class="note">
+                    Format: JPG, PNG, atau PDF
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label>Akta / Dokumen Legalitas</label>
+
+                <input
+                    type="file"
+                    name="legalitas"
+                    accept=".jpg,.jpeg,.png,.pdf"
+                    required
+                >
+
+                <p class="note">
+                    Upload dokumen legalitas EO / organisasi
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label>Bukti Rekening Bank</label>
+
+                <input
+                    type="file"
+                    name="bukti_rekening"
+                    accept=".jpg,.jpeg,.png,.pdf"
+                    required
+                >
+
+                <p class="note">
+                    Upload buku rekening atau bukti kepemilikan rekening
+                </p>
             </div>
 
             <button type="submit">
-                Daftar sebagai EO
+                Kirim Berkas Pendaftaran
             </button>
-        </form>
 
-        <a href="{{ route('home') }}" class="back">
-            ← Kembali ke Home
-        </a>
+        </form>
 
     </div>
 

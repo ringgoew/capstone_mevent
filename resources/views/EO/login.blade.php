@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Daftar sebagai EO</title>
+    <title>Login EO - Event Management</title>
 
     <style>
         * {
@@ -34,39 +34,43 @@
         }
 
         .container {
-            width: 500px;
+            width: 430px;
             max-width: 90%;
-            margin: 50px auto;
-            background: white;
+            margin: 70px auto;
+            background-color: white;
             padding: 35px;
             border-radius: 12px;
             box-shadow: 0 3px 12px rgba(0,0,0,0.08);
         }
 
         h1 {
+            text-align: center;
             margin-bottom: 10px;
         }
 
         .subtitle {
+            text-align: center;
             color: #666;
-            margin-bottom: 25px;
+            font-size: 14px;
+            margin-bottom: 30px;
         }
 
         .form-group {
-            margin-bottom: 18px;
+            margin-bottom: 20px;
         }
 
         label {
             display: block;
-            margin-bottom: 7px;
             font-weight: bold;
+            margin-bottom: 8px;
         }
 
         input {
             width: 100%;
-            padding: 12px;
+            padding: 13px;
             border: 1px solid #ddd;
             border-radius: 7px;
+            outline: none;
             font-size: 14px;
         }
 
@@ -85,13 +89,26 @@
             background-color: #333;
         }
 
-        .back {
-            display: block;
-            margin-top: 15px;
-            text-align: center;
-            color: #555;
-            text-decoration: none;
+        .error {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #ffe5e5;
+            color: #c00;
+            border-radius: 7px;
             font-size: 14px;
+        }
+
+        .register {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .register a {
+            color: #111;
+            font-weight: bold;
+            text-decoration: none;
         }
     </style>
 </head>
@@ -104,85 +121,71 @@
         </div>
     </nav>
 
+
     <div class="container">
 
-        <h1>Daftar sebagai EO</h1>
+        <h1>Login EO</h1>
 
         <p class="subtitle">
-            Daftarkan diri kamu sebagai Event Organizer.
+            Masuk untuk mengelola event kamu.
         </p>
 
-        <form action="{{ route('eo.register.store') }}" method="POST">
+
+        @if (session('error'))
+            <div class="error">
+                {{ session('error') }}
+            </div>
+        @endif
+
+
+        <form action="{{ route('eo.login.authenticate') }}" method="POST">
+
             @csrf
 
             <div class="form-group">
-                <label>Nama EO / Organisasi</label>
-                <input
-                    type="text"
-                    name="nama"
-                    placeholder="Masukkan nama EO"
-                    required
-                >
-            </div>
 
-            <div class="form-group">
-                <label>Nama Penanggung Jawab</label>
-                <input
-                    type="text"
-                    name="penanggung_jawab"
-                    placeholder="Masukkan nama penanggung jawab"
-                    required
-                >
-            </div>
-
-            <div class="form-group">
                 <label>Email</label>
+
                 <input
                     type="email"
                     name="email"
                     placeholder="Masukkan email"
                     required
                 >
+
             </div>
 
-            <div class="form-group">
-                <label>No. Telepon</label>
-                <input
-                    type="text"
-                    name="no_telp"
-                    placeholder="Masukkan nomor telepon"
-                    required
-                >
-            </div>
 
             <div class="form-group">
+
                 <label>Password</label>
+
                 <input
                     type="password"
                     name="password"
                     placeholder="Masukkan password"
                     required
                 >
+
             </div>
 
-            <div class="form-group">
-                <label>Konfirmasi Password</label>
-                <input
-                    type="password"
-                    name="password_confirmation"
-                    placeholder="Ulangi password"
-                    required
-                >
-            </div>
 
             <button type="submit">
-                Daftar sebagai EO
+                Login
             </button>
+
         </form>
 
-        <a href="{{ route('home') }}" class="back">
-            ← Kembali ke Home
-        </a>
+
+        <div class="register">
+
+            Belum memiliki akun EO?
+
+            <a href="{{ route('eo.register') }}">
+                Daftar sebagai EO
+            </a>
+
+        </div>
 
     </div>
 
