@@ -161,7 +161,7 @@
     <!-- NAVBAR -->
     <nav>
         <div class="logo">
-            Event POOKIEMAX
+            M!VENT
         </div>
 
         <div class="menu">

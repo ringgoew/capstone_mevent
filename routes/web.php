@@ -3,10 +3,12 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\EOController;
+use App\Http\Controllers\AdminController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -14,6 +16,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/daftar-eo', [EOController::class, 'register'])->name('eo.register');
 
 Route::post('/daftar-eo', [EOController::class, 'store'])->name('eo.register.store');
+
 Route::get('/daftar-eo/otp', [EOController::class, 'otp'])->name('eo.otp');
 
 Route::post('/daftar-eo/otp', [EOController::class, 'verifyOtp']) ->name('eo.otp.verify');
@@ -28,3 +31,9 @@ Route::get('/eo/login', [EOController::class, 'login'])->name('eo.login');
 Route::post('/eo/login', [EOController::class, 'authenticate'])->name('eo.login.authenticate');
 
 Route::get('/eo/dashboard', [EOController::class, 'dashboard']) ->name('eo.dashboard');
+
+Route::get('/admin/login', [AdminController::class, 'login'])->name('admin.login');
+Route::post('/admin/authenticate', [AdminController::class, 'authenticate'])->name('admin.authenticate');
+
+Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+Route::post('/admin/logout', [AdminController::class, 'logout'])->name('admin.logout');
