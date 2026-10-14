@@ -10,13 +10,12 @@ body {
     color: #222;
 }
 
-/* NAVBAR */
 nav {
     height: 70px;
     background-color: white;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-between; /* Mendorong .menu ke paling kiri dan .logo ke paling kanan */
     padding: 0 60px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
@@ -136,7 +135,6 @@ nav {
     font-size: 14px;
 }
 
-/* FOOTER */
 footer {
     margin-top: 40px;
     padding: 25px 60px;

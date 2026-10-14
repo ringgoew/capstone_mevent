@@ -1,193 +1,8 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+@extends('layouts.eo')
+@section('title', 'Dashboard EO')
+@section('content')
 
-    <title>Dashboard EO - Event Management</title>
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
-        body {
-            background-color: #f5f6f8;
-            color: #222;
-        }
-
-        /* SIDEBAR */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 240px;
-            height: 100vh;
-            background-color: #111;
-            color: white;
-            padding: 25px 18px;
-        }
-
-        .logo {
-            font-size: 21px;
-            font-weight: bold;
-            margin-bottom: 35px;
-            padding-left: 10px;
-        }
-
-        .sidebar a {
-            display: block;
-            color: #ddd;
-            text-decoration: none;
-            padding: 11px 13px;
-            margin-bottom: 4px;
-            border-radius: 7px;
-            font-size: 14px;
-        }
-
-        .sidebar a:hover,
-        .sidebar a.active {
-            background-color: #333;
-            color: white;
-        }
-
-        .menu-title {
-            color: #888;
-            font-size: 11px;
-            margin: 20px 10px 8px;
-            text-transform: uppercase;
-        }
-
-        /* MAIN */
-        .main {
-            margin-left: 240px;
-            padding: 35px 45px;
-        }
-
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .topbar h1 {
-            font-size: 28px;
-        }
-
-        .subtitle {
-            color: #777;
-            margin-top: 7px;
-            font-size: 14px;
-        }
-
-        .profile {
-            background-color: white;
-            padding: 10px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        /* STATISTIK */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 18px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background-color: white;
-            padding: 22px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        .stat-card p {
-            color: #777;
-            font-size: 13px;
-            margin-bottom: 10px;
-        }
-
-        .stat-card h2 {
-            font-size: 24px;
-        }
-
-        /* SECTION */
-        .section {
-            background-color: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .section-header h2 {
-            font-size: 20px;
-        }
-
-        .btn {
-            background-color: #111;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 7px;
-            text-decoration: none;
-            font-size: 13px;
-        }
-
-        /* EVENT */
-        .event-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 18px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .event-item:last-child {
-            border-bottom: none;
-        }
-
-        .event-info h3 {
-            margin-bottom: 8px;
-        }
-
-        .event-info p {
-            color: #777;
-            font-size: 13px;
-            margin-bottom: 5px;
-        }
-
-        .event-status {
-            background-color: #e8f5e9;
-            color: #2e7d32;
-            padding: 6px 11px;
-            border-radius: 15px;
-            font-size: 12px;
-        }
-
-        .detail-btn {
-            display: inline-block;
-            margin-top: 7px;
-            color: #222;
-            font-size: 13px;
-            text-decoration: none;
-        }
-    </style>
-</head>
-
-<body>
-
-    <!-- SIDEBAR -->
     <aside class="sidebar">
 
         <div class="logo">
@@ -240,9 +55,8 @@
 
     </aside>
 
-
-    <!-- MAIN CONTENT -->
     <main class="main">
+
 
         <!-- TOPBAR -->
         <div class="topbar">
@@ -262,7 +76,6 @@
         </div>
 
 
-        <!-- STATISTIK -->
         <div class="stats">
 
             <div class="stat-card">
@@ -337,8 +150,7 @@
             @endforeach
 
         </div>
-
     </main>
 
-</body>
-</html>
+
+@endsection

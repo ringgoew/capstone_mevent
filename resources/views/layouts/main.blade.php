@@ -7,7 +7,7 @@
     <meta name="author" content="Denis" />
     <meta name="keywords" content="..." />
     <!-- <link rel="icon" href=""> -->
-    <title>Event Management</title>
+    <title>@yield('title', 'Manajemen Event')</title>
     @vite(['resources/css/style.css'])
     
 </head>
