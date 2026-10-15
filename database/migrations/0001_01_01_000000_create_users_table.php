@@ -15,13 +15,16 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('phone_number')->nullable();
-            $table->enum('role', ['admin', 'organizer'])->default('organizer');
-            $table->enum('status', ['active', 'inactive', 'suspended'])->default('active');
+            $table->string('role')->default('organizer'); // admin, organizer, staff
+            $table->string('status')->default('active'); // active, suspended
+            $table->unsignedBigInteger('eo_id')->nullable(); // Self-reference untuk staff panitia
+            $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
+            $table->foreign('eo_id')->references('id')->on('users')->onDelete('cascade');
+
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

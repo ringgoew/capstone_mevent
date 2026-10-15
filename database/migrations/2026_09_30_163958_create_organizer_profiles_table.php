@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('organizer_profiles', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->unsignedBigInteger('user_id')->unique();
             $table->string('organization_name');
             $table->string('ktp_number');
             $table->string('ktp_image');
@@ -22,10 +22,10 @@ return new class extends Migration
             $table->string('bank_name');
             $table->string('bank_account_number');
             $table->string('bank_account_holder');
-            $table->enum('verification_status', ['pending', 'verified', 'rejected'])->default('pending');
+            $table->string('verification_status')->default('pending'); // pending, verified, rejected
             $table->text('rejection_reason')->nullable();
             $table->timestamps();
-        });
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');        });
     }
 
     /**
