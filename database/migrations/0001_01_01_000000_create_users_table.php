@@ -17,9 +17,9 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string('phone_number')->nullable();
-            $table->string('role')->default('organizer'); // admin, organizer, staff
-            $table->string('status')->default('active'); // active, suspended
-            $table->unsignedBigInteger('eo_id')->nullable(); // Self-reference untuk staff panitia
+            $table->string('role')->default('organizer');
+            $table->string('status')->default('active'); 
+            $table->unsignedBigInteger('eo_id')->nullable(); 
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();

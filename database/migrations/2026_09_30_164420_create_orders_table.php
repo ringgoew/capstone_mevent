@@ -14,20 +14,23 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('order_code')->unique();
-            $table->foreignId('user_id')->nullable()->comment('Buyer ID (null for guest checkout)')->constrained('users')->nullOnDelete();
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->string('customer_name');
             $table->string('customer_email');
             $table->string('customer_phone')->nullable();
-            $table->foreignId('event_id')->constrained('events')->cascadeOnDelete();
+            $table->unsignedBigInteger('event_id');
             $table->decimal('total_amount', 12, 2);
-            $table->decimal('platform_fee', 12, 2)->default(0);
+            $table->decimal('platform_fee', 12, 2)->default(0.00);
             $table->decimal('grand_total', 12, 2);
-            $table->enum('status', ['pending', 'paid', 'expired', 'cancelled', 'failed'])->default('pending');
+            $table->string('status')->default('pending');
             $table->string('snap_token')->nullable();
             $table->string('payment_method')->nullable();
             $table->timestamp('paid_at')->nullable();
             $table->timestamp('expires_at')->nullable();
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('event_id')->references('id')->on('events')->onDelete('cascade');
         });
     }
 

@@ -22,10 +22,12 @@ return new class extends Migration
             $table->string('bank_name');
             $table->string('bank_account_number');
             $table->string('bank_account_holder');
-            $table->string('verification_status')->default('pending'); // pending, verified, rejected
+            $table->string('verification_status')->default('pending');
             $table->text('rejection_reason')->nullable();
             $table->timestamps();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');        });
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');        
+            });
     }
 
     /**
