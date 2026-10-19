@@ -6,13 +6,15 @@ use App\Http\Controllers\EOController;
 use App\Http\Controllers\EventController;
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminKycController;
 
 // Route::get('/', function () {
 //     return view('welcome');
 // });
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// Route Untuk halaman Utama dan Pendaftaran EO
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/daftar-eo', [EOController::class, 'register'])->name('eo.register');
 Route::post('/daftar-eo', [EOController::class, 'store'])->name('eo.register.store');
 Route::get('/daftar-eo/otp', [EOController::class, 'otp'])->name('eo.otp');
@@ -45,3 +47,10 @@ Route::post('/admin/authenticate', [AdminController::class, 'authenticate'])->na
 
 Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 Route::post('/admin/logout', [AdminController::class, 'logout'])->name('admin.logout');
+
+// Pemeriksaan dan Verifikasi KYC EO
+Route::get('/admin/kyc', [AdminKycController::class, 'index'])->name('admin.kyc.index');
+Route::get('/admin/kyc/{id}', [AdminKycController::class, 'show'])->name('admin.kyc.show');
+Route::get('/admin/kyc/{id}/documents/{type}', [AdminKycController::class, 'document'])->name('admin.kyc.document');
+Route::post('/admin/kyc/{id}/approve', [AdminKycController::class, 'approve'])->name('admin.kyc.approve');
+Route::post('/admin/kyc/{id}/reject', [AdminKycController::class, 'reject'])->name('admin.kyc.reject');

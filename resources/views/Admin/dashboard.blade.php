@@ -3,6 +3,42 @@
 @section('content')
 
 
+    <nav>
+
+        <div class="logo">
+            Event Management
+        </div>
+
+
+        <div class="admin-area">
+
+            <span class="admin-name">
+
+                {{ session('admin_name') }}
+
+            </span>
+
+            <a href="{{ route('admin.kyc.index') }}">
+                Pemeriksaan Dokumen & Verifikasi KYC EO
+            </a>
+
+
+            <form action="{{ route('admin.logout') }}" method="POST">
+
+                @csrf
+
+                <button type="submit" class="logout">
+                    Logout
+                </button>
+
+            </form>
+
+        </div>
+
+
+    </nav>
+
+
     <div class="container">
 
 

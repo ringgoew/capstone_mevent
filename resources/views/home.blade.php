@@ -1,6 +1,11 @@
 @extends('layouts.main')
 @section('title')
 @section('content')
+    <!-- HERO -->
+    <section class="hero">
+        <h1>
+            Temukan Event Menarik di Sekitarmu
+        </h1>
 
     <section class="hero">
         <h1>
