@@ -13,9 +13,6 @@ use Throwable;
 
 class EventController extends Controller
 {
-    /**
-     * Menampilkan form pembuatan event.
-     */
     public function create()
     {
         if (!session('eo_login') || !session('eo_user_id')) {
@@ -23,17 +20,13 @@ class EventController extends Controller
                 ->with('error', 'Silakan login sebagai EO terlebih dahulu.');
         }
 
-        // Mengambil kategori dari tabel PostgreSQL.
-        $categories = DB::table('categories')
+        $categories = DB::table('event_categories')
             ->orderBy('name')
             ->get();
 
         return view('eo.events.create', compact('categories'));
     }
 
-    /**
-     * Menyimpan event dan jenis tiket sebagai draft.
-     */
     public function store(Request $request)
     {
         if (!session('eo_login') || !session('eo_user_id')) {
@@ -63,7 +56,6 @@ class EventController extends Controller
 
         $userId = session('eo_user_id');
 
-        // Pastikan akun EO ada dan aktif.
         $organizer = DB::table('users')
             ->where('id', $userId)
             ->where('role', 'organizer')
@@ -78,7 +70,6 @@ class EventController extends Controller
                 ]);
         }
 
-        // Validasi periode penjualan tiket.
         foreach ($validated['tickets'] as $index => $ticket) {
             if (
                 !empty($ticket['start_sales']) &&
@@ -95,7 +86,6 @@ class EventController extends Controller
         $bannerPath = null;
 
         try {
-            // Simpan gambar ke storage/app/public/events.
             $bannerPath = $request->file('banner_image')
                 ->store('events', 'public');
 
@@ -104,7 +94,6 @@ class EventController extends Controller
                 $userId,
                 $bannerPath
             ) {
-                // Membuat slug unik untuk event.
                 $baseSlug = Str::slug($validated['title']);
 
                 if ($baseSlug === '') {
@@ -119,7 +108,6 @@ class EventController extends Controller
                     $counter++;
                 }
 
-                // Menyimpan data event.
                 $eventId = DB::table('events')->insertGetId([
                     'user_id' => $userId,
                     'category_id' => $validated['category_id'],
@@ -137,7 +125,6 @@ class EventController extends Controller
                     'updated_at' => now(),
                 ]);
 
-                // Menyimpan jenis tiket untuk event.
                 foreach ($validated['tickets'] as $ticket) {
                     DB::table('ticket_types')->insert([
                         'event_id' => $eventId,
@@ -155,7 +142,6 @@ class EventController extends Controller
                 }
             });
         } catch (Throwable $e) {
-            // Hapus gambar jika proses penyimpanan gagal.
             if ($bannerPath) {
                 Storage::disk('public')->delete($bannerPath);
             }
@@ -173,9 +159,6 @@ class EventController extends Controller
             ->with('success', 'Draf event dan jenis tiket berhasil disimpan!');
     }
 
-    /**
-     * Menampilkan daftar event milik EO.
-     */
     public function index()
     {
         if (!session('eo_login') || !session('eo_user_id')) {
@@ -190,9 +173,6 @@ class EventController extends Controller
         return view('eo.events.index', compact('events'));
     }
 
-    /**
-     * Mengajukan event draft untuk diperiksa admin.
-     */
     public function submitForReview($id)
     {
         if (!session('eo_login') || !session('eo_user_id')) {

@@ -8,10 +8,8 @@ use Illuminate\Http\Request;
 
 class AdminAuthController extends Controller
 {
-    // Menampilkan halaman Login Admin
     public function login()
     {
-        // Jika admin sudah login, langsung arahkan ke dashboard
         if (session('admin_login')) {
             return redirect()->route('admin.dashboard');
         }
@@ -19,7 +17,6 @@ class AdminAuthController extends Controller
         return view('admin.login');
     }
 
-    // Proses autentikasi login admin
     public function authenticate(Request $request)
     {
         $request->validate([
@@ -27,11 +24,9 @@ class AdminAuthController extends Controller
             'password' => 'required',
         ]);
 
-        // Data login admin dummy
         $emailAdmin = 'admin@event.test';
         $passwordAdmin = 'admin123';
 
-        // Cek login
         if (
             $request->email === $emailAdmin &&
             $request->password === $passwordAdmin
@@ -47,7 +42,6 @@ class AdminAuthController extends Controller
                 ->with('success', 'Login berhasil. Selamat datang, Admin.');
         }
 
-        // Jika login gagal, arahkan kembali ke halaman login dengan pesan error
         return back()
             ->withInput()
             ->withErrors([
@@ -55,7 +49,6 @@ class AdminAuthController extends Controller
             ]);
     }
 
-    // Logout admin
     public function logout()
     {
         session()->forget([
@@ -65,7 +58,7 @@ class AdminAuthController extends Controller
         ]);
 
         return redirect()
-            ->route('admin.login')
+            ->route('home')
             ->with('success', 'Anda berhasil logout.');
     }
 }

@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Storage;
 
 class EOKycController extends Controller
 {
-    // Halaman OTP
     public function otp()
     {
         if (!session('eo_user_id')) {
@@ -20,7 +19,6 @@ class EOKycController extends Controller
         return view('eo.registration.otp');
     }
 
-    // Verifikasi OTP dummy
     public function verifyOtp(Request $request)
     {
         if (!session('eo_user_id')) {
@@ -40,7 +38,6 @@ class EOKycController extends Controller
         return back()->with('error', 'Kode OTP salah. Silakan coba lagi.');
     }
 
-    // Halaman KYC
     public function kyc()
     {
         if (
@@ -53,7 +50,6 @@ class EOKycController extends Controller
         return view('eo.registration.kyc');
     }
 
-    // Simpan profil dan dokumen KYC
     public function submitKyc(Request $request)
     {
         if (

@@ -28,7 +28,7 @@ class EODashboardController extends Controller
                 'lokasi' => 'Jubung',
                 'tiket_terjual' => 80,
                 'status' => 'Published',
-                'foto' => 'efest.jpg' // <-- Sesuai dengan nama file di public/assets/img/events
+                'foto' => 'efest.jpg' 
             ],
             (object) [
                 'nama' => 'Civil Day',
@@ -36,7 +36,7 @@ class EODashboardController extends Controller
                 'lokasi' => 'Tanjung Bunga',
                 'tiket_terjual' => 45,
                 'status' => 'Published',
-                'foto' => 'civilday.jpg' // <-- Sesuai dengan nama file di public/assets/img/events
+                'foto' => 'civilday.jpg' 
             ],
         ];
 

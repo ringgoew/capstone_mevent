@@ -10,11 +10,6 @@ class AdminDashboardController extends Controller
 {
         public function dashboard()
     {
-        /*
-        |--------------------------------------------------------------------------
-        | CEK SESSION
-        |--------------------------------------------------------------------------
-        */
 
         if (!session('admin_login')) {
             return redirect()

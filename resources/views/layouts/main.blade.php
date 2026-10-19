@@ -21,9 +21,16 @@
         @yield('content')
     </main>
     
-    <footer>
-        © 2026 Event Management
-    </footer>
+<footer>
+    <p>&copy; 2026 Event Management System</p>
+    
+    <!-- Tautan tersembunyi / khusus untuk login admin -->
+    <p style="margin-top: 10px;">
+        <a href="{{ route('admin.login') }}" style="color: #888; font-size: 12px; text-decoration: none;">
+            Admin Portal
+        </a>
+    </p>
+</footer>
 
     <script>
         window.addEventListener('scroll', function() {

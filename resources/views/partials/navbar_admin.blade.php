@@ -1,4 +1,4 @@
-@vite(['resources/css/admin.css'])
+<!-- @vite(['resources/css/admin.css'])
    
    <nav>
 
@@ -16,6 +16,8 @@
 
             </span>
 
+            <a href="{{ route('admin.dashboard') }}">Dashboard</a>
+            <a href="{{ route('admin.kyc.index') }}">Pemeriksaan KYC</a>
 
             <form action="{{ route('admin.logout') }}" method="POST">
 
@@ -30,4 +32,4 @@
         </div>
 
 
-    </nav>
+    </nav> -->

@@ -9,7 +9,7 @@ class Category
     // Mengambil semua kategori
     public function getAll()
     {
-        return DB::table('categories')
+        return DB::table('event_categories')
             ->orderBy('id')
             ->get();
     }
@@ -17,7 +17,7 @@ class Category
     // Mengambil kategori berdasarkan ID
     public function getById($id)
     {
-        return DB::table('categories')
+        return DB::table('event_categories')
             ->where('id', $id)
             ->first();
     }

@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Storage;
 
 class AdminKycController extends Controller
 {
-    // Daftar EO yang perlu diperiksa
     public function index(Request $request)
     {
         if (!session('admin_login')) {
@@ -28,7 +27,6 @@ class AdminKycController extends Controller
         return view('admin.kyc.index', compact('profiles', 'status'));
     }
 
-    // Detail dokumen dan profil EO
     public function show(int $id)
     {
         if (!session('admin_login')) {
@@ -42,7 +40,6 @@ class AdminKycController extends Controller
         return view('admin.kyc.show', compact('profile'));
     }
 
-    // Melihat dokumen melalui route yang dilindungi
     public function document(int $id, string $type)
     {
         if (!session('admin_login')) {
@@ -64,7 +61,6 @@ class AdminKycController extends Controller
 
         abort_if(!$path, 404, 'Dokumen belum tersedia.');
 
-        // Asumsi dokumen disimpan di disk local/private.
         $disk = Storage::disk('local');
 
         abort_unless($disk->exists($path), 404, 'File dokumen tidak ditemukan.');
@@ -72,7 +68,6 @@ class AdminKycController extends Controller
         return response()->file($disk->path($path));
     }
 
-    // Setujui KYC EO
     public function approve(int $id)
     {
         if (!session('admin_login')) {
@@ -95,7 +90,6 @@ class AdminKycController extends Controller
             ->with('success', 'KYC EO berhasil diverifikasi.');
     }
 
-    // Tolak KYC dengan alasan wajib
     public function reject(Request $request, int $id)
     {
         if (!session('admin_login')) {

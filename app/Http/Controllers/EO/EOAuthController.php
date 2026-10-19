@@ -13,18 +13,15 @@ class EOAuthController extends Controller
     // Halaman registrasi EO
     public function register()
     {
-        // Jika akun EO sudah login, cegah masuk ke halaman daftar dan arahkan ke dashboard
         if (session('eo_login')) {
             return redirect()->route('eo.dashboard');
         }
 
-        // Bersihkan sisa cache sesi dari percobaan pendaftaran sebelumnya
         session()->forget(['eo_user_id', 'eo_otp_verified']);
 
         return view('eo.registration.register');
     }
 
-    // Simpan akun EO
     public function store(Request $request)
     {
         $request->validate([
@@ -43,7 +40,6 @@ class EOAuthController extends Controller
             'updated_at' => now(),
         ]);
 
-        // Hapus status login jika sebelumnya ada sesi yang tersangkut
         session()->forget('eo_login');
 
         session([
@@ -56,13 +52,11 @@ class EOAuthController extends Controller
         return redirect()->route('eo.otp');
     }
 
-    // Halaman login EO
     public function login()
     {
         return view('eo.login');
     }
 
-    // Proses login EO
     public function authenticate(Request $request)
     {
         $request->validate([
