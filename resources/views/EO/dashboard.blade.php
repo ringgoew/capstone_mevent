@@ -2,48 +2,6 @@
 @section('title', 'Dashboard EO')
 @section('content')
 
-
-    <aside class="sidebar">
-
-    <div class="logo">
-        Event Management
-    </div>
-
-    <a href="{{ route('eo.dashboard') }}" class="active">
-        Dashboard
-    </a>
-
-    <a href="{{ route('eo.events.index') }}">
-        Event Saya
-    </a>
-
-    <a href="{{ route('eo.events.create') }}">
-        Buat Event
-    </a>
-
-    <a href="{{ route('eo.dashboard') }}">
-        Laporan
-    </a>
-
-    <a href="{{ route('eo.dashboard') }}">
-        Payout
-    </a>
-
-    <div class="menu-title">
-        Akun
-    </div>
-
-    <a href="{{ route('eo.dashboard') }}">
-        Profil &amp; Dokumen
-    </a>
-
-    <a href="{{ route('home') }}">
-        Logout
-    </a>
-
-    <main class="main">
-
-
         <!-- TOPBAR -->
         <div class="topbar">
             <div>
@@ -119,6 +77,13 @@
 
                 <div class="event-item">
 
+                @if (!empty($event->foto))
+            <div class="event-image-wrapper" style="margin-right: 20px;">
+                <img src="{{ asset('assets/img/events/' . $event->foto) }}" 
+                     alt="{{ $event->nama }}" 
+                     style="width: 120px; height: 80px; object-fit: cover; border-radius: 8px;">
+            </div>
+        @endif
                     <div class="event-info">
 
                         <h3>{{ $event->title ?? $event->nama ?? 'Event tanpa judul' }}</h3>

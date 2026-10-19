@@ -14,7 +14,7 @@
 <body>
 
     <header>
-        @include('partials.navbar')
+        @include('partials.navbar_admin')
     </header>
 
     <main>

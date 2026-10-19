@@ -199,7 +199,7 @@
 <body>
 
     <nav class="navbar">
-        <h2>POOKIEMAX</h2>
+        <h2>M!VENT</h2>
         <a href="{{ route('eo.events.index') }}">Daftar Event</a>
     </nav>
 

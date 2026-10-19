@@ -15,9 +15,20 @@ nav {
     background-color: white;
     display: flex;
     align-items: center;
-    justify-content: space-between; /* Mendorong .menu ke paling kiri dan .logo ke paling kanan */
+    justify-content: space-between;
     padding: 0 60px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    transition: all 0.3s ease-in-out;
+}
+
+nav.scrolled {
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+    height: 60px;
 }
 
 .logo {
@@ -28,31 +39,68 @@ nav {
 .menu {
     display: flex;
     align-items: center;
-    gap: 25px;
+    gap: 20px;
 }
 
 .menu a {
     text-decoration: none;
     color: #333;
     font-size: 15px;
+    transition: all 0.3s ease;
+}
+
+.btn-masuk {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    color: #333;
+    background-color: transparent;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-masuk svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+    transition: fill 0.3s ease;
+}
+
+.btn-masuk:hover {
+    background-color: #111;
+    color: #fff;
+    border-color: #111;
+}
+
+.btn-masuk:hover svg {
+    fill: #fff;
 }
 
 .btn-eo {
     border: 1px solid #333;
     padding: 10px 16px;
     border-radius: 8px;
+    transition: all 0.3s ease;
 }
 
-/* HERO */
+.btn-eo:hover {
+    background-color: #333;
+    color: #fff;
+}
+
 .hero {
     padding: 70px 60px;
     background: linear-gradient(135deg, #f0f0f0, #ffffff);
+    text-align: center;
 }
 
 .hero h1 {
     font-size: 45px;
     max-width: 650px;
-    margin-bottom: 15px;
+    margin: 0 auto 15px auto;
 }
 
 .hero p {
@@ -61,16 +109,47 @@ nav {
     margin-bottom: 25px;
 }
 
+.search-form {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    max-width: 650px;
+    margin: 0 auto;
+}
+
 .search {
-    width: 500px;
-    max-width: 100%;
+    flex: 1;
     padding: 15px 18px;
     border: 1px solid #ddd;
     border-radius: 10px;
     outline: none;
+    font-size: 15px;
 }
 
-/* EVENT */
+.filter-select {
+    padding: 15px 18px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    outline: none;
+    background: white;
+    font-size: 15px;
+}
+
+.btn-search {
+    padding: 15px 24px;
+    background-color: #111;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s ease;
+}
+
+.btn-search:hover {
+    background-color: #333;
+}
+
 .event-section {
     padding: 45px 60px;
 }
@@ -90,6 +169,11 @@ nav {
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease;
+}
+
+.event-card:hover {
+    transform: translateY(-5px);
 }
 
 .event-image {
@@ -133,6 +217,11 @@ nav {
     text-decoration: none;
     border-radius: 7px;
     font-size: 14px;
+    transition: background 0.2s ease;
+}
+
+.btn-detail:hover {
+    background-color: #333;
 }
 
 footer {
