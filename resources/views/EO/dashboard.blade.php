@@ -29,6 +29,8 @@
             background-color: #111;
             color: white;
             padding: 25px 18px;
+            overflow-y: auto;
+            z-index: 1000;
         }
 
         .logo {
@@ -46,6 +48,9 @@
             margin-bottom: 4px;
             border-radius: 7px;
             font-size: 14px;
+            cursor: pointer;
+            position: relative;
+            z-index: 1001;
         }
 
         .sidebar a:hover,
@@ -65,12 +70,14 @@
         .main {
             margin-left: 240px;
             padding: 35px 45px;
+            min-height: 100vh;
         }
 
         .topbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 20px;
             margin-bottom: 30px;
         }
 
@@ -91,10 +98,28 @@
             font-size: 14px;
         }
 
+        /* NOTIFIKASI */
+        .alert {
+            padding: 13px 16px;
+            margin-bottom: 20px;
+            border-radius: 7px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .alert-error {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
         /* STATISTIK */
         .stats {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 18px;
             margin-bottom: 30px;
         }
@@ -114,6 +139,7 @@
 
         .stat-card h2 {
             font-size: 24px;
+            overflow-wrap: anywhere;
         }
 
         /* SECTION */
@@ -128,6 +154,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 15px;
             margin-bottom: 20px;
         }
 
@@ -136,12 +163,18 @@
         }
 
         .btn {
+            display: inline-block;
             background-color: #111;
             color: white;
             padding: 10px 15px;
             border-radius: 7px;
             text-decoration: none;
             font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            background-color: #333;
         }
 
         /* EVENT */
@@ -149,6 +182,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 20px;
             padding: 18px 0;
             border-bottom: 1px solid #eee;
         }
@@ -157,14 +191,20 @@
             border-bottom: none;
         }
 
+        .event-info {
+            min-width: 0;
+        }
+
         .event-info h3 {
             margin-bottom: 8px;
+            overflow-wrap: anywhere;
         }
 
         .event-info p {
             color: #777;
             font-size: 13px;
             margin-bottom: 5px;
+            line-height: 1.5;
         }
 
         .event-status {
@@ -173,6 +213,34 @@
             padding: 6px 11px;
             border-radius: 15px;
             font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .status-pending {
+            background-color: #fff3e0;
+            color: #e65100;
+        }
+
+        .status-rejected {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        .status-draft {
+            background-color: #eeeeee;
+            color: #555;
+        }
+
+        .status-cancelled {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 35px 15px;
+            color: #777;
+            font-size: 14px;
         }
 
         .detail-btn {
@@ -182,71 +250,112 @@
             font-size: 13px;
             text-decoration: none;
         }
+
+        .detail-btn:hover {
+            text-decoration: underline;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1100px) {
+            .stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .main {
+                padding: 30px 25px;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .sidebar {
+                width: 190px;
+                padding: 20px 12px;
+            }
+
+            .main {
+                margin-left: 190px;
+                padding: 25px 15px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .topbar h1 {
+                font-size: 23px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .section {
+                padding: 18px;
+            }
+
+            .section-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .event-item {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 
 <body>
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
+    
+<!-- SIDEBAR -->
+<aside class="sidebar">
 
-        <div class="logo">
-            Event Management
-        </div>
+    <div class="logo">
+        Event Management
+    </div>
 
-        <a href="{{ route('eo.dashboard') }}" class="active">
-            Dashboard
-        </a>
+    <a href="{{ route('eo.dashboard') }}" class="active">
+        Dashboard
+    </a>
 
-        <a href="#">
-            Event Saya
-        </a>
+    <a href="{{ route('eo.events.index') }}">
+        Event Saya
+    </a>
 
-        <a href="#">
-            Buat Event
-        </a>
+    <a href="{{ route('eo.events.create') }}">
+        Buat Event
+    </a>
 
-        <a href="#">
-            Tiket & Kuota
-        </a>
+    <a href="{{ route('eo.dashboard') }}">
+        Laporan
+    </a>
 
-        <a href="#">
-            Penjualan Tiket
-        </a>
+    <a href="{{ route('eo.dashboard') }}">
+        Payout
+    </a>
 
-        <a href="#">
-            Data Peserta
-        </a>
+    <div class="menu-title">
+        Akun
+    </div>
 
-        <a href="#">
-            Laporan
-        </a>
+    <a href="{{ route('eo.dashboard') }}">
+        Profil &amp; Dokumen
+    </a>
 
-        <a href="#">
-            Payout
-        </a>
+    <a href="{{ route('home') }}">
+        Logout
+    </a>
 
-        <div class="menu-title">
-            Akun
-        </div>
-
-        <a href="#">
-            Profil & Dokumen
-        </a>
-
-        <a href="{{ route('home') }}">
-            Logout
-        </a>
-
-    </aside>
-
+</aside>
 
     <!-- MAIN CONTENT -->
     <main class="main">
 
         <!-- TOPBAR -->
         <div class="topbar">
-
             <div>
                 <h1>Dashboard EO</h1>
 
@@ -256,85 +365,135 @@
             </div>
 
             <div class="profile">
-                EO Event POOKIEMAX
+                {{ session('eo_nama', 'Event Organizer') }}
             </div>
-
         </div>
 
+        <!-- NOTIFIKASI -->
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="alert alert-error">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if ($errors->has('event'))
+            <div class="alert alert-error">
+                {{ $errors->first('event') }}
+            </div>
+        @endif
 
         <!-- STATISTIK -->
         <div class="stats">
 
             <div class="stat-card">
                 <p>Total Event</p>
-                <h2>{{ $stats['total_event'] }}</h2>
+                <h2>{{ $stats['total_event'] ?? 0 }}</h2>
             </div>
 
             <div class="stat-card">
                 <p>Tiket Terjual</p>
-                <h2>{{ $stats['tiket_terjual'] }}</h2>
+                <h2>{{ $stats['tiket_terjual'] ?? 0 }}</h2>
             </div>
 
             <div class="stat-card">
                 <p>Total Pendapatan</p>
                 <h2>
-                    Rp{{ number_format($stats['pendapatan'], 0, ',', '.') }}
+                    Rp{{ number_format($stats['pendapatan'] ?? 0, 0, ',', '.') }}
                 </h2>
             </div>
 
             <div class="stat-card">
                 <p>Peserta Hadir</p>
-                <h2>{{ $stats['peserta_hadir'] }}</h2>
+                <h2>{{ $stats['peserta_hadir'] ?? 0 }}</h2>
             </div>
 
         </div>
-
 
         <!-- EVENT SAYA -->
         <div class="section">
 
             <div class="section-header">
-
                 <h2>Event Saya</h2>
 
-                <a href="#" class="btn">
+                <a href="{{ route('eo.events.create') }}" class="btn">
                     + Buat Event
                 </a>
-
             </div>
 
-
-            @foreach ($events as $event)
+            @forelse ($events as $event)
 
                 <div class="event-item">
 
                     <div class="event-info">
 
-                        <h3>{{ $event['nama'] }}</h3>
+                        <h3>{{ $event->title ?? $event->nama ?? 'Event tanpa judul' }}</h3>
 
                         <p>
-                            📅 {{ $event['tanggal'] }}
+                            📅
+                            @if (!empty($event->start_time))
+                                {{ \Carbon\Carbon::parse($event->start_time)->format('d-m-Y H:i') }}
+                            @elseif (!empty($event->tanggal))
+                                {{ $event->tanggal }}
+                            @else
+                                Jadwal belum tersedia
+                            @endif
+
                             &nbsp; • &nbsp;
-                            📍 {{ $event['lokasi'] }}
+
+                            📍
+                            @if (!empty($event->venue_name))
+                                {{ $event->venue_name }}{{ !empty($event->city) ? ', ' . $event->city : '' }}
+                            @elseif (!empty($event->lokasi))
+                                {{ $event->lokasi }}
+                            @else
+                                Lokasi belum tersedia
+                            @endif
                         </p>
 
                         <p>
-                            🎟 {{ $event['tiket_terjual'] }} tiket terjual
+                            🎟 {{ $event->tiket_terjual ?? 0 }} tiket terjual
                         </p>
 
-                        <a href="#" class="detail-btn">
+                        <a href="{{ route('eo.events.index') }}" class="detail-btn">
                             Lihat Detail →
                         </a>
 
                     </div>
 
-                    <div class="event-status">
-                        {{ $event['status'] }}
+                    @php
+                        $status = $event->status ?? 'draft';
+
+                        $statusClass = match ($status) {
+                            'pending' => 'status-pending',
+                            'rejected', 'cancelled' => 'status-rejected',
+                            'draft' => 'status-draft',
+                            default => '',
+                        };
+                    @endphp
+
+                    <div class="event-status {{ $statusClass }}">
+                        {{ ucfirst($status) }}
                     </div>
 
                 </div>
 
-            @endforeach
+            @empty
+
+                <div class="empty-state">
+                    <p>Belum ada event yang dibuat.</p>
+
+                    <p style="margin-top: 8px;">
+                        Klik tombol <strong>+ Buat Event</strong> untuk mulai membuat event pertamamu.
+                    </p>
+                </div>
+
+            @endforelse
 
         </div>
 
