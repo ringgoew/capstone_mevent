@@ -269,6 +269,10 @@
 
             </span>
 
+            <a href="{{ route('admin.kyc.index') }}">
+                Pemeriksaan Dokumen & Verifikasi KYC EO
+            </a>
+
 
             <form action="{{ route('admin.logout') }}" method="POST">
 

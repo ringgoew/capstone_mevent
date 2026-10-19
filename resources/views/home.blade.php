@@ -1,72 +1,59 @@
 @extends('layouts.main')
 
 @section('content')
+    <!-- HERO -->
+    <section class="hero">
+        <h1>
+            Temukan Event Menarik di Sekitarmu
+        </h1>
 
+        <p>
+            Cari dan beli tiket event favoritmu dengan mudah.
+        </p>
 
-<!-- HERO -->
-<section class="hero">
-<h1>
-    Temukan Event Menarik di Sekitarmu
-</h1>
+        <input type="text" class="search" placeholder="Cari event...">
+    </section>
 
-<p>
-    Cari dan beli tiket event favoritmu dengan mudah.
-</p>
+    <!-- EVENT -->
+    <section class="event-section">
 
-<input
-    type="text"
-    class="search"
-    placeholder="Cari event..."
->
-</section>
+        <h2>Event Terbaru</h2>
 
-<!-- EVENT -->
-<section class="event-section">
+        <div class="event-container">
 
-<h2>Event Terbaru</h2>
+            @foreach ($events as $event)
+                <div class="event-card">
 
-<div class="event-container">
+                    <div class="event-image">
+                        <img src="{{ asset('assets/img/events/' . $event['foto']) }}" alt="{{ $event['nama'] }}">
+                    </div>
 
-    @foreach ($events as $event)
+                    <div class="event-content">
 
-        <div class="event-card">
+                        <h3>
+                            {{ $event['nama'] }}
+                        </h3>
 
-            <div class="event-image">
-                <img
-                    src="{{ asset('assets/img/events/' . $event['foto']) }}"
-                    alt="{{ $event['nama'] }}"
-                >
-            </div>
+                        <p>
+                            📅 {{ $event['tanggal'] }}
+                        </p>
 
-            <div class="event-content">
+                        <p>
+                            📍 {{ $event['location'] }}
+                        </p>
 
-                <h3>
-                    {{ $event['nama'] }}
-                </h3>
+                        <p class="price">
+                            {{ $event['harga'] }}
+                        </p>
 
-                <p>
-                    📅 {{ $event['tanggal'] }}
-                </p>
+                        <a href="#" class="btn-detail">
+                            Lihat Detail
+                        </a>
 
-                <p>
-                    📍 {{ $event['location'] }}
-                </p>
+                    </div>
 
-                <p class="price">
-                    {{ $event['harga'] }}
-                </p>
-
-                <a href="#" class="btn-detail">
-                    Lihat Detail
-                </a>
-
-            </div>
+                </div>
+            @endforeach
 
         </div>
-
-    @endforeach
-
-</div>
-
-
-@endsection
+    @endsection
