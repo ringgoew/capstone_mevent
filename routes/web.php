@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\EOController;
+use App\Http\Controllers\EventController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -28,3 +29,17 @@ Route::get('/eo/login', [EOController::class, 'login'])->name('eo.login');
 Route::post('/eo/login', [EOController::class, 'authenticate'])->name('eo.login.authenticate');
 
 Route::get('/eo/dashboard', [EOController::class, 'dashboard']) ->name('eo.dashboard');
+
+Route::middleware([])->group(function () {
+    Route::get('/eo/events', [EventController::class, 'index'])
+        ->name('eo.events.index');
+
+    Route::get('/eo/events/create', [EventController::class, 'create'])
+        ->name('eo.events.create');
+
+    Route::post('/eo/events', [EventController::class, 'store'])
+        ->name('eo.events.store');
+
+    Route::post('/eo/events/{id}/submit', [EventController::class, 'submitForReview'])
+        ->name('eo.events.submit');
+});
