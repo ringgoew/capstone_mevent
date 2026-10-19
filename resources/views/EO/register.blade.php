@@ -45,22 +45,6 @@
             </div>
 
             <div class="form-group">
-                <label for="penanggung_jawab">Nama Penanggung Jawab</label>
-                <input
-                    type="text"
-                    id="penanggung_jawab"
-                    name="penanggung_jawab"
-                    value="{{ old('penanggung_jawab') }}"
-                    placeholder="Masukkan nama penanggung jawab"
-                    maxlength="255"
-                    required
-                >
-                @error('penanggung_jawab')
-                    <p class="error">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div class="form-group">
                 <label for="email">Email</label>
                 <input
                     type="email"
@@ -72,22 +56,6 @@
                     required
                 >
                 @error('email')
-                    <p class="error">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div class="form-group">
-                <label for="no_telp">No. Telepon</label>
-                <input
-                    type="tel"
-                    id="no_telp"
-                    name="no_telp"
-                    value="{{ old('no_telp') }}"
-                    placeholder="Masukkan nomor telepon"
-                    maxlength="20"
-                    required
-                >
-                @error('no_telp')
                     <p class="error">{{ $message }}</p>
                 @enderror
             </div>
@@ -105,18 +73,6 @@
                 @error('password')
                     <p class="error">{{ $message }}</p>
                 @enderror
-            </div>
-
-            <div class="form-group">
-                <label for="password_confirmation">Konfirmasi Password</label>
-                <input
-                    type="password"
-                    id="password_confirmation"
-                    name="password_confirmation"
-                    placeholder="Ulangi password"
-                    minlength="8"
-                    required
-                >
             </div>
 
             <button type="submit">

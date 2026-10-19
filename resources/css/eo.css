@@ -19,6 +19,46 @@ nav {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
+/* SIDEBAR */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 240px;
+    height: 100vh;
+    background-color: #111;
+    color: white;
+    padding: 25px 18px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.logo {
+    font-size: 21px;
+    font-weight: bold;
+    margin-bottom: 35px;
+    padding-left: 10px;
+}
+
+.sidebar a {
+    display: block;
+    color: #ddd;
+    text-decoration: none;
+    padding: 11px 13px;
+    margin-bottom: 4px;
+    border-radius: 7px;
+    font-size: 14px;
+    cursor: pointer;
+    position: relative;
+    z-index: 1001;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background-color: #333;
+    color: white;
+}
+
 .logo {
     font-size: 24px;
     font-weight: bold;

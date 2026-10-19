@@ -5,62 +5,47 @@
 
     <aside class="sidebar">
 
-        <div class="logo">
-            Event Management
-        </div>
+    <div class="logo">
+        Event Management
+    </div>
 
-        <a href="{{ route('eo.dashboard') }}" class="active">
-            Dashboard
-        </a>
+    <a href="{{ route('eo.dashboard') }}" class="active">
+        Dashboard
+    </a>
 
-        <a href="#">
-            Event Saya
-        </a>
+    <a href="{{ route('eo.events.index') }}">
+        Event Saya
+    </a>
 
-        <a href="#">
-            Buat Event
-        </a>
+    <a href="{{ route('eo.events.create') }}">
+        Buat Event
+    </a>
 
-        <a href="#">
-            Tiket & Kuota
-        </a>
+    <a href="{{ route('eo.dashboard') }}">
+        Laporan
+    </a>
 
-        <a href="#">
-            Penjualan Tiket
-        </a>
+    <a href="{{ route('eo.dashboard') }}">
+        Payout
+    </a>
 
-        <a href="#">
-            Data Peserta
-        </a>
+    <div class="menu-title">
+        Akun
+    </div>
 
-        <a href="#">
-            Laporan
-        </a>
+    <a href="{{ route('eo.dashboard') }}">
+        Profil &amp; Dokumen
+    </a>
 
-        <a href="#">
-            Payout
-        </a>
-
-        <div class="menu-title">
-            Akun
-        </div>
-
-        <a href="#">
-            Profil & Dokumen
-        </a>
-
-        <a href="{{ route('home') }}">
-            Logout
-        </a>
-
-    </aside>
+    <a href="{{ route('home') }}">
+        Logout
+    </a>
 
     <main class="main">
 
 
         <!-- TOPBAR -->
         <div class="topbar">
-
             <div>
                 <h1>Dashboard EO</h1>
 
@@ -70,84 +55,134 @@
             </div>
 
             <div class="profile">
-                EO Event POOKIEMAX
+                {{ session('eo_nama', 'Event Organizer') }}
             </div>
-
         </div>
 
+        <!-- NOTIFIKASI -->
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="alert alert-error">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if ($errors->has('event'))
+            <div class="alert alert-error">
+                {{ $errors->first('event') }}
+            </div>
+        @endif
 
         <div class="stats">
 
             <div class="stat-card">
                 <p>Total Event</p>
-                <h2>{{ $stats['total_event'] }}</h2>
+                <h2>{{ $stats['total_event'] ?? 0 }}</h2>
             </div>
 
             <div class="stat-card">
                 <p>Tiket Terjual</p>
-                <h2>{{ $stats['tiket_terjual'] }}</h2>
+                <h2>{{ $stats['tiket_terjual'] ?? 0 }}</h2>
             </div>
 
             <div class="stat-card">
                 <p>Total Pendapatan</p>
                 <h2>
-                    Rp{{ number_format($stats['pendapatan'], 0, ',', '.') }}
+                    Rp{{ number_format($stats['pendapatan'] ?? 0, 0, ',', '.') }}
                 </h2>
             </div>
 
             <div class="stat-card">
                 <p>Peserta Hadir</p>
-                <h2>{{ $stats['peserta_hadir'] }}</h2>
+                <h2>{{ $stats['peserta_hadir'] ?? 0 }}</h2>
             </div>
 
         </div>
-
 
         <!-- EVENT SAYA -->
         <div class="section">
 
             <div class="section-header">
-
                 <h2>Event Saya</h2>
 
-                <a href="#" class="btn">
+                <a href="{{ route('eo.events.create') }}" class="btn">
                     + Buat Event
                 </a>
-
             </div>
 
-
-            @foreach ($events as $event)
+            @forelse ($events as $event)
 
                 <div class="event-item">
 
                     <div class="event-info">
 
-                        <h3>{{ $event['nama'] }}</h3>
+                        <h3>{{ $event->title ?? $event->nama ?? 'Event tanpa judul' }}</h3>
 
                         <p>
-                            📅 {{ $event['tanggal'] }}
+                            📅
+                            @if (!empty($event->start_time))
+                                {{ \Carbon\Carbon::parse($event->start_time)->format('d-m-Y H:i') }}
+                            @elseif (!empty($event->tanggal))
+                                {{ $event->tanggal }}
+                            @else
+                                Jadwal belum tersedia
+                            @endif
+
                             &nbsp; • &nbsp;
-                            📍 {{ $event['lokasi'] }}
+
+                            📍
+                            @if (!empty($event->venue_name))
+                                {{ $event->venue_name }}{{ !empty($event->city) ? ', ' . $event->city : '' }}
+                            @elseif (!empty($event->lokasi))
+                                {{ $event->lokasi }}
+                            @else
+                                Lokasi belum tersedia
+                            @endif
                         </p>
 
                         <p>
-                            🎟 {{ $event['tiket_terjual'] }} tiket terjual
+                            🎟 {{ $event->tiket_terjual ?? 0 }} tiket terjual
                         </p>
 
-                        <a href="#" class="detail-btn">
+                        <a href="{{ route('eo.events.index') }}" class="detail-btn">
                             Lihat Detail →
                         </a>
 
                     </div>
 
-                    <div class="event-status">
-                        {{ $event['status'] }}
+                    @php
+                        $status = $event->status ?? 'draft';
+
+                        $statusClass = match ($status) {
+                            'pending' => 'status-pending',
+                            'rejected', 'cancelled' => 'status-rejected',
+                            'draft' => 'status-draft',
+                            default => '',
+                        };
+                    @endphp
+
+                    <div class="event-status {{ $statusClass }}">
+                        {{ ucfirst($status) }}
                     </div>
 
                 </div>
 
-            @endforeach
+            @empty
+
+                <div class="empty-state">
+                    <p>Belum ada event yang dibuat.</p>
+
+                    <p style="margin-top: 8px;">
+                        Klik tombol <strong>+ Buat Event</strong> untuk mulai membuat event pertamamu.
+                    </p>
+                </div>
+
+            @endforelse
 
         </div>
     </main>

@@ -20,16 +20,13 @@ class EOController extends Controller
     {
         $request->validate([
             'nama' => 'required|string|max:255',
-            'penanggung_jawab' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email',
-            'no_telp' => 'nullable|string|max:20',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:8',
         ]);
 
         $userId = DB::table('users')->insertGetId([
-            'name' => $request->penanggung_jawab,
+            'name' => $request->nama,
             'email' => $request->email,
-            'phone_number' => $request->no_telp,
             'password' => Hash::make($request->password),
             'role' => 'organizer',
             'status' => 'active',
@@ -231,35 +228,35 @@ class EOController extends Controller
             return back()->with('error', 'Akun EO tidak aktif.');
         }
 
-        $profile = DB::table('organizer_profiles')
-            ->where('user_id', $user->id)
-            ->first();
+        // $profile = DB::table('organizer_profiles')
+        //     ->where('user_id', $user->id)
+        //     ->first();
 
-        if (!$profile) {
-            session([
-                'eo_user_id' => $user->id,
-                'eo_nama' => $user->name,
-                'eo_email' => $user->email,
-                'eo_otp_verified' => true,
-            ]);
+        // if (!$profile) {
+        //     session([
+        //         'eo_user_id' => $user->id,
+        //         'eo_nama' => $user->name,
+        //         'eo_email' => $user->email,
+        //         'eo_otp_verified' => true,
+        //     ]);
 
-            return redirect()->route('eo.kyc');
-        }
+        //     return redirect()->route('eo.kyc');
+        // }
 
-        if ($profile->verification_status === 'rejected') {
-            return back()->with(
-                'error',
-                'Verifikasi ditolak: ' .
-                ($profile->rejection_reason ?? 'Silakan hubungi admin.')
-            );
-        }
+        // if ($profile->verification_status === 'rejected') {
+        //     return back()->with(
+        //         'error',
+        //         'Verifikasi ditolak: ' .
+        //         ($profile->rejection_reason ?? 'Silakan hubungi admin.')
+        //     );
+        // }
 
-        if ($profile->verification_status !== 'verified') {
-            return back()->with(
-                'error',
-                'Akun EO masih menunggu persetujuan admin.'
-            );
-        }
+        // if ($profile->verification_status !== 'verified') {
+        //     return back()->with(
+        //         'error',
+        //         'Akun EO masih menunggu persetujuan admin.'
+        //     );
+        // }
 
         $request->session()->regenerate();
 
