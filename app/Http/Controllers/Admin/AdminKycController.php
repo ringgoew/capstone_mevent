@@ -3,10 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller; 
-
 use App\Models\OrganizerProfile;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+
+use Illuminate\Support\Facades\Mail;
+use App\Mail\KycApprovedMail;
+use App\Mail\KycRejectedMail;
 
 class AdminKycController extends Controller
 {
@@ -74,10 +78,12 @@ class AdminKycController extends Controller
             return redirect()->route('admin.login');
         }
 
-        $updated = OrganizerProfile::updatePendingStatus(
-            $id,
-            'verified'
-        );
+        // 1. Ambil data profil untuk mendapatkan email dan nama EO
+        $profile = OrganizerProfile::findForAdmin($id);
+        abort_if(!$profile, 404, 'Profil KYC tidak ditemukan.');
+
+        // 2. Update status ke database
+        $updated = OrganizerProfile::updatePendingStatus($id, 'verified');
 
         if (!$updated) {
             return redirect()
@@ -85,9 +91,11 @@ class AdminKycController extends Controller
                 ->with('error', 'KYC tidak dapat diproses. Periksa status terbaru.');
         }
 
+        Mail::to($profile->user_email)->send(new KycApprovedMail($profile));
+
         return redirect()
             ->route('admin.kyc.index')
-            ->with('success', 'KYC EO berhasil diverifikasi.');
+            ->with('success', 'KYC EO berhasil diverifikasi dan email notifikasi telah dikirim.');
     }
 
     public function reject(Request $request, int $id)
@@ -100,11 +108,12 @@ class AdminKycController extends Controller
             'rejection_reason' => 'required|string|max:2000',
         ]);
 
-        $updated = OrganizerProfile::updatePendingStatus(
-            $id,
-            'rejected',
-            $data['rejection_reason']
-        );
+        // 1. Ambil data profil untuk email
+        $profile = OrganizerProfile::findForAdmin($id);
+        abort_if(!$profile, 404, 'Profil KYC tidak ditemukan.');
+
+        // 2. Update status ke database
+        $updated = OrganizerProfile::updatePendingStatus($id, 'rejected', $data['rejection_reason']);
 
         if (!$updated) {
             return redirect()
@@ -112,8 +121,11 @@ class AdminKycController extends Controller
                 ->with('error', 'KYC tidak dapat diproses. Periksa status terbaru.');
         }
 
+        // 3. Kirim Email Notifikasi & Alasan Penolakan
+        Mail::to($profile->user_email)->send(new KycRejectedMail($profile, $data['rejection_reason']));
+
         return redirect()
             ->route('admin.kyc.index')
-            ->with('success', 'KYC EO ditolak. Alasan penolakan telah disimpan.');
+            ->with('success', 'KYC EO ditolak dan email penolakan telah dikirim.');
     }
 }
