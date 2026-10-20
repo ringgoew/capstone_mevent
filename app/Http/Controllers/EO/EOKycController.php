@@ -20,23 +20,55 @@ class EOKycController extends Controller
     }
 
     public function verifyOtp(Request $request)
-    {
-        if (!session('eo_user_id')) {
-            return redirect()->route('eo.register');
-        }
+{
+    if (!session('eo_user_id')) {
+        return redirect()->route('eo.register');
+    }
 
-        $request->validate([
-            'otp' => 'required|string',
+    $request->validate([
+        'otp' => 'required|digits:6',
+    ]);
+
+    $otpHash = session('eo_otp_hash');
+    $expiresAt = session('eo_otp_expires_at');
+
+    if (!$otpHash || !$expiresAt) {
+        return back()->with(
+            'error',
+            'OTP tidak tersedia. Silakan daftar kembali.'
+        );
+    }
+
+    if (now()->timestamp > $expiresAt) {
+        session()->forget([
+            'eo_otp_hash',
+            'eo_otp_expires_at',
         ]);
 
-        if ($request->otp === '123456') {
-            session(['eo_otp_verified' => true]);
-
-            return redirect()->route('eo.kyc');
-        }
-
-        return back()->with('error', 'Kode OTP salah. Silakan coba lagi.');
+        return back()->with(
+            'error',
+            'Kode OTP sudah kedaluwarsa. Silakan daftar kembali.'
+        );
     }
+
+    if (!hash_equals($otpHash, hash('sha256', $request->otp))) {
+        return back()->with(
+            'error',
+            'Kode OTP salah. Silakan coba lagi.'
+        );
+    }
+
+    session([
+        'eo_otp_verified' => true,
+    ]);
+
+    session()->forget([
+        'eo_otp_hash',
+        'eo_otp_expires_at',
+    ]);
+
+    return redirect()->route('eo.kyc');
+}
 
     public function kyc()
     {

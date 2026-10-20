@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class EOAuthController extends Controller
 {
@@ -23,34 +24,72 @@ class EOAuthController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'nama' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email',
-            'password' => 'required|string|min:8',
+{
+    $validated = $request->validate([
+        'nama' => 'required|string|max:255',
+        'email' => 'required|email|max:255|unique:users,email',
+        'password' => 'required|string|min:8',
+    ]);
+
+    // Buat akun EO
+    $userId = DB::table('users')->insertGetId([
+        'name' => $validated['nama'],
+        'email' => $validated['email'],
+        'password' => Hash::make($validated['password']),
+        'role' => 'organizer',
+        'status' => 'active',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    // Buat OTP enam digit
+    $otp = (string) random_int(100000, 999999);
+
+    // Simpan hash OTP dan batas waktu 5 menit
+    session([
+        'eo_user_id' => $userId,
+        'eo_nama' => $validated['nama'],
+        'eo_email' => $validated['email'],
+        'eo_otp_hash' => hash('sha256', $otp),
+        'eo_otp_expires_at' => now()->addMinutes(5)->timestamp,
+        'eo_otp_verified' => false,
+    ]);
+
+    try {
+        // Kirim OTP ke email pendaftar
+        Mail::raw(
+            "Halo {$validated['nama']},\n\n"
+            . "Kode OTP pendaftaran EO kamu adalah: {$otp}\n"
+            . "Kode ini berlaku selama 5 menit.\n\n"
+            . "Jangan bagikan kode ini kepada siapa pun.",
+            function ($message) use ($validated) {
+                $message->to($validated['email'])
+                    ->subject('OTP Pendaftaran EO - M!VENT');
+            }
+        );
+    } catch (\Throwable $e) {
+        // Hapus akun jika email gagal dikirim
+        DB::table('users')->where('id', $userId)->delete();
+
+        session()->forget([
+            'eo_user_id',
+            'eo_nama',
+            'eo_email',
+            'eo_otp_hash',
+            'eo_otp_expires_at',
+            'eo_otp_verified',
         ]);
 
-        $userId = DB::table('users')->insertGetId([
-            'name' => $request->nama,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'organizer',
-            'status' => 'active',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        report($e);
 
-        session()->forget('eo_login');
-
-        session([
-            'eo_user_id' => $userId,
-            'eo_nama' => $request->nama,
-            'eo_email' => $request->email,
-            'eo_otp_verified' => false,
-        ]);
-
-        return redirect()->route('eo.otp');
+        return back()
+            ->withInput($request->except('password'))
+            ->with('error', 'Email OTP gagal dikirim. Periksa konfigurasi email lalu coba lagi.');
     }
+
+    return redirect()->route('eo.otp')
+        ->with('success', 'Kode OTP telah dikirim ke email kamu.');
+}
 
     public function login()
     {

@@ -22,15 +22,17 @@
 
             <div class="form-group text-left">
                 <label for="otp">Kode OTP</label>
-                <input
-                    type="text"
-                    id="otp"
-                    name="otp"
-                    class="otp-input"
-                    placeholder="Masukkan 6 digit OTP"
-                    maxlength="6"
-                    required
-                >
+<input
+    type="text"
+    id="otp"
+    name="otp"
+    class="otp-input"
+    placeholder="Masukkan 6 digit OTP"
+    inputmode="numeric"
+    pattern="[0-9]{6}"
+    maxlength="6"
+    required
+>
             </div>
 
             <button type="submit">
@@ -38,9 +40,11 @@
             </button>
         </form>
 
-        <div class="info">
-            <strong>Demo:</strong> gunakan kode OTP <strong>123456</strong>
-        </div>
+        @if (session('success'))
+    <div class="alert">
+        {{ session('success') }}
+    </div>
+@endif
 
     </div>
 @endsection

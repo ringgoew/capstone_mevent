@@ -13,6 +13,7 @@ use App\Http\Controllers\EO\EOKycController;
 use App\Http\Controllers\EO\EODashboardController;
 use App\Http\Controllers\EO\EventController;
 
+
 // INI BAGIAN PUBLIC
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
