@@ -31,11 +31,28 @@
     </div>
 
     <!-- MENU ADMIN -->
+
     <div class="menu-container">
+
+
         <div class="menu-card">
-            <h3>Verifikasi EO</h3>
-            <p>Admin dapat melakukan pemeriksaan terhadap pendaftaran Event Organizer.</p>
+
+            <h3>
+                Verifikasi EO
+            </h3>
+            
+            <a href="{{ route('admin.event-verification.index') }}" class="btn btn-dark" style="margin-top:12px">
+                Periksa Event
+            </a>
+
+            <p>
+                Admin dapat melakukan pemeriksaan
+                terhadap pendaftaran Event Organizer.
+            </p>
+
         </div>
+
+
 
         <div class="menu-card">
             <h3>Verifikasi Event</h3>
