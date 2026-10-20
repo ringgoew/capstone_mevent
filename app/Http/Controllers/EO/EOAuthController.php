@@ -51,16 +51,15 @@ class EOAuthController extends Controller
         'eo_nama' => $validated['nama'],
         'eo_email' => $validated['email'],
         'eo_otp_hash' => hash('sha256', $otp),
-        'eo_otp_expires_at' => now()->addMinutes(5)->timestamp,
+        'eo_otp_expires_at' => now()->addMinutes(3)->timestamp,
         'eo_otp_verified' => false,
     ]);
 
     try {
-        // Kirim OTP ke email pendaftar
         Mail::raw(
             "Halo {$validated['nama']},\n\n"
             . "Kode OTP pendaftaran EO kamu adalah: {$otp}\n"
-            . "Kode ini berlaku selama 5 menit.\n\n"
+            . "Kode ini berlaku selama 3 menit.\n\n"
             . "Jangan bagikan kode ini kepada siapa pun.",
             function ($message) use ($validated) {
                 $message->to($validated['email'])
