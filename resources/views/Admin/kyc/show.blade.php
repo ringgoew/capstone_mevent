@@ -1,7 +1,5 @@
-@extends('admin.layout')
-
+@extends('layouts.admin')
 @section('title', 'Detail KYC EO')
-
 @section('content')
 
     <a href="{{ route('admin.kyc.index') }}" class="btn btn-gray">

@@ -13,10 +13,9 @@ use App\Http\Controllers\EO\EOKycController;
 use App\Http\Controllers\EO\EODashboardController;
 use App\Http\Controllers\EO\EventController;
 
-// --- PUBLIC ROUTE ---
+// INI BAGIAN PUBLIC
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// 1. Auth & Register (Guest)
 Route::middleware(['guest'])->group(function () {
     Route::get('/eo/login', [EOAuthController::class, 'login'])->name('eo.login');
     Route::post('/eo/login', [EOAuthController::class, 'authenticate'])->name('eo.login.authenticate');
@@ -32,6 +31,7 @@ Route::get('/daftar-eo/kyc', [EOKycController::class, 'kyc'])->name('eo.kyc');
 Route::post('/daftar-eo/kyc', [EOKycController::class, 'submitKyc'])->name('eo.kyc.submit');
 Route::get('/daftar-eo/pending', [EOKycController::class, 'pending'])->name('eo.pending');
 
+// INI BAGIAN EO
 Route::middleware([])->group(function () {
     Route::get('/eo/dashboard', [EODashboardController::class, 'dashboard'])->name('eo.dashboard');
 
@@ -44,13 +44,12 @@ Route::middleware([])->group(function () {
 });
 
 
-// 1. Auth Admin (Guest)
+// INI BAGIAN ADMIN
 Route::middleware(['guest'])->group(function () {
     Route::get('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login');
     Route::post('/admin/authenticate', [AdminAuthController::class, 'authenticate'])->name('admin.authenticate');
 });
 
-// 2. Fitur Utama Admin (Wajib Login)
 Route::middleware([])->group(function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'dashboard'])->name('admin.dashboard');
 

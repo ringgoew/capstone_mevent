@@ -6,213 +6,95 @@
 }
 
 body {
+    background: #f5f6fa;
+    color: #202124;
     min-height: 100vh;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    background: #f5f5f5;
 }
 
-.login-container {
-    width: 400px;
-    max-width: 90%;
-
-    background: white;
-
-    padding: 35px;
-
-    border-radius: 14px;
-
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-}
-
-.logo {
-    text-align: center;
-
-    font-size: 25px;
-    font-weight: bold;
-
-    margin-bottom: 8px;
-}
-
-.subtitle {
-    text-align: center;
-
-    color: #777;
-
-    font-size: 14px;
-
-    margin-bottom: 30px;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-label {
-    display: block;
-
-    margin-bottom: 7px;
-
-    font-size: 14px;
-
-    font-weight: bold;
-}
-
-input {
-    width: 100%;
-
-    padding: 12px;
-
-    border: 1px solid #ddd;
-
-    border-radius: 8px;
-
-    font-size: 14px;
-
-    outline: none;
-}
-
-input:focus {
-    border-color: #333;
-}
-
-.btn-login {
-    width: 100%;
-
-    padding: 13px;
-
-    background: #111;
-
-    color: white;
-
-    border: none;
-
-    border-radius: 8px;
-
-    cursor: pointer;
-
-    font-size: 15px;
-}
-
-.btn-login:hover {
-    background: #333;
-}
-
-.error {
-    background: #ffe9e9;
-
-    color: #b00000;
-
-    padding: 12px;
-
-    border-radius: 8px;
-
-    margin-bottom: 20px;
-
-    font-size: 14px;
-}
-
-.success {
-    background: #e8f7ed;
-
-    color: #20733a;
-
-    padding: 12px;
-
-    border-radius: 8px;
-
-    margin-bottom: 20px;
-
-    font-size: 14px;
-}
-
-.dummy {
-    margin-top: 20px;
-
-    padding: 15px;
-
-    background: #f3f3f3;
-
-    border-radius: 8px;
-
-    font-size: 13px;
-
-    color: #555;
-}
-
-.dummy strong {
-    display: block;
-
-    margin-bottom: 7px;
-
-    color: #222;
-}
-
+/* NAVBAR ADMIN */
 nav {
     height: 70px;
-
     background: white;
-
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
-
     padding: 0 50px;
-
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+nav a {
+    color: #222;
+    text-decoration: none;
+    margin-right: 18px;
+    font-weight: 500;
+}
+
+nav a:hover {
+    color: #000;
+    text-decoration: underline;
 }
 
 .logo {
     font-size: 24px;
-
     font-weight: bold;
 }
 
 .admin-area {
     display: flex;
-
     align-items: center;
-
     gap: 15px;
 }
 
 .admin-name {
     font-size: 14px;
-
     color: #555;
+    margin-right: 15px;
 }
 
-.logout {
-    padding: 9px 15px;
-
-    background: #111;
-
-    color: white;
-
-    border: none;
-
+/* TOMBOL UMUM & LOGOUT */
+.btn {
+    display: inline-block;
+    border: 0;
     border-radius: 7px;
-
+    padding: 10px 15px;
+    text-decoration: none;
     cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
 }
 
-.logout:hover {
-    background: #333;
+.btn-dark {
+    color: #fff;
+    background: #222;
 }
 
-/* CONTENT */
+.btn-dark:hover {
+    background: #000;
+}
 
+.btn-green {
+    color: #fff;
+    background: #16803c;
+}
+
+.btn-red {
+    color: #fff;
+    background: #c62828;
+}
+
+.btn-gray {
+    color: #222;
+    background: #e8e8e8;
+}
+
+/* LAYOUT KONTEN (DASHBOARD & KYC) */
 .container {
-    width: 90%;
-
+    width: 92%;
     max-width: 1200px;
-
-    margin: 40px auto;
+    margin: 32px auto;
 }
 
 .header {
@@ -227,73 +109,51 @@ nav {
     color: #777;
 }
 
-/* ALERT */
-
-.success {
-    background: #e8f7ed;
-
-    color: #20733a;
-
-    padding: 13px 15px;
-
-    border-radius: 8px;
-
-    margin-bottom: 25px;
+.card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* STATISTIC */
-
+/* STATISTIC DASHBOARD */
 .stats {
     display: grid;
-
     grid-template-columns: repeat(4, 1fr);
-
     gap: 20px;
-
     margin-bottom: 30px;
 }
 
 .stat-card {
     background: white;
-
     padding: 22px;
-
     border-radius: 12px;
-
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
 }
 
 .stat-title {
     color: #777;
-
     font-size: 14px;
-
     margin-bottom: 10px;
 }
 
 .stat-number {
     font-size: 30px;
-
     font-weight: bold;
 }
 
-/* MENU */
-
+/* MENU DASHBOARD */
 .menu-container {
     display: grid;
-
     grid-template-columns: repeat(3, 1fr);
-
     gap: 20px;
 }
 
 .menu-card {
     background: white;
-
     padding: 25px;
-
     border-radius: 12px;
-
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
 }
 
@@ -303,32 +163,133 @@ nav {
 
 .menu-card p {
     color: #777;
-
     font-size: 14px;
-
     line-height: 1.5;
 }
 
+/* ALERT (SUCCESS & ERROR) */
+.alert {
+    padding: 13px;
+    border-radius: 7px;
+    margin-bottom: 18px;
+    font-weight: 500;
+}
+
+.success {
+    color: #176b37;
+    background: #e6f6eb;
+    border: 1px solid #c3e6cb;
+}
+
+.error {
+    color: #9e2020;
+    background: #fdeaea;
+    border: 1px solid #f5c6c6;
+}
+
+/* TABEL KYC */
+.table-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 13px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+th {
+    background: #fafafa;
+    font-weight: bold;
+}
+
+/* BADGE STATUS */
+.badge {
+    display: inline-block;
+    border-radius: 20px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.pending {
+    color: #805600;
+    background: #fff0c2;
+}
+
+.verified {
+    color: #176b37;
+    background: #dff5e5;
+}
+
+.rejected {
+    color: #9e2020;
+    background: #fde1e1;
+}
+
+/* FORM FIELD */
+.field {
+    margin-bottom: 16px;
+}
+
+.field label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.field p {
+    margin: 0;
+    color: #555;
+    overflow-wrap: anywhere;
+}
+
+input, textarea, select {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    outline: none;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: #222;
+}
+
+textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* RESPONSIVE */
 @media (max-width: 900px) {
     .stats {
         grid-template-columns: repeat(2, 1fr);
     }
-
     .menu-container {
         grid-template-columns: 1fr;
     }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
     nav {
-        padding: 0 20px;
+        padding: 16px 4%;
+        flex-direction: column;
+        gap: 14px;
+        height: auto;
     }
-
     .admin-name {
         display: none;
     }
-
     .stats {
         grid-template-columns: 1fr;
+    }
+    .container {
+        width: 96%;
     }
 }

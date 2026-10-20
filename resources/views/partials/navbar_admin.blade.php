@@ -1,35 +1,21 @@
-<!-- @vite(['resources/css/admin.css'])
-   
-   <nav>
-
-
+<nav>
         <div class="logo">
             Event Management
         </div>
 
-
         <div class="admin-area">
-
             <span class="admin-name">
-
-                {{ session('admin_name') }}
-
+                Halo, {{ session('admin_name', 'Administrator') }}
             </span>
 
             <a href="{{ route('admin.dashboard') }}">Dashboard</a>
             <a href="{{ route('admin.kyc.index') }}">Pemeriksaan KYC</a>
 
-            <form action="{{ route('admin.logout') }}" method="POST">
-
+            <form action="{{ route('admin.logout') }}" method="POST" style="display:inline;">
                 @csrf
-
-                <button type="submit" class="logout">
+                <button type="submit" class="btn btn-dark">
                     Logout
                 </button>
-
             </form>
-
         </div>
-
-
-    </nav> -->
+</nav>
