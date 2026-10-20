@@ -13,16 +13,18 @@ return new class extends Migration
     {
         Schema::create('ticket_types', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('event_id')->constrained('events')->cascadeOnDelete();
-            $table->string('name');
-            $table->decimal('price', 12, 2)->default(0);
+            $table->unsignedBigInteger('event_id');
+            $table->string('name'); // VIP, Regular
+            $table->decimal('price', 12, 2)->default(0.00);
             $table->integer('quota');
             $table->integer('reserved_quota')->default(0);
             $table->integer('sold_quota')->default(0);
-            $table->integer('max_per_order')->default(5)->comment('Batas max tiket per transaksi');
-            $table->dateTime('start_sales')->nullable();
-            $table->dateTime('end_sales')->nullable();
+            $table->integer('max_per_order')->default(5);
+            $table->timestamp('start_sales')->nullable();
+            $table->timestamp('end_sales')->nullable();
             $table->timestamps();
+
+            $table->foreign('event_id')->references('id')->on('events')->onDelete('cascade');        
         });
     }
 

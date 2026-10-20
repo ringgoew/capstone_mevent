@@ -1,13 +1,21 @@
-<nav>
-    <div class="logo">
-        Event POOKIEMAX
-    </div>
-
+<nav id="navbar">
+    <!-- Bagian Kiri: Tombol Login & Daftar EO -->
     <div class="menu">
-        <a href="#">Jelajah Event</a>
+        <a href="{{ route('eo.login') }}" class="btn-masuk">
+            <!-- Ikon Orang (SVG) -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+            </svg>
+            Login
+        </a>
 
         <a href="{{ route('eo.register') }}" class="btn-eo">
             Daftar sebagai EO
         </a>
+    </div>    
+
+    <!-- Bagian Kanan: Logo -->
+    <div class="logo">
+        M!VENT
     </div>
 </nav>

@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->comment('EO User ID')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('category_id');
             $table->string('title');
             $table->string('slug')->unique();
             $table->text('description');
@@ -22,11 +22,14 @@ return new class extends Migration
             $table->string('venue_name');
             $table->string('city');
             $table->text('address');
-            $table->dateTime('start_time');
-            $table->dateTime('end_time');
-            $table->enum('status', ['draft', 'pending', 'published', 'rejected', 'completed', 'cancelled'])->default('pending');
+            $table->timestamp('start_time');
+            $table->timestamp('end_time');
+            $table->string('status')->default('pending');
             $table->text('rejection_reason')->nullable();
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('category_id')->references('id')->on('event_categories')->onDelete('cascade');
         });
     }
 

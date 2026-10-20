@@ -14,21 +14,25 @@ return new class extends Migration
         Schema::create('payouts', function (Blueprint $table) {
             $table->id();
             $table->string('payout_code')->unique();
-            $table->foreignId('user_id')->comment('EO User ID')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('event_id')->nullable()->comment('Event ID terkait pencairan')->constrained('events')->nullOnDelete();
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('event_id')->nullable();
             $table->decimal('gross_amount', 12, 2);
             $table->decimal('commission_fee', 12, 2);
             $table->decimal('net_amount', 12, 2);
             $table->string('bank_name');
             $table->string('bank_account_number');
             $table->string('bank_account_holder');
-            $table->enum('status', ['pending', 'approved', 'rejected', 'completed'])->default('pending');
+            $table->string('status')->default('pending');
             $table->string('proof_of_transfer')->nullable();
             $table->text('rejection_reason')->nullable();
-            $table->foreignId('processed_by')->nullable()->comment('Admin User ID')->constrained('users')->nullOnDelete();
-            $table->timestamp('requested_at')->useCurrent();
-            $table->timestamp('processed_at')->nullable();            
+            $table->unsignedBigInteger('processed_by')->nullable(); 
+            $table->timestamp('requested_at')->nullable();
+            $table->timestamp('processed_at')->nullable();
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('event_id')->references('id')->on('events')->onDelete('set null');
+            $table->foreign('processed_by')->references('id')->on('users')->onDelete('set null');        
         });
     }
 
