@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\EOController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminKycController;
+use App\Http\Controllers\AdminEventVerificationController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -30,3 +31,9 @@ Route::get('/admin/kyc/{id}', [AdminKycController::class, 'show'])->name('admin.
 Route::get('/admin/kyc/{id}/documents/{type}', [AdminKycController::class, 'document'])->name('admin.kyc.document');
 Route::post('/admin/kyc/{id}/approve', [AdminKycController::class, 'approve'])->name('admin.kyc.approve');
 Route::post('/admin/kyc/{id}/reject', [AdminKycController::class, 'reject'])->name('admin.kyc.reject');
+
+// Pemeriksaan dan Verifikasi Event EO
+Route::get('/admin/event-verification', [AdminEventVerificationController::class, 'index',])->name('admin.event-verification.index');
+Route::get('/admin/event-verification/{id}', [AdminEventVerificationController::class, 'show',])->name('admin.event-verification.show');
+Route::post('/admin/event-verification/{id}/publish', [AdminEventVerificationController::class, 'publish',])->name('admin.event-verification.publish');
+Route::post('/admin/event-verification/{id}/reject', [AdminEventVerificationController::class, 'reject',])->name('admin.event-verification.reject');

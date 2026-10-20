@@ -396,6 +396,18 @@
 
             </div>
 
+            <div class="menu-card">
+                <h3>Pemeriksaan Event</h3>
+
+                <p>
+                    Periksa kelayakan event yang diajukan EO,
+                    lalu publish atau reject pengajuan.
+                </p>
+
+                <a href="{{ route('admin.event-verification.index') }}" class="btn btn-dark" style="margin-top:12px">
+                    Periksa Event
+                </a>
+            </div>
 
             <div class="menu-card">
 
