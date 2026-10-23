@@ -14,6 +14,8 @@ use App\Http\Controllers\EO\EOKycController;
 use App\Http\Controllers\EO\EODashboardController;
 use App\Http\Controllers\EO\EventController;
 
+use App\Http\Controllers\PaymentController;
+
 
 // ==========================================
 // PUBLIC ROUTES
@@ -75,3 +77,7 @@ Route::middleware([])->group(function () {
 
     Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 });
+
+
+Route::get('/checkout', [PaymentController::class, 'checkout']);
+Route::post('/payment/notification', [PaymentController::class, 'notification']);
