@@ -4,11 +4,13 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\HomeController;
 
+// Admin Controllers
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminKycController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminEventVerificationController;
 
+// EO Controllers
 use App\Http\Controllers\EO\EOAuthController;
 use App\Http\Controllers\EO\EOKycController;
 use App\Http\Controllers\EO\EODashboardController;
