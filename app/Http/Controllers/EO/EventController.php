@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers\EO;
 
-use App\Http\Controllers\Controller; 
-
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -13,6 +12,7 @@ use Throwable;
 
 class EventController extends Controller
 {
+    // Form tambah event
     public function create()
     {
         if (!session('eo_login') || !session('eo_user_id')) {
@@ -27,6 +27,7 @@ class EventController extends Controller
         return view('eo.events.create', compact('categories'));
     }
 
+    // Simpan event dan jenis tiket
     public function store(Request $request)
     {
         if (!session('eo_login') || !session('eo_user_id')) {
@@ -35,7 +36,7 @@ class EventController extends Controller
         }
 
         $validated = $request->validate([
-            'category_id' => 'required|integer|exists:categories,id',
+            'category_id' => 'required|integer|exists:event_categories,id',
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'banner_image' => 'required|image|mimes:jpg,jpeg,png|max:2048',
@@ -70,6 +71,7 @@ class EventController extends Controller
                 ]);
         }
 
+        // Validasi waktu penjualan tiket
         foreach ($validated['tickets'] as $index => $ticket) {
             if (
                 !empty($ticket['start_sales']) &&
@@ -94,6 +96,7 @@ class EventController extends Controller
                 $userId,
                 $bannerPath
             ) {
+                // Buat slug unik
                 $baseSlug = Str::slug($validated['title']);
 
                 if ($baseSlug === '') {
@@ -108,6 +111,7 @@ class EventController extends Controller
                     $counter++;
                 }
 
+                // Simpan event
                 $eventId = DB::table('events')->insertGetId([
                     'user_id' => $userId,
                     'category_id' => $validated['category_id'],
@@ -125,6 +129,7 @@ class EventController extends Controller
                     'updated_at' => now(),
                 ]);
 
+                // Simpan jenis tiket
                 foreach ($validated['tickets'] as $ticket) {
                     DB::table('ticket_types')->insert([
                         'event_id' => $eventId,
@@ -159,6 +164,7 @@ class EventController extends Controller
             ->with('success', 'Draf event dan jenis tiket berhasil disimpan!');
     }
 
+    // Daftar event milik EO
     public function index()
     {
         if (!session('eo_login') || !session('eo_user_id')) {
@@ -173,6 +179,7 @@ class EventController extends Controller
         return view('eo.events.index', compact('events'));
     }
 
+    // Ajukan event untuk ditinjau admin
     public function submitForReview($id)
     {
         if (!session('eo_login') || !session('eo_user_id')) {
@@ -214,5 +221,33 @@ class EventController extends Controller
 
         return redirect()->route('eo.events.index')
             ->with('success', 'Event berhasil diajukan untuk verifikasi admin.');
+    }
+
+    // Detail event untuk halaman publik
+    public function show($slug)
+    {
+        $event = DB::table('events')
+            ->where('slug', $slug)
+            ->where('status', 'published')
+            ->first();
+
+        if (!$event) {
+            abort(404);
+        }
+
+        $category = DB::table('event_categories')
+            ->where('id', $event->category_id)
+            ->first();
+
+        $tickets = DB::table('ticket_types')
+            ->where('event_id', $event->id)
+            ->orderBy('price', 'asc')
+            ->get();
+
+        return view('events', compact(
+            'event',
+            'category',
+            'tickets'
+        ));
     }
 }

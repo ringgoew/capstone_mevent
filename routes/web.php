@@ -16,6 +16,8 @@ use App\Http\Controllers\EO\EventController;
 
 // INI BAGIAN PUBLIC
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/events/{slug}', [EventController::class, 'show'])
+    ->name('events.show');
 
 Route::middleware(['guest'])->group(function () {
     Route::get('/eo/login', [EOAuthController::class, 'login'])->name('eo.login');
