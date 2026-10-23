@@ -40,7 +40,7 @@
             <h3>
                 Verifikasi EO
             </h3>
-            
+
             <a href="{{ route('admin.event-verification.index') }}" class="btn btn-dark" style="margin-top:12px">
                 Periksa Event
             </a>
