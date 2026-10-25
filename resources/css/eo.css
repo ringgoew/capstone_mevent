@@ -1,5 +1,5 @@
 /* ==========================================================================
-   GLOBAL & LAYOUT BASE
+   1. GLOBAL RESET & BASE TYPOGRAPHY
    ========================================================================== */
 * {
     margin: 0;
@@ -10,13 +10,13 @@
 
 body {
     background-color: #f7f7f7;
-    color: #222;
+    color: #222222;
 }
 
-/* NAVBAR UTAMA (Public / Auth Pages) */
+/* Navbar Utama Publik / Auth */
 nav {
     height: 70px;
-    background-color: white;
+    background-color: #ffffff;
     display: flex;
     align-items: center;
     padding: 0 60px;
@@ -28,12 +28,14 @@ nav {
     font-weight: bold;
 }
 
-/* CONTAINER UMUM (Form & Status Pages) */
+/* ==========================================================================
+   2. PUBLIC / AUTH / STATUS FORM CONTAINER (Register, OTP, KYC, Pending)
+   ========================================================================== */
 .container {
     width: 500px;
     max-width: 90%;
     margin: 50px auto;
-    background: white;
+    background: #ffffff;
     padding: 35px;
     border-radius: 12px;
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
@@ -42,25 +44,24 @@ nav {
 .text-center {
     text-align: center;
 }
-
 .text-left {
     text-align: left;
 }
 
-/* TYPOGRAPHY & MESSAGES */
+/* Typography & Alert Messages */
 h1 {
     margin-bottom: 10px;
 }
 
 .subtitle {
-    color: #666;
+    color: #666666;
     margin-bottom: 25px;
     line-height: 1.5;
 }
 
 .note {
     font-size: 12px;
-    color: #777;
+    color: #777777;
     margin-top: 5px;
 }
 
@@ -78,7 +79,17 @@ h1 {
     color: #b71c1c;
 }
 
-/* FORM ELEMENTS */
+.alert-success {
+    background: #e6f4ea;
+    color: #137333;
+}
+
+.alert-error {
+    background: #fce8e6;
+    color: #c5221f;
+}
+
+/* Form Elements Standard */
 .form-group {
     margin-bottom: 18px;
 }
@@ -90,22 +101,23 @@ label {
 }
 
 input,
-select {
+select,
+textarea {
     width: 100%;
     padding: 12px;
-    border: 1px solid #ddd;
+    border: 1px solid #dddddd;
     border-radius: 7px;
     font-size: 14px;
-    background: white;
+    background: #ffffff;
 }
 
 input:focus,
-select:focus {
+select:focus,
+textarea:focus {
     outline: none;
-    border-color: #555;
+    border-color: #555555;
 }
 
-/* INPUT OTP */
 .otp-input {
     text-align: center;
     letter-spacing: 5px;
@@ -113,37 +125,38 @@ select:focus {
     padding: 13px;
 }
 
-/* BUTTONS & LINKS */
+/* General Buttons & Links */
 button {
     width: 100%;
     padding: 13px;
     border: none;
     border-radius: 7px;
-    background-color: #111;
-    color: white;
+    background-color: #111111;
+    color: #ffffff;
     font-size: 15px;
     cursor: pointer;
     margin-top: 10px;
+    transition: background-color 0.2s ease;
 }
 
 button:hover {
-    background-color: #333;
+    background-color: #333333;
 }
 
 .back {
     display: inline-block;
     margin-top: 20px;
     text-align: center;
-    color: #555;
+    color: #555555;
     text-decoration: none;
     font-size: 14px;
 }
 
 .back:hover {
-    color: #111;
+    color: #111111;
 }
 
-/* HALAMAN PENDING & STATUS INFO */
+/* Status & Pending Screen */
 .icon {
     font-size: 55px;
     margin-bottom: 20px;
@@ -165,143 +178,695 @@ button:hover {
     padding: 15px;
     border-radius: 8px;
     font-size: 14px;
-    color: #555;
+    color: #555555;
     margin-top: 15px;
     line-height: 1.5;
 }
 
 /* ==========================================================================
-   EO DASHBOARD & SIDEBAR LAYOUT
+   3. EO SIDEBAR (SLIDE-ON-HOVER SENSOR)
    ========================================================================== */
 .sidebar {
     position: fixed;
-    left: 0;
+    left: -232px; /* Menyisakan 8px area sensor di tepi kiri layar */
     top: 0;
     width: 240px;
     height: 100vh;
-    background-color: #111;
-    color: white;
-    padding: 25px 18px;
+    background-color: #111111;
+    color: #ffffff;
+    padding: 30px 20px;
     overflow-y: auto;
     z-index: 1000;
+    transition:
+        left 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.3s ease;
+}
+
+/* Pemicu Sensor Kursor */
+.sidebar::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: -25px;
+    width: 25px;
+    height: 100%;
+    background: transparent;
+}
+
+.sidebar:hover {
+    left: 0 !important;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.3);
+}
+
+.sidebar .logo {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    margin-bottom: 30px;
+    color: #ffffff;
 }
 
 .sidebar a {
-    display: block;
-    color: #ddd;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #a1a1aa;
     text-decoration: none;
-    padding: 11px 13px;
-    margin-bottom: 4px;
-    border-radius: 7px;
+    padding: 12px 14px;
+    margin-bottom: 6px;
+    border-radius: 8px;
     font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
 }
 
 .sidebar a:hover,
 .sidebar a.active {
-    background-color: #333;
-    color: white;
+    background-color: #27272a;
+    color: #ffffff;
 }
 
 .menu-title {
-    color: #888;
+    color: #71717a;
     font-size: 11px;
-    margin: 20px 10px 8px;
+    font-weight: 700;
+    margin: 24px 14px 10px;
     text-transform: uppercase;
+    letter-spacing: 0.8px;
 }
 
+.sidebar button {
+    background-color: #27272a;
+    color: #ffffff;
+    border: 1px solid #3f3f46;
+    margin-top: 15px;
+}
+
+.sidebar button:hover {
+    background-color: #dc2626;
+    border-color: #dc2626;
+}
+
+/* ==========================================================================
+   4. EO DASHBOARD & MAIN CONTENT (FULL-WIDTH MODERN LAYOUT)
+   ========================================================================== */
 .main {
-    margin-left: 240px;
-    padding: 35px 45px;
+    margin-left: 0 !important; /* Full width agar tidak menyisakan spasi saat sidebar tersembunyi */
+    padding: 40px 60px;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background-color: #f7f7f7;
+    background-color: #fcfcfc;
+    animation: fadeIn 0.4s ease-out;
 }
 
+/* Topbar Header */
 .topbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
+    margin-bottom: 36px;
 }
 
 .topbar h1 {
-    font-size: 28px;
+    font-size: 30px;
+    font-weight: 800;
+    color: #111111;
+    margin-bottom: 6px;
+}
+
+.topbar .subtitle {
+    color: #666666;
+    font-size: 14px;
+    margin-bottom: 0;
 }
 
 .profile {
-    background-color: white;
-    padding: 10px 16px;
-    border-radius: 8px;
+    background-color: #ffffff;
+    border: 1px solid #e4e4e7;
+    padding: 10px 18px;
+    border-radius: 30px;
     font-size: 14px;
+    font-weight: 600;
+    color: #111111;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
 }
 
+/* Stats Cards Grid */
 .stats {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 18px;
-    margin-bottom: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
 }
 
 .stat-card {
-    background-color: white;
-    padding: 22px;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    background-color: #ffffff;
+    border: 1px solid #e4e4e7;
+    padding: 24px;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    border-color: #111111;
 }
 
 .stat-card p {
-    color: #777;
+    color: #71717a;
     font-size: 13px;
+    font-weight: 600;
     margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .stat-card h2 {
-    font-size: 24px;
+    font-size: 28px;
+    font-weight: 800;
+    color: #111111;
 }
 
+/* Dashboard Section Event Saya */
 .section {
-    background-color: white;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    background-color: #ffffff;
+    border: 1px solid #e4e4e7;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.03);
 }
 
 .section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f4f4f5;
 }
 
-.btn {
-    background-color: #111;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 7px;
+.section-header h2 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #111111;
+}
+
+.section-header .btn {
+    background-color: #111111;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
     text-decoration: none;
-    font-size: 13px;
+    transition: background-color 0.2s ease;
 }
 
+.section-header .btn:hover {
+    background-color: #333333;
+}
+
+/* Event List Card */
+.event-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+    border: 1px solid #e4e4e7;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    background-color: #ffffff;
+    transition: all 0.25s ease;
+}
+
+.event-item:hover {
+    border-color: #111111;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+}
+
+.event-info h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: #111111;
+    margin-bottom: 6px;
+}
+
+.event-info p {
+    font-size: 13px;
+    color: #71717a;
+    margin-bottom: 6px;
+}
+
+.detail-btn {
+    display: inline-block;
+    color: #111111;
+    font-weight: 700;
+    font-size: 13px;
+    text-decoration: none;
+    margin-top: 4px;
+    transition: color 0.2s ease;
+}
+
+.detail-btn:hover {
+    color: #52525b;
+}
+
+/* Status Badges */
+.event-status {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.status-published {
+    background-color: #111111;
+    color: #ffffff;
+}
+
+.status-draft {
+    background-color: #f4f4f5;
+    color: #52525b;
+}
+
+.status-pending {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.status-rejected {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+/* Footer EO */
 .eo-footer {
     margin-top: 40px;
-    margin-left: -45px;
-    margin-right: -45px;
+    margin-left: -60px;
+    margin-right: -60px;
     padding: 25px 60px;
-    background-color: #111;
-    color: white;
+    background-color: #111111;
+    color: #ffffff;
     text-align: center;
 }
 
-/* RESPONSIVE MEDIA QUERIES */
-@media (max-width: 600px) {
+/* ==========================================================================
+   5. FORM BUAT EVENT & TIKET (WIDE CONTAINER)
+   ========================================================================== */
+.form-container-wide {
+    max-width: 850px;
+    margin: 40px auto;
+    background: #ffffff;
+    padding: 35px;
+    border-radius: 16px;
+    border: 1px solid #e4e4e7;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.form-section-card {
+    background: #ffffff;
+    border: 1px solid #e4e4e7;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.form-section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111111;
+    margin-bottom: 20px;
+}
+
+/* Ticket Item Cards & Grid */
+.ticket-card-item {
+    background: #fcfcfc;
+    border: 1px solid #e4e4e7;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s ease;
+}
+
+.ticket-card-item:hover {
+    border-color: #111111;
+}
+
+.ticket-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f4f4f5;
+}
+
+.ticket-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #111111;
+}
+
+.btn-remove-ticket {
+    background: #fee2e2;
+    color: #991b1b;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.btn-remove-ticket:hover {
+    background: #fca5a5;
+}
+
+.ticket-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.ticket-form-grid .form-group {
+    margin-bottom: 0;
+}
+
+.btn-add-ticket {
+    width: 100%;
+    background: #f4f4f5;
+    color: #111111;
+    border: 1px dashed #a1a1aa;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-add-ticket:hover {
+    background: #111111;
+    color: #ffffff;
+    border-color: #111111;
+}
+
+/* ==========================================================================
+   6. HALAMAN DETAIL EVENT (MONOCHROME THEME)
+   ========================================================================== */
+.detail-page-wrapper {
+    background-color: #fcfcfc;
+    min-height: 100vh;
+    padding: 40px 20px 80px 20px;
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.detail-container {
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+/* Tombol Kembali */
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background-color: #ffffff;
+    color: #111111;
+    border: 1px solid #e4e4e7;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    margin-bottom: 24px;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+}
+
+.btn-back:hover {
+    background-color: #111111;
+    color: #ffffff;
+    border-color: #111111;
+    transform: translateX(-3px);
+}
+
+/* Card Hero Event */
+.event-hero-card {
+    background: #ffffff;
+    border: 1px solid #e4e4e7;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+    margin-bottom: 36px;
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.banner-wrapper {
+    width: 100%;
+    max-height: 420px;
+    overflow: hidden;
+    background-color: #111111;
+}
+
+.banner-img {
+    width: 100%;
+    height: 100%;
+    max-height: 420px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.event-hero-card:hover .banner-img {
+    transform: scale(1.03);
+}
+
+.event-hero-body {
+    padding: 32px;
+}
+
+.category-badge {
+    display: inline-block;
+    background: #111111;
+    color: #ffffff;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+}
+
+.event-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #111111;
+    margin-bottom: 14px;
+    line-height: 1.25;
+}
+
+.event-description {
+    color: #555555;
+    font-size: 15px;
+    line-height: 1.7;
+    margin-bottom: 28px;
+}
+
+/* Metadata Event Grid */
+.event-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    padding-top: 24px;
+    border-top: 1px dashed #e4e4e7;
+}
+
+.meta-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px;
+    background: #f8f8f9;
+    border-radius: 10px;
+    border: 1px solid #f0f0f2;
+}
+
+.meta-full {
+    grid-column: 1 / -1;
+}
+
+.meta-icon {
+    color: #111111;
+    display: flex;
+    align-items: center;
+    padding-top: 2px;
+}
+
+.meta-label {
+    display: block;
+    font-size: 12px;
+    color: #777777;
+    margin-bottom: 2px;
+}
+
+.meta-value {
+    font-size: 14px;
+    color: #111111;
+    font-weight: 600;
+}
+
+/* Section Tiket Public */
+.tickets-section {
+    margin-top: 40px;
+}
+
+.section-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #111111;
+    margin-bottom: 20px;
+}
+
+.tickets-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.ticket-card {
+    background: #ffffff;
+    border: 1px solid #e4e4e7;
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    transition: all 0.25s ease;
+}
+
+.ticket-card:hover {
+    border-color: #111111;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+}
+
+.ticket-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111111;
+    margin-bottom: 4px;
+}
+
+.ticket-quota {
+    font-size: 13px;
+    color: #777777;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+}
+
+.ticket-action {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.ticket-price {
+    font-size: 20px;
+    font-weight: 800;
+    color: #111111;
+}
+
+.btn-buy-ticket {
+    background-color: #111111;
+    color: #ffffff;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.btn-buy-ticket:hover {
+    background-color: #333333;
+    transform: scale(1.02);
+}
+
+.empty-tickets {
+    background: #ffffff;
+    border: 1px dashed #cccccc;
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    color: #777777;
+}
+
+.empty-tickets svg {
+    margin-bottom: 10px;
+}
+
+/* ==========================================================================
+   7. KEYFRAMES & MEDIA QUERIES
+   ========================================================================== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 640px) {
     nav {
         padding: 0 20px;
+    }
+
+    .main {
+        padding: 25px 20px;
     }
 
     .container {
         padding: 24px;
         margin: 25px auto;
+    }
+
+    .ticket-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ticket-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .ticket-action {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .event-title {
+        font-size: 24px;
     }
 }

@@ -11,13 +11,19 @@ class EODashboardController extends Controller
     {
         // Cek login EO
         if (!session('eo_login') || !session('eo_user_id')) {
-            return redirect()->route('eo.login');
+            return redirect()->route('eo.login')->with('error', 'Sesi Berakhir');
         }
 
-        // ID EO yang sedang login
         $eoId = session('eo_user_id');
 
-        // Ambil semua event milik EO yang sedang login
+        $eoAccount = DB::table('users') 
+            ->where('id', $eoId)
+            ->first();
+
+        if (!$eoAccount || $eoAccount->status !== 'verified') {
+            return redirect()->route('eo.login')->with('error', 'Error, akun EO tidak terverifikasi');
+        }
+
         $events = DB::table('events')
             ->leftJoin('ticket_types', 'events.id', '=', 'ticket_types.event_id')
             ->where('events.user_id', $eoId)

@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller; 
-
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Models\AdminEventModeration;
+use App\Models\OrganizerProfile;
 
 class AdminDashboardController extends Controller
 {
-        public function dashboard()
+    public function dashboard()
     {
-
         if (!session('admin_login')) {
             return redirect()
                 ->route('admin.login')
@@ -19,19 +20,25 @@ class AdminDashboardController extends Controller
                 ]);
         }
 
-        // data dummy untuk ditampilkan di dashboard
-        $data = [
-            'total_event' => 12,
-            'event_pending' => 3,
-            'total_eo' => 8,
-            'total_tiket' => 245,
-        ];
+        // Mengambil data riil dari database menggantikan data dummy
+        $totalEvent = DB::table('events')->count();
+        $eventPending = DB::table('events')->where('status', 'pending')->count();
+        $totalEo = DB::table('organizer_profiles')->count();
 
+        // Contoh perhitungan total tiket terjual atau total transaksi dari tabel orders/tickets
+        // Menyesuaikan dengan struktur database Anda (misal berdasarkan tabel orders / tickets)
+        $totalTiket = DB::table('orders')->count(); // atau sum dari jumlah kuantitas tiket jika ada
+
+        $data = [
+            'total_event' => $totalEvent,
+            'event_pending' => $eventPending,
+            'total_eo' => $totalEo,
+            'total_tiket' => $totalTiket,
+        ];
 
         return view(
             'admin.dashboard',
             compact('data')
         );
     }
-
 }

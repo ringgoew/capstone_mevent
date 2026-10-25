@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,8 +10,9 @@
     <!-- <link rel="icon" href=""> -->
     <title>@yield('title', 'M!VENT')</title>
     @vite(['resources/css/style.css'])
-    
+
 </head>
+
 <body>
 
     <header>
@@ -20,17 +22,17 @@
     <main>
         @yield('content')
     </main>
-    
-<footer>
-    <p>&copy; 2026 Event Management System</p>
-    
-    <!-- Tautan tersembunyi / khusus untuk login admin -->
-    <p style="margin-top: 10px;">
-        <a href="{{ route('admin.login') }}" style="color: #888; font-size: 12px; text-decoration: none;">
-            Admin Portal
-        </a>
-    </p>
-</footer>
+
+    <footer>
+        <p>&copy; 2026 Event Management System</p>
+
+        <!-- Tautan tersembunyi / khusus untuk login admin -->
+        <p style="margin-top: 10px;">
+            <a href="{{ route('admin.login') }}" style="color: #888; font-size: 12px; text-decoration: none;">
+                Admin Portal
+            </a>
+        </p>
+    </footer>
 
     <script>
         window.addEventListener('scroll', function() {
@@ -43,6 +45,8 @@
         });
     </script>
 </body>
+
 </html>
 </body>
+
 </html>

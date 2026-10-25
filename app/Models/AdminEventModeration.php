@@ -25,14 +25,11 @@ class AdminEventModeration
             ->get();
     }
 
-    /**
-     * Mengambil detail event untuk pemeriksaan Admin.
-     */
     public static function findEvent(int $id): ?object
     {
         return DB::table('events as e')
             ->join('users as u', 'u.id', '=', 'e.user_id')
-            ->join('categories as c', 'c.id', '=', 'e.category_id')
+            ->join('event_categories as c', 'c.id', '=', 'e.category_id')
             ->select(
                 'e.*',
                 'u.name as eo_name',

@@ -50,6 +50,11 @@ Route::middleware([])->group(function () {
     Route::post('/eo/events', [EventController::class, 'store'])->name('eo.events.store');
     Route::post('/eo/events/{id}/submit', [EventController::class, 'submitForReview'])->name('eo.events.submit');
 
+    Route::get('/eo/events/{id}', [EventController::class, 'eoShow'])->name('eo.events.show');
+
+    Route::get('/eo/events/{id}/edit', [EventController::class, 'edit'])->name('eo.events.edit');
+    Route::put('/eo/events/{id}', [EventController::class, 'update'])->name('eo.events.update');
+
     Route::post('/eo/logout', [EOAuthController::class, 'logout'])->name('eo.logout');
 });
 
