@@ -7,14 +7,19 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminKycController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminEventVerificationController;
 
 use App\Http\Controllers\EO\EOAuthController;
 use App\Http\Controllers\EO\EOKycController;
 use App\Http\Controllers\EO\EODashboardController;
 use App\Http\Controllers\EO\EventController;
 
+use App\Http\Controllers\PaymentController;
 
-// INI BAGIAN PUBLIC
+
+// ==========================================
+// PUBLIC ROUTES
+// ==========================================
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/events/{slug}', [EventController::class, 'show'])
     ->name('events.show');
@@ -22,7 +27,7 @@ Route::get('/events/{slug}', [EventController::class, 'show'])
 Route::middleware(['guest'])->group(function () {
     Route::get('/eo/login', [EOAuthController::class, 'login'])->name('eo.login');
     Route::post('/eo/login', [EOAuthController::class, 'authenticate'])->name('eo.login.authenticate');
-    
+
     Route::get('/daftar-eo', [EOAuthController::class, 'register'])->name('eo.register');
     Route::post('/daftar-eo', [EOAuthController::class, 'store'])->name('eo.register.store');
 });
@@ -34,7 +39,10 @@ Route::get('/daftar-eo/kyc', [EOKycController::class, 'kyc'])->name('eo.kyc');
 Route::post('/daftar-eo/kyc', [EOKycController::class, 'submitKyc'])->name('eo.kyc.submit');
 Route::get('/daftar-eo/pending', [EOKycController::class, 'pending'])->name('eo.pending');
 
-// INI BAGIAN EO
+
+// ==========================================
+// EO ROUTES
+// ==========================================
 Route::middleware([])->group(function () {
     Route::get('/eo/dashboard', [EODashboardController::class, 'dashboard'])->name('eo.dashboard');
 
@@ -42,12 +50,14 @@ Route::middleware([])->group(function () {
     Route::get('/eo/events/create', [EventController::class, 'create'])->name('eo.events.create');
     Route::post('/eo/events', [EventController::class, 'store'])->name('eo.events.store');
     Route::post('/eo/events/{id}/submit', [EventController::class, 'submitForReview'])->name('eo.events.submit');
-    
+
     Route::post('/eo/logout', [EOAuthController::class, 'logout'])->name('eo.logout');
 });
 
 
-// INI BAGIAN ADMIN
+// ==========================================
+// ADMIN ROUTES
+// ==========================================
 Route::middleware(['guest'])->group(function () {
     Route::get('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login');
     Route::post('/admin/authenticate', [AdminAuthController::class, 'authenticate'])->name('admin.authenticate');
@@ -62,5 +72,14 @@ Route::middleware([])->group(function () {
     Route::post('/admin/kyc/{id}/approve', [AdminKycController::class, 'approve'])->name('admin.kyc.approve');
     Route::post('/admin/kyc/{id}/reject', [AdminKycController::class, 'reject'])->name('admin.kyc.reject');
 
+    Route::get('/admin/event-verification', [AdminEventVerificationController::class, 'index'])->name('admin.event-verification.index');
+    Route::get('/admin/event-verification/{id}', [AdminEventVerificationController::class, 'show'])->name('admin.event-verification.show');
+    Route::post('/admin/event-verification/{id}/publish', [AdminEventVerificationController::class, 'publish'])->name('admin.event-verification.publish');
+    Route::post('/admin/event-verification/{id}/reject', [AdminEventVerificationController::class, 'reject'])->name('admin.event-verification.reject');
+
     Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 });
+
+
+Route::get('/checkout', [PaymentController::class, 'checkout']);
+Route::post('/payment/notification', [PaymentController::class, 'notification']);
