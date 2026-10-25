@@ -10,66 +10,71 @@ class PaymentController extends Controller
 {
     public function checkout()
     {
-        // 1. Setup konfigurasi Midtrans
+        // Setup konfigurasi midtrans
         Config::$serverKey = config('midtrans.server_key');
         Config::$isProduction = config('midtrans.is_production');
         Config::$isSanitized = true;
         Config::$is3ds = true;
 
-        // 2. Siapkan data pesanan (Contoh data statis)
+        // Siapkan data pesanan (contoh data statis)
         $params = array(
+
             'transaction_details' => array(
-                'order_id' => rand(), // ID pesanan harus unik
-                'gross_amount' => 50000, // Harga total
+                'order_id' => rand(),
+                'gross_amount' => 500000,
             ),
             'customer_details' => array(
                 'first_name' => 'Budi',
                 'last_name' => 'Pratama',
-                'email' => 'budi.pra@example.com',
-                'phone' => '08111222333',
+                'email' => 'budi@example.com',
+                'phone' => '08123456789',
             ),
         );
 
-        // 3. Minta Token Snap dari Midtrans
+        // dd([
+        //     'Server_Key_Yang_Terbaca' => \Midtrans\Config::$serverKey,
+        //     'Status_Produksi' => \Midtrans\Config::$isProduction,
+        // ]);
+
+        // Minta Token Snap Dari Midtrans
         $snapToken = Snap::getSnapToken($params);
 
-        // 4. Kirim token ke halaman view (frontend)
-        return view('checkout', compact('snapToken'));
+        // Kirim Token Ke Halaman View
+        return view('payment.checkout', compact('snapToken'));
     }
-    
+
     public function notification(Request $request)
     {
-        // 1. Setup konfigurasi Midtrans
+        // Setup konfigurasi midtrans
         \Midtrans\Config::$serverKey = config('midtrans.server_key');
         \Midtrans\Config::$isProduction = config('midtrans.is_production');
 
-        // 2. Buat instance Notification dari Midtrans
+        // buat instance notification dari midtrans
         try {
             $notif = new \Midtrans\Notification();
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Gagal memproses notifikasi', 'error' => $e->getMessage()], 400);
+            return response()->json(['error' => 'Gagal Memproses Notifikasi', 'error_message' => $e->getMessage()], 400);
         }
 
         $transactionStatus = $notif->transaction_status;
         $orderId = $notif->order_id;
 
-        // 3. Tentukan logika pembaruan basis data (Database) berdasarkan status
+        //tentukan logika pembaruan basis data (database) berdasarkan status
         if ($transactionStatus == 'capture' || $transactionStatus == 'settlement') {
-            // Pembayaran Berhasil / Lunas
-            // Contoh: Order::where('id', $orderId)->update(['status' => 'lunas']);
-            error_log("Pesanan $orderId berhasil dibayar.");
-            
-        } else if ($transactionStatus == 'pending') {
-            // Menunggu Pembayaran
-            error_log("Pesanan $orderId sedang menunggu pembayaran.");
-            
-        } else if ($transactionStatus == 'deny' || $transactionStatus == 'expire' || $transactionStatus == 'cancel') {
-            // Pembayaran Gagal / Dibatalkan / Kedaluwarsa
-            error_log("Pesanan $orderId gagal atau dibatalkan.");
+            // Pembayaran berhasil
+            // Update status pembayaran di database
+            // Contoh: Payment::where('order_id', $orderId)->update(['status' => 'lunas']);
+            error_log("pesanan $orderId berhasil dibayar.");
+        } elseif ($transactionStatus == 'pending') {
+            // Menunggu pembayaran
+            error_log("pesanan $orderId menunggu pembayaran.");
+        } elseif ($transactionStatus == 'deny' || $transactionStatus == 'expire' || $transactionStatus == 'cancel') {
+            // Pembayaran ditolak
+            // Update status pembayaran di database
+            error_log("pesanan $orderId gagal atau dibatalkan.");
         }
 
-        // 4. Kembalikan respon HTTP 200 agar Midtrans tahu notifikasi sudah diterima
-        return response()->json(['message' => 'Notifikasi berhasil diterima']);
+        // kembalikan respons http 200 agar midtrans tau notifikasi sudah diterima
+        return response()->json(['message' => 'Notifikasi Berhasil Diterima']);
     }
 }
-
