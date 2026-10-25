@@ -16,6 +16,9 @@ use App\Http\Controllers\EO\EOKycController;
 use App\Http\Controllers\EO\EODashboardController;
 use App\Http\Controllers\EO\EventController;
 
+// Payment Controller
+use App\Http\Controllers\PaymentController;
+
 
 // ==========================================
 // PUBLIC ROUTES
@@ -76,4 +79,12 @@ Route::middleware([])->group(function () {
     Route::post('/admin/event-verification/{id}/reject', [AdminEventVerificationController::class, 'reject'])->name('admin.event-verification.reject');
 
     Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
+});
+
+
+// ==========================================
+// PAYMENT ROUTES
+// ==========================================
+Route::middleware([])->group(function () {
+    Route::get('/payment/checkout', [PaymentController::class, 'checkout'])->name('checkout');
 });
