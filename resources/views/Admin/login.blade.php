@@ -154,30 +154,6 @@
 
             font-size: 14px;
         }
-
-
-        .dummy {
-            margin-top: 20px;
-
-            padding: 15px;
-
-            background: #f3f3f3;
-
-            border-radius: 8px;
-
-            font-size: 13px;
-
-            color: #555;
-        }
-
-
-        .dummy strong {
-            display: block;
-
-            margin-bottom: 7px;
-
-            color: #222;
-        }
     </style>
 
 </head>
@@ -254,24 +230,6 @@
             </button>
 
         </form>
-
-
-        <div class="dummy">
-
-            <strong>
-                Akun Dummy
-            </strong>
-
-            Email:
-            admin@event.test
-
-            <br>
-
-            Password:
-            admin123
-
-        </div>
-
 
     </div>
 
