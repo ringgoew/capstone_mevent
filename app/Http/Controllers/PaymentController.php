@@ -5,9 +5,48 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Midtrans\Config;
 use Midtrans\Snap;
+// use App\Models\Order;
 
 class PaymentController extends Controller
 {
+    // public function checkout($id)
+    // {
+    //     // Setup konfigurasi Midtrans
+    //     Config::$serverKey = config('midtrans.server_key');
+    //     Config::$isProduction = config('midtrans.is_production');
+    //     Config::$isSanitized = true;
+    //     Config::$is3ds = true;
+
+    //     // Panggil logika query dari Model Order
+    //     $orderData = Order::getPaymentDetails($id);
+
+    //     if (!$orderData) {
+    //         abort(404, 'Data pesanan tidak ditemukan.');
+    //     }
+
+    //     // Siapkan parameter Midtrans
+    //     $params = array(
+    //         'transaction_details' => array(
+    //             // Menggunakan order_code asli dari tabel Orders
+    //             'order_id' => $orderData->order_code,
+    //             // Menggunakan grand_total dari tabel Orders
+    //             'gross_amount' => (int) $orderData->grand_total,
+    //         ),
+    //         'customer_details' => array(
+    //             'first_name' => $orderData->customer_name,
+    //             'email'      => $orderData->customer_email,
+    //             'phone'      => $orderData->customer_phone ?? '0800000000',
+    //         ),
+    //     );
+
+    //     // Minta Token Snap
+    //     $snapToken = Snap::getSnapToken($params);
+
+    //     // Lempar token dan data gabungan ke view
+    //     return view('payment.checkout', compact('snapToken', 'orderData'));
+    // }
+
+
     public function checkout()
     {
         // Setup konfigurasi midtrans
@@ -76,5 +115,24 @@ class PaymentController extends Controller
 
         // kembalikan respons http 200 agar midtrans tau notifikasi sudah diterima
         return response()->json(['message' => 'Notifikasi Berhasil Diterima']);
+    }
+
+    public function finish(Request $request)
+    {
+        // Tangkap parameter yang dikirim Midtrans melalui URL
+        $orderId = $request->query('order_id');
+        $transactionStatus = $request->query('transaction_status');
+
+        // Cek status transaksi
+        if ($transactionStatus == 'settlement' || $transactionStatus == 'capture') {
+            // Jika sukses dibayar
+            return view('payment.approved', compact('orderId'));
+        } elseif ($transactionStatus == 'pending') {
+            // Jika user menutup pop-up tapi belum bayar (misal VA)
+            return view('payment.pending', compact('orderId'));
+        } else {
+            // Jika gagal, kadaluarsa, atau dibatalkan ('deny', 'expire', 'cancel')
+            return view('payment.rejected', compact('orderId'));
+        }
     }
 }

@@ -87,4 +87,5 @@ Route::middleware([])->group(function () {
 // ==========================================
 Route::middleware([])->group(function () {
     Route::get('/payment/checkout', [PaymentController::class, 'checkout'])->name('checkout');
+    Route::get('/payment/finish', [PaymentController::class, 'finish'])->name('payment.finish');
 });
