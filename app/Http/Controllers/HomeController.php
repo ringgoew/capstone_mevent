@@ -9,11 +9,9 @@ class HomeController extends Controller
 {
     public function index(Request $request)
     {
-        // Ambil event yang sudah dipublikasikan
         $query = DB::table('events')
             ->where('status', 'published');
 
-        // Pencarian berdasarkan nama event, lokasi, atau kota
         if ($request->filled('keyword')) {
             $keyword = $request->keyword;
 
@@ -24,22 +22,18 @@ class HomeController extends Controller
             });
         }
 
-        // Filter berdasarkan kategori dari tabel event_categories
         if ($request->filled('category')) {
             $query->where('category_id', $request->category);
         }
 
-        // Ambil data event dari database
         $events = $query
             ->orderBy('start_time', 'asc')
             ->get()
             ->map(function ($event) {
-                // Ambil harga tiket termurah
                 $event->harga = DB::table('ticket_types')
                     ->where('event_id', $event->id)
                     ->min('price');
 
-                // Sesuaikan nama properti dengan Blade
                 $event->nama = $event->title;
                 $event->tanggal = $event->start_time;
                 $event->location = $event->venue_name;

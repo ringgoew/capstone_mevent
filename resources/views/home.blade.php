@@ -47,11 +47,10 @@
             <div class="event-card">
                 <div class="event-image">
                     @if ($event->foto)
-                        <img
-                            src="{{ asset('storage/' . $event->foto) }}"
-                            alt="{{ $event->nama }}"
-                        >
-                    @else
+<img
+    src="{{ asset('assets/img/events/' . $event->foto) }}"
+    alt="{{ $event->nama }}"
+>                    @else
                         <p>Gambar belum tersedia</p>
                     @endif
                 </div>

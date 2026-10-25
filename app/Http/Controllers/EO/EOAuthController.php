@@ -32,15 +32,15 @@ class EOAuthController extends Controller
     ]);
 
     // Buat akun EO
-    $userId = DB::table('users')->insertGetId([
-        'name' => $validated['nama'],
-        'email' => $validated['email'],
-        'password' => Hash::make($validated['password']),
-        'role' => 'organizer',
-        'status' => 'active',
-        'created_at' => now(),
-        'updated_at' => now(),
-    ]);
+$userId = DB::table('users')->insertGetId([
+    'name' => $validated['nama'],
+    'email' => $validated['email'],
+    'password' => Hash::make($validated['password']),
+    'role' => 'organizer',
+    'status' => 'pending', // Ubah dari 'active' menjadi 'pending'
+    'created_at' => now(),
+    'updated_at' => now(),
+]);
 
     // Buat OTP enam digit
     $otp = (string) random_int(100000, 999999);
