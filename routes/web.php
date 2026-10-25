@@ -4,22 +4,23 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\HomeController;
 
+// Admin Controllers
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminKycController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminEventVerificationController;
 
+// EO Controllers
 use App\Http\Controllers\EO\EOAuthController;
 use App\Http\Controllers\EO\EOKycController;
 use App\Http\Controllers\EO\EODashboardController;
 use App\Http\Controllers\EO\EventController;
 
+// Payment Controller
 use App\Http\Controllers\PaymentController;
 
 
-// ==========================================
 // PUBLIC ROUTES
-// ==========================================
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::middleware(['guest'])->group(function () {
@@ -38,9 +39,7 @@ Route::post('/daftar-eo/kyc', [EOKycController::class, 'submitKyc'])->name('eo.k
 Route::get('/daftar-eo/pending', [EOKycController::class, 'pending'])->name('eo.pending');
 
 
-// ==========================================
 // EO ROUTES
-// ==========================================
 Route::middleware([])->group(function () {
     Route::get('/eo/dashboard', [EODashboardController::class, 'dashboard'])->name('eo.dashboard');
 
@@ -53,9 +52,7 @@ Route::middleware([])->group(function () {
 });
 
 
-// ==========================================
 // ADMIN ROUTES
-// ==========================================
 Route::middleware(['guest'])->group(function () {
     Route::get('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login');
     Route::post('/admin/authenticate', [AdminAuthController::class, 'authenticate'])->name('admin.authenticate');
@@ -79,5 +76,7 @@ Route::middleware([])->group(function () {
 });
 
 
-Route::get('/checkout', [PaymentController::class, 'checkout']);
-Route::post('/payment/notification', [PaymentController::class, 'notification']);
+// PAYMENT ROUTES
+Route::middleware([])->group(function () {
+    Route::get('/payment/checkout', [PaymentController::class, 'checkout'])->name('checkout');
+});
