@@ -10,7 +10,6 @@
     <!-- <link rel="icon" href=""> -->
     <title>@yield('title', 'M!VENT')</title>
     @vite(['resources/css/style.css'])
-
 </head>
 
 <body>
@@ -44,9 +43,9 @@
             }
         });
     </script>
-</body>
 
-</html>
+    {{-- PERBAIKAN: Wajib ditambahkan agar @push('scripts') dari halaman checkout bisa dirender --}}
+    @stack('scripts')
 </body>
 
 </html>

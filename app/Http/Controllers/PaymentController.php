@@ -3,136 +3,214 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Midtrans\Config;
 use Midtrans\Snap;
-// use App\Models\Order;
+use Midtrans\Notification;
 
 class PaymentController extends Controller
 {
-    // public function checkout($id)
-    // {
-    //     // Setup konfigurasi Midtrans
-    //     Config::$serverKey = config('midtrans.server_key');
-    //     Config::$isProduction = config('midtrans.is_production');
-    //     Config::$isSanitized = true;
-    //     Config::$is3ds = true;
-
-    //     // Panggil logika query dari Model Order
-    //     $orderData = Order::getPaymentDetails($id);
-
-    //     if (!$orderData) {
-    //         abort(404, 'Data pesanan tidak ditemukan.');
-    //     }
-
-    //     // Siapkan parameter Midtrans
-    //     $params = array(
-    //         'transaction_details' => array(
-    //             // Menggunakan order_code asli dari tabel Orders
-    //             'order_id' => $orderData->order_code,
-    //             // Menggunakan grand_total dari tabel Orders
-    //             'gross_amount' => (int) $orderData->grand_total,
-    //         ),
-    //         'customer_details' => array(
-    //             'first_name' => $orderData->customer_name,
-    //             'email'      => $orderData->customer_email,
-    //             'phone'      => $orderData->customer_phone ?? '0800000000',
-    //         ),
-    //     );
-
-    //     // Minta Token Snap
-    //     $snapToken = Snap::getSnapToken($params);
-
-    //     // Lempar token dan data gabungan ke view
-    //     return view('payment.checkout', compact('snapToken', 'orderData'));
-    // }
-
-
-    public function checkout()
+    public function store(Request $request)
     {
-        // Setup konfigurasi midtrans
-        Config::$serverKey = config('midtrans.server_key');
-        Config::$isProduction = config('midtrans.is_production');
-        Config::$isSanitized = true;
-        Config::$is3ds = true;
+        $request->validate([
+            'event_id'    => 'required|integer',
+            'buyer_name'  => 'required|string|max:255',
+            'buyer_email' => 'required|email|max:255',
+            'buyer_phone' => 'required|string|max:20',
+            'quantities'  => 'required|array',
+        ]);
 
-        // Siapkan data pesanan (contoh data statis)
-        $params = array(
+        $totalPrice = 0;
+        $orderItemsData = [];
 
-            'transaction_details' => array(
-                'order_id' => rand(),
-                'gross_amount' => 500000,
-            ),
-            'customer_details' => array(
-                'first_name' => 'Budi',
-                'last_name' => 'Pratama',
-                'email' => 'budi@example.com',
-                'phone' => '08123456789',
-            ),
-        );
+        // Gunakan DB Transaction agar jika ada kesalahan, stok/order tidak rusak
+        return DB::transaction(function () use ($request, &$totalPrice, &$orderItemsData) {
 
-        // dd([
-        //     'Server_Key_Yang_Terbaca' => \Midtrans\Config::$serverKey,
-        //     'Status_Produksi' => \Midtrans\Config::$isProduction,
-        // ]);
+            foreach ($request->quantities as $ticketId => $qty) {
+                $qty = (int) $qty;
+                if ($qty > 0) {
+                    $ticket = DB::table('ticket_types')->where('id', $ticketId)->lockForUpdate()->first();
 
-        // Minta Token Snap Dari Midtrans
-        $snapToken = Snap::getSnapToken($params);
+                    if (!$ticket) {
+                        return response()->json(['message' => 'Tipe tiket tidak ditemukan.'], 404);
+                    }
 
-        // Kirim Token Ke Halaman View
-        return view('payment.checkout', compact('snapToken'));
+                    // Cek ketersediaan stok aktual
+                    $available = $ticket->quota - ($ticket->reserved_quota ?? 0) - ($ticket->sold_quota ?? 0);
+                    if ($qty > $available) {
+                        return response()->json(['message' => "Stok tiket {$ticket->name} tidak mencukupi."], 422);
+                    }
+
+                    $subtotal = $ticket->price * $qty;
+                    $totalPrice += $subtotal;
+
+                    $orderItemsData[] = [
+                        'ticket_type_id' => $ticket->id,
+                        'name'           => substr($ticket->name, 0, 50),
+                        'price'          => (int) $ticket->price,
+                        'quantity'       => $qty,
+                        'subtotal'       => $subtotal,
+                    ];
+
+                    // Reservasi stok tiket sementara
+                    DB::table('ticket_types')
+                        ->where('id', $ticket->id)
+                        ->increment('reserved_quota', $qty);
+                }
+            }
+
+            if ($totalPrice <= 0 || empty($orderItemsData)) {
+                return response()->json(['message' => 'Pilih minimal satu tiket.'], 422);
+            }
+
+            $orderCode = 'MIVENT-' . time() . '-' . rand(100, 999);
+
+            $orderId = DB::table('orders')->insertGetId([
+                'order_code'     => $orderCode,
+                'customer_name'  => $request->buyer_name,
+                'customer_email' => $request->buyer_email,
+                'customer_phone' => $request->buyer_phone,
+                'event_id'       => $request->event_id,
+                'total_amount'   => $totalPrice,
+                'platform_fee'   => 0,
+                'grand_total'    => $totalPrice,
+                'status'         => 'pending',
+                'created_at'     => now(),
+                'updated_at'     => now(),
+            ]);
+
+            // 2. Simpan ke tabel order_items
+            $midtransItems = [];
+            foreach ($orderItemsData as $item) {
+                DB::table('order_items')->insert([
+                    'order_id'       => $orderId,
+                    'ticket_type_id' => $item['ticket_type_id'],
+                    'quantity'       => $item['quantity'],
+                    'price'          => $item['price'],
+                    'subtotal'       => $item['subtotal'],
+                    'created_at'     => now(),
+                    'updated_at'     => now(),
+                ]);
+
+                $midtransItems[] = [
+                    'id'       => (string) $item['ticket_type_id'],
+                    'price'    => $item['price'],
+                    'quantity' => $item['quantity'],
+                    'name'     => $item['name'],
+                ];
+            }
+
+            // 3. Simpan ke tabel payments
+            DB::table('payments')->insert([
+                'order_id'        => $orderId,
+                'payment_gateway' => 'midtrans',
+                'payment_method'  => 'bank_transfer',
+                'amount'          => $totalPrice,
+                'status'          => 'pending',
+                'created_at'      => now(),
+                'updated_at'      => now(),
+            ]);
+
+            // Setup Midtrans Snap Token
+            Config::$serverKey = config('midtrans.server_key');
+            Config::$isProduction = config('midtrans.is_production');
+            Config::$isSanitized = true;
+            Config::$is3ds = true;
+
+            $params = [
+                'transaction_details' => [
+                    'order_id'     => $orderCode,
+                    'gross_amount' => $totalPrice,
+                ],
+                'item_details' => $midtransItems,
+                'customer_details' => [
+                    'first_name' => $request->buyer_name,
+                    'email'      => $request->buyer_email,
+                    'phone'      => $request->buyer_phone,
+                ],
+                'enabled_payments' => [
+                    'bca_va',
+                    'bni_va',
+                    'bri_va',
+                    'cimb_va',
+                    'permata_va',
+                    'other_va'
+                ],
+            ];
+
+            $snapToken = Snap::getSnapToken($params);
+
+            // Update snap_token di tabel orders
+            DB::table('orders')->where('id', $orderId)->update(['snap_token' => $snapToken]);
+
+            return response()->json([
+                'snap_token' => $snapToken,
+                'order_code' => $orderCode,
+            ]);
+        });
     }
 
-    public function notification(Request $request)
+    public function callback(Request $request)
     {
-        // Setup konfigurasi midtrans
-        \Midtrans\Config::$serverKey = config('midtrans.server_key');
-        \Midtrans\Config::$isProduction = config('midtrans.is_production');
+        Config::$serverKey = config('midtrans.server_key');
+        Config::$isProduction = config('midtrans.is_production');
 
-        // buat instance notification dari midtrans
         try {
-            $notif = new \Midtrans\Notification();
+            $notif = new Notification();
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Gagal Memproses Notifikasi', 'error_message' => $e->getMessage()], 400);
+            return response()->json(['message' => $e->getMessage()], 400);
         }
 
         $transactionStatus = $notif->transaction_status;
-        $orderId = $notif->order_id;
+        $orderCode = $notif->order_id;
 
-        //tentukan logika pembaruan basis data (database) berdasarkan status
-        if ($transactionStatus == 'capture' || $transactionStatus == 'settlement') {
-            // Pembayaran berhasil
-            // Update status pembayaran di database
-            // Contoh: Payment::where('order_id', $orderId)->update(['status' => 'lunas']);
-            error_log("pesanan $orderId berhasil dibayar.");
-        } elseif ($transactionStatus == 'pending') {
-            // Menunggu pembayaran
-            error_log("pesanan $orderId menunggu pembayaran.");
-        } elseif ($transactionStatus == 'deny' || $transactionStatus == 'expire' || $transactionStatus == 'cancel') {
-            // Pembayaran ditolak
-            // Update status pembayaran di database
-            error_log("pesanan $orderId gagal atau dibatalkan.");
+        $order = DB::table('orders')->where('order_code', $orderCode)->first();
+        if (!$order) {
+            return response()->json(['message' => 'Order tidak ditemukan'], 404);
         }
 
-        // kembalikan respons http 200 agar midtrans tau notifikasi sudah diterima
-        return response()->json(['message' => 'Notifikasi Berhasil Diterima']);
-    }
-
-    public function finish(Request $request)
-    {
-        // Tangkap parameter yang dikirim Midtrans melalui URL
-        $orderId = $request->query('order_id');
-        $transactionStatus = $request->query('transaction_status');
-
-        // Cek status transaksi
         if ($transactionStatus == 'settlement' || $transactionStatus == 'capture') {
-            // Jika sukses dibayar
-            return view('payment.approved', compact('orderId'));
-        } elseif ($transactionStatus == 'pending') {
-            // Jika user menutup pop-up tapi belum bayar (misal VA)
-            return view('payment.pending', compact('orderId'));
-        } else {
-            // Jika gagal, kadaluarsa, atau dibatalkan ('deny', 'expire', 'cancel')
-            return view('payment.rejected', compact('orderId'));
+            DB::transaction(function () use ($order) {
+                // Update status Order & Payment
+                DB::table('orders')->where('id', $order->id)->update([
+                    'status'  => 'paid',
+                    'paid_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                DB::table('payments')->where('order_id', $order->id)->update([
+                    'status'     => 'success',
+                    'paid_at'    => now(),
+                    'updated_at' => now(),
+                ]);
+
+                // Pindahkan kuota reserved ke sold_quota
+                $items = DB::table('order_items')->where('order_id', $order->id)->get();
+                foreach ($items as $item) {
+                    DB::table('ticket_types')
+                        ->where('id', $item->ticket_type_id)
+                        ->decrement('reserved_quota', $item->quantity);
+
+                    DB::table('ticket_types')
+                        ->where('id', $item->ticket_type_id)
+                        ->increment('sold_quota', $item->quantity);
+                }
+            });
+        } else if (in_array($transactionStatus, ['expire', 'deny', 'cancel'])) {
+            DB::transaction(function () use ($order) {
+                DB::table('orders')->where('id', $order->id)->update(['status' => 'cancelled', 'updated_at' => now()]);
+                DB::table('payments')->where('order_id', $order->id)->update(['status' => 'failed', 'updated_at' => now()]);
+
+                // Kembalikan kuota reserved jika transaksi batal
+                $items = DB::table('order_items')->where('order_id', $order->id)->get();
+                foreach ($items as $item) {
+                    DB::table('ticket_types')
+                        ->where('id', $item->ticket_type_id)
+                        ->decrement('reserved_quota', $item->quantity);
+                }
+            });
         }
+
+        return response()->json(['message' => 'Callback diproses successfully']);
     }
 }

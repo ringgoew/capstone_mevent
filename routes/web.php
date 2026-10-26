@@ -87,8 +87,8 @@ Route::middleware([])->group(function () {
 
 // PAYMENT ROUTES
 Route::middleware([])->group(function () {
-    Route::get('/payment/checkout', [PaymentController::class, 'checkout'])->name('checkout');
-    Route::get('/payment/finish', [PaymentController::class, 'finish'])->name('payment.finish');
+    Route::post('/checkout/process', [PaymentController::class, 'store'])->name('checkout.store');
+    Route::post('/midtrans/callback', [PaymentController::class, 'callback'])->name('midtrans.callback');
 });
 
 
