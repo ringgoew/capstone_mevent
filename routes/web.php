@@ -20,10 +20,10 @@ use App\Http\Controllers\EO\EventController;
 use App\Http\Controllers\PaymentController;
 
 
-// ==========================================
 // PUBLIC ROUTES
-// ==========================================
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/events/{slug}', [EventController::class, 'show'])
+    ->name('events.show');
 
 Route::middleware(['guest'])->group(function () {
     Route::get('/eo/login', [EOAuthController::class, 'login'])->name('eo.login');
@@ -41,9 +41,7 @@ Route::post('/daftar-eo/kyc', [EOKycController::class, 'submitKyc'])->name('eo.k
 Route::get('/daftar-eo/pending', [EOKycController::class, 'pending'])->name('eo.pending');
 
 
-// ==========================================
 // EO ROUTES
-// ==========================================
 Route::middleware([])->group(function () {
     Route::get('/eo/dashboard', [EODashboardController::class, 'dashboard'])->name('eo.dashboard');
 
@@ -52,13 +50,16 @@ Route::middleware([])->group(function () {
     Route::post('/eo/events', [EventController::class, 'store'])->name('eo.events.store');
     Route::post('/eo/events/{id}/submit', [EventController::class, 'submitForReview'])->name('eo.events.submit');
 
+    Route::get('/eo/events/{id}', [EventController::class, 'eoShow'])->name('eo.events.show');
+
+    Route::get('/eo/events/{id}/edit', [EventController::class, 'edit'])->name('eo.events.edit');
+    Route::put('/eo/events/{id}', [EventController::class, 'update'])->name('eo.events.update');
+
     Route::post('/eo/logout', [EOAuthController::class, 'logout'])->name('eo.logout');
 });
 
 
-// ==========================================
 // ADMIN ROUTES
-// ==========================================
 Route::middleware(['guest'])->group(function () {
     Route::get('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login');
     Route::post('/admin/authenticate', [AdminAuthController::class, 'authenticate'])->name('admin.authenticate');
@@ -82,9 +83,7 @@ Route::middleware([])->group(function () {
 });
 
 
-// ==========================================
 // PAYMENT ROUTES
-// ==========================================
 Route::middleware([])->group(function () {
     Route::get('/payment/checkout', [PaymentController::class, 'checkout'])->name('checkout');
     Route::get('/payment/finish', [PaymentController::class, 'finish'])->name('payment.finish');

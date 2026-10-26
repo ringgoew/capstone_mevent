@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller; 
+use App\Http\Controllers\Controller;
 use App\Models\OrganizerProfile;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 use App\Mail\KycApprovedMail;
 use App\Mail\KycRejectedMail;
 
@@ -72,24 +72,26 @@ class AdminKycController extends Controller
         return response()->file($disk->path($path));
     }
 
+    // App/Http/Controllers/Admin/AdminKycController.php
     public function approve(int $id)
     {
         if (!session('admin_login')) {
             return redirect()->route('admin.login');
         }
 
-        // 1. Ambil data profil untuk mendapatkan email dan nama EO
         $profile = OrganizerProfile::findForAdmin($id);
         abort_if(!$profile, 404, 'Profil KYC tidak ditemukan.');
 
-        // 2. Update status ke database
         $updated = OrganizerProfile::updatePendingStatus($id, 'verified');
 
         if (!$updated) {
             return redirect()
-                ->route('admin.kyc.show', $id)
+                ->route('admin.kyc.show', $id)  
                 ->with('error', 'KYC tidak dapat diproses. Periksa status terbaru.');
         }
+
+        // Update status user menjadi active setelah disetujui admin
+        DB::table('users')->where('id', $profile->user_id)->update(['status' => 'verified']);
 
         Mail::to($profile->user_email)->send(new KycApprovedMail($profile));
 

@@ -56,8 +56,7 @@ class AdminAuthController extends Controller
         ]);
 
         return redirect()
-            ->route('admin.dashboard')
-            ->with('success', 'Login berhasil. Selamat datang, Admin.');
+            ->route('admin.dashboard');
     }
 
     // Logout Admin
@@ -73,7 +72,6 @@ class AdminAuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()
-            ->route('home')
-            ->with('success', 'Anda berhasil logout.');
+            ->route('home');
     }
 }
