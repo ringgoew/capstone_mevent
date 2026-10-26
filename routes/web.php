@@ -19,6 +19,8 @@ use App\Http\Controllers\EO\EventController;
 // Payment Controller
 use App\Http\Controllers\PaymentController;
 
+use App\Http\Controllers\CheckoutController;
+
 
 // PUBLIC ROUTES
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -88,3 +90,7 @@ Route::middleware([])->group(function () {
     Route::get('/payment/checkout', [PaymentController::class, 'checkout'])->name('checkout');
     Route::get('/payment/finish', [PaymentController::class, 'finish'])->name('payment.finish');
 });
+
+
+Route::get('/events/{slug}/checkout', [CheckoutController::class, 'show'])
+    ->name('checkout.show');

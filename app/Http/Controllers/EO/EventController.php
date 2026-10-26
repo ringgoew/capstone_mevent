@@ -87,7 +87,7 @@ class EventController extends Controller
                 ]);
             }
         }
-        $forbiddenKeywords = ['judi', 'sara', 'kekerasan', 'narkoba', 'pornografi', 'radikalisme', 'sabung ayam', 'tarung bebas', 'ponzi'];
+        $forbiddenKeywords = ['judi', 'sara', 'kekerasan', 'narkoba', 'pornografi', 'radikalisme', 'sabung ayam', 'tarung bebas', 'ponzi', 'jancok', 'patek'];
         $textToScan = strtolower($validated['title'] . ' ' . $validated['description']);
 
         $detectedKeywords = [];

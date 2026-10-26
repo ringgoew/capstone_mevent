@@ -101,7 +101,10 @@
                             Gratis
                             @endif
                         </span>
-                        <button class="btn-buy-ticket">Beli Tiket</button>
+                        <a href="{{ route('checkout.show', $event->slug) }}"
+                            class="btn-buy-ticket">
+                            Beli Tiket
+                        </a>
                     </div>
                 </div>
                 @empty
