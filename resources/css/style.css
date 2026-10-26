@@ -512,3 +512,366 @@ footer {
         font-size: 24px;
     }
 }
+
+
+/* ==========================================
+   CHECKOUT TICKET PAGE - M!VENT
+   Monochrome Theme
+========================================== */
+
+.checkout-header {
+    margin-bottom: 30px;
+    padding: 10px 0;
+}
+
+.checkout-header h1 {
+    font-size: 32px;
+    font-weight: 800;
+    color: #111;
+    margin-bottom: 10px;
+}
+
+.checkout-header p {
+    color: #777;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.checkout-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(260px, 0.9fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.checkout-form-section {
+    min-width: 0;
+}
+
+.checkout-form-section form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.checkout-card,
+.checkout-summary {
+    background: #fff;
+    border: 1px solid #e4e4e7;
+    border-radius: 14px;
+    padding: 26px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.035);
+}
+
+.checkout-card h2,
+.checkout-summary h2 {
+    color: #111;
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.checkout-card > p {
+    color: #777;
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+
+.checkout-card .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    margin-bottom: 20px;
+}
+
+.checkout-card .form-group:last-child {
+    margin-bottom: 0;
+}
+
+.checkout-card .form-group label {
+    color: #222;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.checkout-card .form-group input {
+    width: 100%;
+    min-height: 46px;
+    padding: 12px 14px;
+    background: #fcfcfc;
+    color: #222;
+    border: 1px solid #dedee2;
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.checkout-card .form-group input:focus {
+    background: #fff;
+    border-color: #111;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
+}
+
+.checkout-card .form-group input::placeholder {
+    color: #aaa;
+}
+
+/* Pilihan jenis tiket */
+
+.checkout-ticket-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.checkout-ticket {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px;
+    background: #fff;
+    border: 1px solid #e4e4e7;
+    border-radius: 11px;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.checkout-ticket:hover {
+    border-color: #999;
+    background: #fafafa;
+}
+
+.checkout-ticket-info {
+    min-width: 0;
+}
+
+.checkout-ticket-info h3 {
+    color: #111;
+    font-size: 16px;
+    font-weight: 750;
+    margin-bottom: 7px;
+}
+
+.checkout-ticket-info p {
+    color: #111;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.checkout-ticket-info small {
+    color: #777;
+    font-size: 12px;
+}
+
+.checkout-ticket-quantity {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    flex-shrink: 0;
+}
+
+.checkout-ticket-quantity label {
+    color: #777;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.checkout-ticket-quantity input {
+    width: 82px;
+    height: 40px;
+    padding: 8px;
+    background: #fff;
+    color: #111;
+    border: 1px solid #dedee2;
+    border-radius: 7px;
+    outline: none;
+    font-size: 14px;
+}
+
+.checkout-ticket-quantity input:focus {
+    border-color: #111;
+}
+
+.checkout-ticket-quantity input:disabled {
+    background: #f1f1f1;
+    cursor: not-allowed;
+}
+
+/* Ringkasan pesanan */
+
+.checkout-summary {
+    position: sticky;
+    top: 90px;
+}
+
+.checkout-summary h2 {
+    margin-bottom: 22px;
+}
+
+.checkout-summary h3 {
+    color: #111;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1.45;
+    margin-bottom: 10px;
+}
+
+.checkout-summary > p {
+    color: #777;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.checkout-summary hr {
+    border: 0;
+    border-top: 1px solid #e8e8eb;
+    margin: 22px 0;
+}
+
+#checkout-selected-tickets {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#checkout-selected-tickets p {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    color: #555;
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.checkout-summary-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+    font-size: 13px;
+}
+
+.checkout-summary-row span {
+    color: #777;
+}
+
+.checkout-summary-row strong {
+    color: #111;
+    text-align: right;
+}
+
+.checkout-total {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 22px;
+}
+
+.checkout-total span {
+    color: #777;
+    font-size: 13px;
+}
+
+.checkout-total strong {
+    color: #111;
+    font-size: 25px;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.checkout-summary .btn-buy-ticket {
+    width: 100%;
+    min-height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 13px 16px;
+    background: #111;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.checkout-summary .btn-buy-ticket:hover:not(:disabled) {
+    background: #333;
+    transform: translateY(-1px);
+}
+
+.checkout-summary .btn-buy-ticket:disabled {
+    background: #aaa;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.checkout-summary .btn-buy-ticket + p {
+    margin-top: 14px;
+    color: #888;
+    font-size: 12px;
+    line-height: 1.7;
+    text-align: center;
+}
+
+/* Tampilan tablet dan HP */
+
+@media (max-width: 760px) {
+    .checkout-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .checkout-summary {
+        position: static;
+    }
+}
+
+@media (max-width: 480px) {
+    .detail-page-wrapper {
+        padding: 25px 15px 50px;
+    }
+
+    .checkout-header h1 {
+        font-size: 26px;
+    }
+
+    .checkout-header p {
+        font-size: 14px;
+    }
+
+    .checkout-card,
+    .checkout-summary {
+        padding: 19px;
+    }
+
+    .checkout-card h2,
+    .checkout-summary h2 {
+        font-size: 18px;
+    }
+
+    .checkout-ticket {
+        padding: 14px;
+        gap: 10px;
+    }
+
+    .checkout-ticket-info h3 {
+        font-size: 14px;
+    }
+
+    .checkout-ticket-info p {
+        font-size: 13px;
+    }
+
+    .checkout-ticket-quantity input {
+        width: 70px;
+    }
+
+    .checkout-total strong {
+        font-size: 22px;
+    }
+}

@@ -1,4 +1,3 @@
-
 @extends('layouts.main')
 
 @section('title', 'Checkout Tiket - M!VENT')
