@@ -46,7 +46,7 @@ class KycApprovedMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'views.kyc.approved',
+            view: 'kyc.approved',
         );
     }
 

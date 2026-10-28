@@ -50,7 +50,7 @@ class KycRejectedMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'views.kyc.rejected',
+            view: 'kyc.rejected',
         );
     }
 

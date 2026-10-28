@@ -64,7 +64,7 @@ class EventController extends Controller
         $organizer = DB::table('users')
             ->where('id', $userId)
             ->where('role', 'organizer')
-            ->where('status', 'active')
+            ->where('status', 'verified')
             ->first();
 
         if (!$organizer) {

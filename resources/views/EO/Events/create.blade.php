@@ -105,11 +105,10 @@
             <div class="form-section-card">
                 <h3 class="form-section-title">4. Jenis Tiket dan Kuota</h3>
 
-                <div id="ticket-container">
+                <div id="ticket-container" data-initial-count="{{ count(old('tickets', [])) > 0 ? count(old('tickets', [])) : 1 }}">
                     <div class="ticket-card-item">
                         <div class="ticket-header">
                             <span class="ticket-title">Jenis Tiket #1</span>
-                            <button type="button" class="btn-remove-ticket" onclick="this.closest('.ticket-card-item').remove()">Hapus</button>
                         </div>
 
                         <div class="ticket-form-grid">
@@ -130,7 +129,7 @@
 
                             <div class="form-group">
                                 <label>Maksimal Tiket / Transaksi <span style="color:red;">*</span></label>
-                                <input type="number" name="tickets[0][max_per_transaction]" value="5" min="1" required>
+                                <input type="number" name="tickets[0][max_per_order]" value="5" min="1" required>
                             </div>
                         </div>
                     </div>
@@ -156,62 +155,84 @@
 </div>
 
 <script>
-    const container = document.getElementById('ticket-container');
-    const addButton = document.getElementById('add-ticket');
-    let ticketIndex = @json(count($oldTickets ?? []));
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.getElementById('ticket-container');
+        const addButton = document.getElementById('add-ticket');
 
-    function updateTicketNumbers() {
-        const cards = container.querySelectorAll('.ticket-card');
-        cards.forEach((card, index) => {
-            card.querySelector('.ticket-number').textContent = index + 1;
-            const removeButton = card.querySelector('.remove-ticket');
-            removeButton.disabled = cards.length === 1;
-        });
-    }
+        // Membaca jumlah tiket dari atribut HTML (aman dari format error VS Code)
+        let ticketIndex = parseInt(container.getAttribute('data-initial-count')) || 1;
 
-    addButton.addEventListener('click', function() {
-        const card = document.createElement('div');
-        card.className = 'ticket-card';
-        card.style.cssText = 'border: 1px solid #e0e1ed; padding: 18px; border-radius: 10px; margin-bottom: 15px; background: #fcfcff;';
-        card.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-                <h4 style="margin: 0;">Jenis Tiket <span class="ticket-number"></span></h4>
-                <button type="button" class="btn btn-danger remove-ticket" style="background: #ffe8e8; color: #c03939; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer;">Hapus</button>
-            </div>
-            <div class="form-group" style="margin-bottom: 18px;">
-                <label style="display: block; font-weight: bold; margin-bottom: 8px;">Nama Tiket *</label>
-                <input type="text" name="tickets[${ticketIndex}][name]" placeholder="Contoh: VIP" style="width: 100%; padding: 12px; border: 1px solid #d9dbea; border-radius: 7px;" required>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
-                <div class="form-group" style="margin-bottom: 18px;">
-                    <label style="display: block; font-weight: bold; margin-bottom: 8px;">Harga Tiket (Rp) *</label>
-                    <input type="number" name="tickets[${ticketIndex}][price]" min="0" step="0.01" value="0" style="width: 100%; padding: 12px; border: 1px solid #d9dbea; border-radius: 7px;" required>
-                </div>
-                <div class="form-group" style="margin-bottom: 18px;">
-                    <label style="display: block; font-weight: bold; margin-bottom: 8px;">Kuota Tiket *</label>
-                    <input type="number" name="tickets[${ticketIndex}][quota]" min="1" value="100" style="width: 100%; padding: 12px; border: 1px solid #d9dbea; border-radius: 7px;" required>
-                </div>
-            </div>
-            <div class="form-group" style="margin-bottom: 18px;">
-                <label style="display: block; font-weight: bold; margin-bottom: 8px;">Maksimal Tiket per Transaksi *</label>
-                <input type="number" name="tickets[${ticketIndex}][max_per_order]" min="1" value="5" style="width: 100%; padding: 12px; border: 1px solid #d9dbea; border-radius: 7px;" required>
-            </div>
-        `;
-        container.appendChild(card);
-        ticketIndex++;
-        updateTicketNumbers();
-    });
+        window.updateTicketNumbers = function() {
+            const cards = container.querySelectorAll('.ticket-card-item');
+            cards.forEach((card, index) => {
+                const titleSpan = card.querySelector('.ticket-title');
+                if (titleSpan) {
+                    titleSpan.textContent = 'Jenis Tiket #' + (index + 1);
+                }
+                const removeButton = card.querySelector('.btn-remove-ticket');
+                if (removeButton) {
+                    if (cards.length === 1) {
+                        removeButton.disabled = true;
+                        removeButton.style.opacity = '0.5';
+                        removeButton.style.cursor = 'not-allowed';
+                    } else {
+                        removeButton.disabled = false;
+                        removeButton.style.opacity = '1';
+                        removeButton.style.cursor = 'pointer';
+                    }
+                }
+            });
+        };
 
-    container.addEventListener('click', function(event) {
-        if (event.target.classList.contains('remove-ticket')) {
-            const cards = container.querySelectorAll('.ticket-card');
+        window.removeTicketItem = function(button) {
+            const cards = container.querySelectorAll('.ticket-card-item');
             if (cards.length > 1) {
-                event.target.closest('.ticket-card').remove();
-                updateTicketNumbers();
+                button.closest('.ticket-card-item').remove();
+                window.updateTicketNumbers();
             }
-        }
-    });
+        };
 
-    updateTicketNumbers();
+        if (addButton) {
+            addButton.addEventListener('click', function() {
+                const card = document.createElement('div');
+                card.className = 'ticket-card-item';
+
+                card.innerHTML = `
+                    <div class="ticket-header">
+                        <span class="ticket-title">Jenis Tiket #${ticketIndex + 1}</span>
+                        <button type="button" class="btn-remove-ticket" onclick="removeTicketItem(this)">Hapus</button>
+                    </div>
+
+                    <div class="ticket-form-grid">
+                        <div class="form-group">
+                            <label>Nama Tiket <span style="color:red;">*</span></label>
+                            <input type="text" name="tickets[${ticketIndex}][name]" placeholder="Contoh: Reguler / VIP" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Harga Tiket (Rp) <span style="color:red;">*</span></label>
+                            <input type="number" name="tickets[${ticketIndex}][price]" placeholder="0 jika Gratis" min="0" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Kuota Tiket <span style="color:red;">*</span></label>
+                            <input type="number" name="tickets[${ticketIndex}][quota]" placeholder="Contoh: 100" min="1" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Maksimal Tiket / Transaksi <span style="color:red;">*</span></label>
+                            <input type="number" name="tickets[${ticketIndex}][max_per_order]" value="5" min="1" required>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(card);
+                ticketIndex++;
+                window.updateTicketNumbers();
+            });
+        }
+
+        window.updateTicketNumbers();
+    });
 </script>
 @endsection
