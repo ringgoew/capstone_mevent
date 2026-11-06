@@ -119,7 +119,7 @@
                 Tolak Pengajuan
             </button>
 
-            <button type="submit" id="btnSubmitReject" class="btn" style="background: #dc3545; color: white; display: none;"
+            <button type="button" id="btnSubmitReject" class="btn" style="background: #dc3545; color: white; display: none;"
                 data-url="{{ route('admin.kyc.reject', $profile->id) }}" onclick="submitReject(this)">
                 Konfirmasi Penolakan
             </button>
@@ -163,7 +163,7 @@
         form.submit();
     }
 
-    // Fungsi Reject
+    // Fungsi Reject yang Benar
     function submitReject(button) {
         const reason = document.getElementById('rejection_reason').value.trim();
         if (!reason) {
@@ -173,21 +173,6 @@
         }
 
         const actionUrl = button.dataset.url;
-        const form = document.getElementById('kycActionForm');
-        form.action = actionUrl;
-        form.method = 'POST';
-        form.submit();
-    }
-
-    // Validasi sebelum Reject: Pastikan alasan penolakan terisi
-    function submitReject(actionUrl) {
-        const reason = document.getElementById('rejection_reason').value.trim();
-        if (!reason) {
-            alert('Alasan penolakan wajib diisi.');
-            document.getElementById('rejection_reason').focus();
-            return;
-        }
-
         const form = document.getElementById('kycActionForm');
         form.action = actionUrl;
         form.method = 'POST';
