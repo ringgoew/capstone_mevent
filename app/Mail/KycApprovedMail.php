@@ -27,7 +27,7 @@ class KycApprovedMail extends Mailable
     public function build()
     {
         return $this->subject('Verifikasi Akun EO M!VENT - Disetujui')
-                    ->view('emails.kyc.approved');
+            ->view('emails.kyc.approved');
     }
 
     /**
@@ -46,7 +46,7 @@ class KycApprovedMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'views.kyc.approved',
+            view: 'kyc.approved',
         );
     }
 
