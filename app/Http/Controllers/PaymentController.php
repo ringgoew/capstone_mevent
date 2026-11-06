@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendTicketEmail;
 use Midtrans\Config;
 use Midtrans\Snap;
 use Midtrans\Notification;
@@ -196,6 +198,22 @@ class PaymentController extends Controller
                         ->increment('sold_quota', $item->quantity);
                 }
             });
+
+            // --- KIRIM EMAIL OTOMATIS KETIKA PEMBAYARAN BERHASIL ---
+            try {
+                $orderComplete = DB::table('orders')
+                    ->join('events', 'orders.event_id', '=', 'events.id')
+                    ->select('orders.*', 'events.title as event_title', 'events.start_time', 'events.venue_name')
+                    ->where('orders.id', $order->id)
+                    ->first();
+
+                if ($orderComplete && $orderComplete->customer_email) {
+                    Mail::to($orderComplete->customer_email)->send(new SendTicketEmail($orderComplete, null));
+                }
+            } catch (\Exception $e) {
+                \Log::error('Gagal mengirim email tiket: ' . $e->getMessage());
+            }
+
         } else if (in_array($transactionStatus, ['expire', 'deny', 'cancel'])) {
             DB::transaction(function () use ($order) {
                 DB::table('orders')->where('id', $order->id)->update(['status' => 'cancelled', 'updated_at' => now()]);
