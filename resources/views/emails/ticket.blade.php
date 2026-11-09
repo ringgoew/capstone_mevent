@@ -161,6 +161,23 @@
                 </div>
             </div>
 
+            <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto;">
+    <h2>Pembayaran Berhasil 🎉</h2>
+    <p>Halo {{ $order->customer_name }}, tiket Anda untuk <strong>{{ $order->event_title }}</strong> sudah aktif.</p>
+
+    <p>
+        <strong>Kode Order:</strong> {{ $order->order_code }}<br>
+        <strong>Tempat:</strong> {{ $order->venue_name }}<br>
+        <strong>Waktu:</strong> {{ \Carbon\Carbon::parse($order->start_time)->translatedFormat('d F Y, H:i') }}
+    </p>
+
+    <p>Tunjukkan QR code ini di pintu masuk:</p>
+    {{-- embedData membuat gambar inline (CID), lebih andal daripada data URI di Gmail/Outlook --}}
+    <img src="{{ $message->embedData($qrPng, 'qr-tiket.png', 'image/png') }}"
+         alt="QR Tiket" width="250" height="250">
+</div>
+
+
             <!-- Catatan Kaki / Instruksi -->
             <div class="footer-note">
                 <strong>Penting:</strong> Harap tunjukkan e-ticket atau QR Code di atas kepada petugas saat memasuki area event. Tiket ini hanya berlaku untuk satu kali penukaran.

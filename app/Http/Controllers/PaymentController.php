@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use App\Mail\SendTicketEmail;
 use Midtrans\Config;
 use Midtrans\Snap;
@@ -130,6 +131,9 @@ class PaymentController extends Controller
                     'email'      => $request->buyer_email,
                     'phone'      => $request->buyer_phone,
                 ],
+                'callback' => [
+                    'notification' => 'https://blooper-yoyo-harvest.ngrok-free.dev -> http://localhost:8000',
+                ],
                 'enabled_payments' => [
                     'bca_va',
                     'bni_va',
@@ -211,7 +215,7 @@ class PaymentController extends Controller
                     Mail::to($orderComplete->customer_email)->send(new SendTicketEmail($orderComplete, null));
                 }
             } catch (\Exception $e) {
-                \Log::error('Gagal mengirim email tiket: ' . $e->getMessage());
+                Log::error('Gagal mengirim email tiket: ' . $e->getMessage());
             }
 
         } else if (in_array($transactionStatus, ['expire', 'deny', 'cancel'])) {

@@ -90,7 +90,7 @@ Route::middleware([])->group(function () {
 // PAYMENT ROUTES
 Route::middleware([])->group(function () {
     Route::post('/checkout/process', [PaymentController::class, 'store'])->name('checkout.store');
-    Route::post('/midtrans/callback', [PaymentController::class, 'callback'])->name('midtrans.callback');
+//     Route::post('/midtrans/callback', [PaymentController::class, 'callback'])->name('midtrans.callback');
 });
 
 
