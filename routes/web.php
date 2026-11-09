@@ -61,7 +61,7 @@ Route::middleware([])->group(function () {
     Route::get('/eo/events/{id}/edit', [EventController::class, 'edit'])->name('eo.events.edit');
     Route::put('/eo/events/{id}', [EventController::class, 'update'])->name('eo.events.update');
     Route::get('/eo/events/{event}/detail', [EventController::class, 'eoShow'])
-    ->name('eo.events.show');
+        ->name('eo.events.show');
 
     Route::post('/eo/logout', [EOAuthController::class, 'logout'])->name('eo.logout');
 });
@@ -101,9 +101,11 @@ Route::middleware([])->group(function () {
 // PAYMENT ROUTES
 Route::middleware([])->group(function () {
     Route::post('/checkout/process', [PaymentController::class, 'store'])->name('checkout.store');
-//     Route::post('/midtrans/callback', [PaymentController::class, 'callback'])->name('midtrans.callback');
+
+    Route::post('/midtrans/callback', [PaymentController::class, 'callback'])->name('midtrans.callback');
 });
 
+Route::get('/orders/{orderCode}/ticket', [PaymentController::class, 'showTicket'])->name('orders.ticket');
 
 Route::get('/events/{slug}/checkout', [CheckoutController::class, 'show'])
     ->name('checkout.show');
