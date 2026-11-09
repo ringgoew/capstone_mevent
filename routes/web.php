@@ -16,8 +16,12 @@ use App\Http\Controllers\EO\EOKycController;
 use App\Http\Controllers\EO\EODashboardController;
 use App\Http\Controllers\EO\EventController;
 
+// Panitia Controllers
+use App\Http\Controllers\EO\PanitiaController;
+
 // Payment Controller
 use App\Http\Controllers\PaymentController;
+
 
 
 // PUBLIC ROUTES
@@ -56,6 +60,13 @@ Route::middleware([])->group(function () {
     Route::put('/eo/events/{id}', [EventController::class, 'update'])->name('eo.events.update');
 
     Route::post('/eo/logout', [EOAuthController::class, 'logout'])->name('eo.logout');
+});
+
+// Route Panitia
+Route::middleware([])->group(function () {
+    Route::get('/panitia', [PanitiaController::class, 'index'])->name('panitia.index');
+    Route::post('/panitia/store', [PanitiaController::class, 'store'])->name('panitia.store');
+    Route::delete('/panitia/{id}', [PanitiaController::class, 'destroy'])->name('panitia.destroy');
 });
 
 
