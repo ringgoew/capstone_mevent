@@ -871,6 +871,7 @@ button:hover {
     }
 }
 
+<<<<<<< HEAD
 /* =========================================
    HALAMAN EVENT SAYA - M!VENT EO
    ========================================= */
@@ -878,10 +879,19 @@ button:hover {
 .my-events-page {
     width: 100%;
     max-width: 1250px;
+=======
+/* ==========================================================================
+   8. HALAMAN MANAJEMEN PANITIA (PANITIA/INDEX)
+   ========================================================================== */
+/* Menggunakan desain wrapper yang selaras dengan form-container-wide */
+.panitia-wrapper {
+    max-width: 960px;
+>>>>>>> d19df63d0b36bb3d1812402f6e7bdd495b36509a
     margin: 0 auto;
     animation: fadeIn 0.4s ease-out;
 }
 
+<<<<<<< HEAD
 .my-events-header {
     display: flex;
     justify-content: space-between;
@@ -1230,3 +1240,95 @@ button:hover {
         width: 100%;
     }
 }
+=======
+.panitia-layout-grid {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+/* Menggunakan gaya card dari form-section-card di eo.css */
+.panitia-card {
+    background: #ffffff;
+    border: 1px solid #e4e4e7;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+.panitia-card-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111111;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f4f4f5;
+}
+
+/* Kustomisasi Tabel agar selaras dengan desain eo.css */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.panitia-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.panitia-table th,
+.panitia-table td {
+    padding: 16px 14px;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f2;
+}
+
+.panitia-table th {
+    font-weight: 700;
+    color: #555555;
+    background-color: #f8f8f9;
+}
+
+.panitia-table td {
+    color: #111111;
+}
+
+/* Badge Role */
+.role-badge {
+    display: inline-block;
+    background: #f4f4f5;
+    color: #111111;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    border: 1px solid #e4e4e7;
+    text-transform: capitalize;
+}
+
+/* Tombol Aksi */
+.btn-delete {
+    background: #fee2e2;
+    color: #991b1b;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.btn-delete:hover {
+    background: #fca5a5;
+}
+
+/* Responsive Grid untuk Layar Kecil */
+@media (max-width: 850px) {
+    .panitia-layout-grid {
+        grid-template-columns: 1fr;
+    }
+}
+>>>>>>> d19df63d0b36bb3d1812402f6e7bdd495b36509a
