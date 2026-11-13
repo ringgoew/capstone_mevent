@@ -15,6 +15,7 @@ use App\Http\Controllers\EO\EOAuthController;
 use App\Http\Controllers\EO\EOKycController;
 use App\Http\Controllers\EO\EODashboardController;
 use App\Http\Controllers\EO\EventController;
+use App\Http\Controllers\EO\EoReportController;
 
 // Panitia Controllers
 use App\Http\Controllers\EO\PanitiaController;
@@ -56,8 +57,14 @@ Route::middleware([])->group(function () {
     Route::post('/eo/events', [EventController::class, 'store'])->name('eo.events.store');
     Route::post('/eo/events/{id}/submit', [EventController::class, 'submitForReview'])->name('eo.events.submit');
 
-    Route::get('/eo/events/{id}', [EventController::class, 'eoShow'])->name('eo.events.show');
+    // Laporan Keseluruhan (untuk menu sidebar Laporan)
+Route::get('/eo/reports', [EoReportController::class, 'index'])->name('eo.reports.index');
 
+// Laporan Detail Per Event (yang sebelumnya sudah kita buat)
+Route::get('/eo/events/{id}/report', [EoReportController::class, 'salesReport'])->name('eo.reports.sales');
+    Route::get('/eo/events/{id}', [EventController::class, 'eoShow'])->name('eo.events.show');
+    Route::get('/eo/events/{id}/report', [EoReportController::class, 'salesReport'])
+    ->name('eo.reports.sales');
     Route::get('/eo/events/{id}/edit', [EventController::class, 'edit'])->name('eo.events.edit');
     Route::put('/eo/events/{id}', [EventController::class, 'update'])->name('eo.events.update');
     Route::get('/eo/events/{event}/detail', [EventController::class, 'eoShow'])

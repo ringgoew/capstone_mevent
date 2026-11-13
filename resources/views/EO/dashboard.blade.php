@@ -82,7 +82,7 @@
                                 Jadwal belum diatur
                             @endif
 
-                            &nbsp; • &nbsp; 📍
+                            &nbsp; 📍
                             @if (!empty($event->venue_name))
                                 {{ $event->venue_name }}{{ !empty($event->city) ? ', ' . $event->city : '' }}
                             @elseif (!empty($event->lokasi))
@@ -94,9 +94,16 @@
 
                         <p>🎟 {{ $event->tiket_terjual ?? 0 }} tiket terjual</p>
 
-                        <a href="{{ route('eo.events.show', $event->id) }}" class="detail-btn">
-                            Lihat Detail →
-                        </a>
+                        <!-- TOMBOL AKSI: LIHAT DETAIL & LIHAT LAPORAN -->
+                        <div style="display: flex; gap: 10px; margin-top: 10px; align-items: center;">
+                            <a href="{{ route('eo.events.show', $event->id) }}" class="detail-btn">
+                                Lihat Detail →
+                            </a>
+
+                            <a href="{{ route('eo.reports.sales', $event->id) }}" class="btn" style="background-color: #0d9488; color: #fff; padding: 6px 14px; border-radius: 6px; font-size: 13px; text-decoration: none; font-weight: 500;">
+                                📊 Lihat Laporan
+                            </a>
+                        </div>
                     </div>
                 </div>
 

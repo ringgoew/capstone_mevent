@@ -95,23 +95,33 @@ class PaymentController extends Controller
                     'updated_at'     => now(),
                 ]);
 
-               // Generate e-tiket sejumlah quantity yang dibeli ke tabel e_tickets
-for ($i = 0; $i < $item['quantity']; $i++) {
-    $ticketCode = 'TKT-' . strtoupper(\Illuminate\Support\Str::random(10));
-    
-    DB::table('e_tickets')->insert([
-        'order_id'       => $orderId,
-        'order_item_id'  => $orderItemId,
-        'ticket_code'    => $ticketCode,
-        'qr_code_hash'   => md5($ticketCode), // Sesuai kolom di e_tickets
-        'attendee_name'  => $request->buyer_name,
-        'attendee_email' => $request->buyer_email,
-        'attendee_phone' => $request->buyer_phone,
-        'status'         => 'valid', // Sesuai default status di e_tickets ('valid')
-        'created_at'     => now(),
-        'updated_at'     => now(),
-    ]);
-}
+                // Generate e-tiket sejumlah quantity yang dibeli ke tabel e_tickets
+                for ($i = 0; $i < $item['quantity']; $i++) {
+                    $ticketCode = 'TKT-' . strtoupper(\Illuminate\Support\Str::random(10));
+                    
+                    DB::table('e_tickets')->insert([
+                        'order_id'       => $orderId,
+                        'order_item_id'  => $orderItemId,
+                        'ticket_code'    => $ticketCode,
+                        'qr_code_hash'   => md5($ticketCode),
+                        'attendee_name'  => $request->buyer_name,
+                        'attendee_email' => $request->buyer_email,
+                        'attendee_phone' => $request->buyer_phone,
+                        'status'         => 'valid',
+                        'created_at'     => now(),
+                        'updated_at'     => now(),
+                    ]);
+                }
+
+                // --- FIX: TAMBAHKAN SOLD_QUOTA DAN KURANGI RESERVED_QUOTA OTOMATIS SAAT CHECKOUT ---
+                DB::table('ticket_types')
+                    ->where('id', $item['ticket_type_id'])
+                    ->decrement('reserved_quota', $item['quantity']);
+
+                DB::table('ticket_types')
+                    ->where('id', $item['ticket_type_id'])
+                    ->increment('sold_quota', $item['quantity']);
+                // -------------------------------------------------------------------------------
 
                 $midtransItems[] = [
                     'id'       => (string) $item['ticket_type_id'],
@@ -191,33 +201,6 @@ for ($i = 0; $i < $item['quantity']; $i++) {
         }
 
         if ($transactionStatus == 'settlement' || $transactionStatus == 'capture') {
-            DB::transaction(function () use ($order) {
-                // Update status Order & Payment
-                DB::table('orders')->where('id', $order->id)->update([
-                    'status'     => 'paid',
-                    'paid_at'    => now(),
-                    'updated_at' => now(),
-                ]);
-
-                DB::table('payments')->where('order_id', $order->id)->update([
-                    'status'     => 'success',
-                    'paid_at'    => now(),
-                    'updated_at' => now(),
-                ]);
-
-                // Pindahkan kuota reserved ke sold_quota
-                $items = DB::table('order_items')->where('order_id', $order->id)->get();
-                foreach ($items as $item) {
-                    DB::table('ticket_types')
-                        ->where('id', $item->ticket_type_id)
-                        ->decrement('reserved_quota', $item->quantity);
-
-                    DB::table('ticket_types')
-                        ->where('id', $item->ticket_type_id)
-                        ->increment('sold_quota', $item->quantity);
-                }
-            });
-
             // --- KIRIM EMAIL OTOMATIS KETIKA PEMBAYARAN BERHASIL ---
             try {
                 $orderComplete = DB::table('orders')
@@ -238,12 +221,17 @@ for ($i = 0; $i < $item['quantity']; $i++) {
                 DB::table('orders')->where('id', $order->id)->update(['status' => 'cancelled', 'updated_at' => now()]);
                 DB::table('payments')->where('order_id', $order->id)->update(['status' => 'failed', 'updated_at' => now()]);
 
-                // Kembalikan kuota reserved jika transaksi batal
+                // Kembalikan kuota jika transaksi batal
                 $items = DB::table('order_items')->where('order_id', $order->id)->get();
                 foreach ($items as $item) {
                     DB::table('ticket_types')
                         ->where('id', $item->ticket_type_id)
-                        ->decrement('reserved_quota', $item->quantity);
+                        ->decrement('reserved_quota', $item['quantity'] ?? $item->quantity);
+                    
+                    // Kurangi sold_quota jika sebelumnya sudah terhitung
+                    DB::table('ticket_types')
+                        ->where('id', $item->ticket_type_id)
+                        ->decrement('sold_quota', $item->quantity);
                 }
             });
         }
@@ -269,7 +257,6 @@ for ($i = 0; $i < $item['quantity']; $i++) {
             ->where('order_items.order_id', $order->id)
             ->get();
 
-        // Ambil data tiket individual beserta QR code-nya dari tabel tickets
         $e_tickets = DB::table('e_tickets')
             ->where('order_id', $order->id)
             ->get();

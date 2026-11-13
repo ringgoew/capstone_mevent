@@ -16,8 +16,8 @@
         Buat Event
     </a>
 
-    <a href="{{ route('eo.dashboard') }}">
-        Laporan
+    <a href="{{ route('eo.reports.index') }}" class="menu-item">
+    📊 Laporan
     </a>
 
     <a href="{{ route('eo.dashboard') }}">
