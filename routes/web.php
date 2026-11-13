@@ -17,8 +17,7 @@ use App\Http\Controllers\EO\EODashboardController;
 use App\Http\Controllers\EO\EventController;
 
 // Panitia Controllers
-use App\Http\Controllers\Panitia\PanitiaAuthController;
-use App\Http\Controllers\Panitia\PanitiaController;
+use App\Http\Controllers\EO\PanitiaController;
 
 // Payment Controller
 use App\Http\Controllers\PaymentController;
@@ -47,8 +46,9 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
-// EO ROUTES
+// EO ROUTES & Panitia
 Route::middleware([])->group(function () {
+    // EO Routes
     Route::get('/eo/dashboard', [EODashboardController::class, 'dashboard'])->name('eo.dashboard');
     Route::get('/eo/events', [EventController::class, 'index'])->name('eo.events.index');
     Route::get('/eo/events/create', [EventController::class, 'create'])->name('eo.events.create');
@@ -58,19 +58,13 @@ Route::middleware([])->group(function () {
     Route::get('/eo/events/{id}/edit', [EventController::class, 'edit'])->name('eo.events.edit');
     Route::put('/eo/events/{id}', [EventController::class, 'update'])->name('eo.events.update');
     Route::post('/eo/logout', [EOAuthController::class, 'logout'])->name('eo.logout');
-});
 
-// Panitia Routes
-Route::middleware(['guest'])->group(function () {
-    Route::get('/login-panitia', [PanitiaAuthController::class, 'login'])->name('panitia.login');
-    Route::post('/login-panitia', [PanitiaAuthController::class, 'authenticate'])->name('panitia.login.authenticate');
-});
-
-Route::middleware(['auth'])->group(function () {
+    // Panitia Routes
     Route::get('/panitia', [PanitiaController::class, 'index'])->name('panitia.index');
     Route::post('/panitia/store', [PanitiaController::class, 'store'])->name('panitia.store');
     Route::delete('/panitia/{id}', [PanitiaController::class, 'destroy'])->name('panitia.destroy');
 });
+
 
 // ADMIN ROUTES
 Route::middleware(['guest'])->group(function () {
@@ -78,7 +72,7 @@ Route::middleware(['guest'])->group(function () {
     Route::post('/admin/authenticate', [AdminAuthController::class, 'authenticate'])->name('admin.authenticate');
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware([])->group(function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'dashboard'])->name('admin.dashboard');
 
     Route::get('/admin/kyc', [AdminKycController::class, 'index'])->name('admin.kyc.index');

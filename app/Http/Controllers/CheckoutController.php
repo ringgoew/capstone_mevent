@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Midtrans\Config;
 use Midtrans\Snap;
@@ -189,7 +190,7 @@ class CheckoutController extends Controller
 
         } catch (\Throwable $e) {
 
-            \Log::error('Checkout gagal: ' . $e->getMessage());
+            Log::error('Checkout gagal: ' . $e->getMessage());
 
             return response()->json([
                 'message' => $e instanceof \Illuminate\Validation\ValidationException
