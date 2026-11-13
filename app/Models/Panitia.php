@@ -11,7 +11,7 @@ class Panitia extends Model
     public static function getDaftarPanitia()
     {
         return DB::table('users')
-            ->where('role', '!=', 'EO')
+            ->whereNotIn('role', ['admin', 'organizer', 'EO'])
             ->orderBy('id', 'desc')
             ->get();
     }
