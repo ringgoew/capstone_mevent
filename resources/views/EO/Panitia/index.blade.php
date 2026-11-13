@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.eo')
 @section('content')
     <div class="container">
         <h2>Manajemen Akun Panitia & Hak Akses</h2>
@@ -43,7 +43,7 @@
 
         <!-- Menampilkan Daftar Akun Panitia -->
         <div class="card">
-            <div class="card-header">Daftar Akun Panitia</div>
+            <div class="card-header" style="text-align: center;">Daftar Akun Panitia</div>
             <div class="card-body">
                 <table class="table table-bordered">
                     <thead>
