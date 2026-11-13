@@ -82,10 +82,10 @@ class PaymentController extends Controller
                 'updated_at'     => now(),
             ]);
 
-            // 2. Simpan ke tabel order_items
+            // 2. Simpan ke tabel order_items & Generate Tiket / QR Code
             $midtransItems = [];
             foreach ($orderItemsData as $item) {
-                DB::table('order_items')->insert([
+                $orderItemId = DB::table('order_items')->insertGetId([
                     'order_id'       => $orderId,
                     'ticket_type_id' => $item['ticket_type_id'],
                     'quantity'       => $item['quantity'],
@@ -94,6 +94,21 @@ class PaymentController extends Controller
                     'created_at'     => now(),
                     'updated_at'     => now(),
                 ]);
+
+                // Generate tiket & QR code individual per quantity
+                for ($i = 0; $i < $item['quantity']; $i++) {
+                    $ticketCode = 'TKT-' . strtoupper(\Illuminate\Support\Str::random(10));
+                    
+                    DB::table('tickets')->insert([
+                        'order_id'       => $orderId,
+                        'ticket_type_id' => $item['ticket_type_id'],
+                        'ticket_code'    => $ticketCode,
+                        'qr_code'        => $ticketCode,
+                        'status'         => 'active',
+                        'created_at'     => now(),
+                        'updated_at'     => now(),
+                    ]);
+                }
 
                 $midtransItems[] = [
                     'id'       => (string) $item['ticket_type_id'],
@@ -176,8 +191,8 @@ class PaymentController extends Controller
             DB::transaction(function () use ($order) {
                 // Update status Order & Payment
                 DB::table('orders')->where('id', $order->id)->update([
-                    'status'  => 'paid',
-                    'paid_at' => now(),
+                    'status'     => 'paid',
+                    'paid_at'    => now(),
                     'updated_at' => now(),
                 ]);
 
@@ -201,35 +216,36 @@ class PaymentController extends Controller
             });
 
             // --- KIRIM EMAIL OTOMATIS KETIKA PEMBAYARAN BERHASIL ---
-        //     try {
-        //         $orderComplete = DB::table('orders')
-        //             ->join('events', 'orders.event_id', '=', 'events.id')
-        //             ->select('orders.*', 'events.title as event_title', 'events.start_time', 'events.venue_name')
-        //             ->where('orders.id', $order->id)
-        //             ->first();
+            try {
+                $orderComplete = DB::table('orders')
+                    ->join('events', 'orders.event_id', '=', 'events.id')
+                    ->select('orders.*', 'events.title as event_title', 'events.start_time', 'events.venue_name')
+                    ->where('orders.id', $order->id)
+                    ->first();
 
-        //         if ($orderComplete && $orderComplete->customer_email) {
-        //             Mail::to($orderComplete->customer_email)->send(new SendTicketEmail($orderComplete, null));
-        //         }
-        //     } catch (\Exception $e) {
-        //         Log::error('Gagal mengirim email tiket: ' . $e->getMessage());
-        //     }
-        // } else if (in_array($transactionStatus, ['expire', 'deny', 'cancel'])) {
-        //     DB::transaction(function () use ($order) {
-        //         DB::table('orders')->where('id', $order->id)->update(['status' => 'cancelled', 'updated_at' => now()]);
-        //         DB::table('payments')->where('order_id', $order->id)->update(['status' => 'failed', 'updated_at' => now()]);
+                if ($orderComplete && $orderComplete->customer_email) {
+                    Mail::to($orderComplete->customer_email)->send(new SendTicketEmail($orderComplete, null));
+                }
+            } catch (\Exception $e) {
+                Log::error('Gagal mengirim email tiket: ' . $e->getMessage());
+            }
 
-        //         // Kembalikan kuota reserved jika transaksi batal
-        //         $items = DB::table('order_items')->where('order_id', $order->id)->get();
-        //         foreach ($items as $item) {
-        //             DB::table('ticket_types')
-        //                 ->where('id', $item->ticket_type_id)
-        //                 ->decrement('reserved_quota', $item->quantity);
-        //         }
-        //     });
+        } else if (in_array($transactionStatus, ['expire', 'deny', 'cancel'])) {
+            DB::transaction(function () use ($order) {
+                DB::table('orders')->where('id', $order->id)->update(['status' => 'cancelled', 'updated_at' => now()]);
+                DB::table('payments')->where('order_id', $order->id)->update(['status' => 'failed', 'updated_at' => now()]);
+
+                // Kembalikan kuota reserved jika transaksi batal
+                $items = DB::table('order_items')->where('order_id', $order->id)->get();
+                foreach ($items as $item) {
+                    DB::table('ticket_types')
+                        ->where('id', $item->ticket_type_id)
+                        ->decrement('reserved_quota', $item->quantity);
+                }
+            });
         }
 
-        // return response()->json(['message' => 'Callback diproses successfully']);
+        return response()->json(['message' => 'Callback diproses successfully']);
     }
 
     public function showTicket($orderCode)
@@ -250,6 +266,11 @@ class PaymentController extends Controller
             ->where('order_items.order_id', $order->id)
             ->get();
 
-        return view('ticket_success', compact('order', 'items'));
+        // Ambil data tiket individual beserta QR code-nya dari tabel tickets
+        $tickets = DB::table('tickets')
+            ->where('order_id', $order->id)
+            ->get();
+
+        return view('ticket_success', compact('order', 'items', 'tickets'));
     }
 }

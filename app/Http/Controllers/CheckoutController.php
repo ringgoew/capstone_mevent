@@ -77,7 +77,6 @@ class CheckoutController extends Controller
                 $items = [];
 
                 foreach ($quantities as $ticketId => $quantity) {
-
                     $ticket = $tickets[$ticketId];
                     $quantity = (int) $quantity;
 
@@ -86,18 +85,11 @@ class CheckoutController extends Controller
                         - ($ticket->sold_quota ?? 0);
 
                     if ($quantity > $available) {
-                        throw new \Exception(
-                            'Stok tiket ' . $ticket->name . ' tidak mencukupi.'
-                        );
+                        throw new \Exception('Stok tiket ' . $ticket->name . ' tidak mencukupi.');
                     }
 
-                    if (
-                        !empty($ticket->max_per_order) &&
-                        $quantity > $ticket->max_per_order
-                    ) {
-                        throw new \Exception(
-                            'Jumlah tiket ' . $ticket->name . ' melebihi batas pembelian.'
-                        );
+                    if (!empty($ticket->max_per_order) && $quantity > $ticket->max_per_order) {
+                        throw new \Exception('Jumlah tiket ' . $ticket->name . ' melebihi batas pembelian.');
                     }
 
                     $subtotal = $ticket->price * $quantity;
@@ -109,18 +101,18 @@ class CheckoutController extends Controller
                         'subtotal' => $subtotal,
                     ];
 
-                    // Reservasi stok sementara
+                    // REKOMENDASI: Masukkan ke reserved_quota dulu selama status pending
                     DB::table('ticket_types')
                         ->where('id', $ticketId)
                         ->update([
-                            'reserved_quota' =>
-                                ($ticket->reserved_quota ?? 0) + $quantity
+                            'reserved_quota' => ($ticket->reserved_quota ?? 0) + $quantity
                         ]);
                 }
 
-                // Membuat order
+                // 1. Membuat order
+                $orderCode = 'ORD-' . strtoupper(Str::random(12));
                 $orderId = DB::table('orders')->insertGetId([
-                    'order_code' => 'ORD-' . strtoupper(Str::random(12)),
+                    'order_code' => $orderCode,
                     'user_id' => null,
                     'customer_name' => $validated['buyer_name'],
                     'customer_email' => $validated['buyer_email'],
@@ -135,9 +127,9 @@ class CheckoutController extends Controller
                     'updated_at' => now(),
                 ]);
 
-                // Menyimpan detail tiket pesanan
+                // 2. Menyimpan detail order_items & Generate Tiket / QR Code
                 foreach ($items as $item) {
-                    DB::table('order_items')->insert([
+                    $orderItemId = DB::table('order_items')->insertGetId([
                         'order_id' => $orderId,
                         'ticket_type_id' => $item['ticket']->id,
                         'quantity' => $item['quantity'],
@@ -146,20 +138,32 @@ class CheckoutController extends Controller
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
+
+                    // Generate tiket sejumlah quantity yang dibeli
+                    for ($i = 0; $i < $item['quantity']; $i++) {
+                        $ticketCode = 'TKT-' . strtoupper(Str::random(10));
+                        
+                        DB::table('tickets')->insert([
+                            'order_id'       => $orderId,
+                            'ticket_type_id' => $item['ticket']->id,
+                            'ticket_code'    => $ticketCode,
+                            'qr_code'        => $ticketCode,
+                            'status'         => 'active',
+                            'created_at'     => now(),
+                            'updated_at'     => now(),
+                        ]);
+                    }
                 }
 
-                return DB::table('orders')
-                    ->where('id', $orderId)
-                    ->first();
+                return DB::table('orders')->where('id', $orderId)->first();
             });
 
-            // Konfigurasi Midtrans
+            // Konfigurasi & Ambil Snap Token Midtrans
             Config::$serverKey = config('midtrans.server_key');
             Config::$isProduction = config('midtrans.is_production');
             Config::$isSanitized = true;
             Config::$is3ds = true;
 
-            // Membuat transaksi pembayaran
             $params = [
                 'transaction_details' => [
                     'order_id' => $result->order_code,
@@ -176,10 +180,7 @@ class CheckoutController extends Controller
 
             DB::table('orders')
                 ->where('id', $result->id)
-                ->update([
-                    'snap_token' => $snapToken,
-                    'updated_at' => now(),
-                ]);
+                ->update(['snap_token' => $snapToken, 'updated_at' => now()]);
 
             return response()->json([
                 'success' => true,
@@ -188,14 +189,8 @@ class CheckoutController extends Controller
             ]);
 
         } catch (\Throwable $e) {
-
             \Log::error('Checkout gagal: ' . $e->getMessage());
-
-            return response()->json([
-                'message' => $e instanceof \Illuminate\Validation\ValidationException
-                    ? 'Data checkout tidak valid.'
-                    : $e->getMessage(),
-            ], 422);
+            return response()->json(['message' => $e->getMessage()], 422);
         }
     }
 }
