@@ -17,7 +17,9 @@ use App\Http\Controllers\EO\EODashboardController;
 use App\Http\Controllers\EO\EventController;
 
 // Panitia Controllers
-use App\Http\Controllers\EO\PanitiaController;
+use App\Http\Controllers\Panitia\PanitiaAuthController;
+use App\Http\Controllers\Panitia\PanitiaController;
+use App\Http\Controllers\Panitia\PanitiaDashboardController;
 
 // Payment Controller
 use App\Http\Controllers\PaymentController;
@@ -28,51 +30,51 @@ use App\Http\Controllers\CheckoutController;
 
 // PUBLIC ROUTES
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/events/{slug}', [EventController::class, 'show'])
-    ->name('events.show');
+Route::get('/events/{slug}', [EventController::class, 'show'])->name('events.show');
 
 Route::middleware(['guest'])->group(function () {
     Route::get('/eo/login', [EOAuthController::class, 'login'])->name('eo.login');
     Route::post('/eo/login', [EOAuthController::class, 'authenticate'])->name('eo.login.authenticate');
-
     Route::get('/daftar-eo', [EOAuthController::class, 'register'])->name('eo.register');
     Route::post('/daftar-eo', [EOAuthController::class, 'store'])->name('eo.register.store');
 });
 
-Route::get('/daftar-eo/otp', [EOKycController::class, 'otp'])->name('eo.otp');
-Route::post('/daftar-eo/otp', [EOKycController::class, 'verifyOtp'])->name('eo.otp.verify');
-
-Route::get('/daftar-eo/kyc', [EOKycController::class, 'kyc'])->name('eo.kyc');
-Route::post('/daftar-eo/kyc', [EOKycController::class, 'submitKyc'])->name('eo.kyc.submit');
-Route::get('/daftar-eo/pending', [EOKycController::class, 'pending'])->name('eo.pending');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/daftar-eo/otp', [EOKycController::class, 'otp'])->name('eo.otp');
+    Route::post('/daftar-eo/otp', [EOKycController::class, 'verifyOtp'])->name('eo.otp.verify');
+    Route::get('/daftar-eo/kyc', [EOKycController::class, 'kyc'])->name('eo.kyc');
+    Route::post('/daftar-eo/kyc', [EOKycController::class, 'submitKyc'])->name('eo.kyc.submit');
+    Route::get('/daftar-eo/pending', [EOKycController::class, 'pending'])->name('eo.pending');
+});
 
 
 // EO ROUTES
 Route::middleware([])->group(function () {
     Route::get('/eo/dashboard', [EODashboardController::class, 'dashboard'])->name('eo.dashboard');
-
     Route::get('/eo/events', [EventController::class, 'index'])->name('eo.events.index');
     Route::get('/eo/events/create', [EventController::class, 'create'])->name('eo.events.create');
     Route::post('/eo/events', [EventController::class, 'store'])->name('eo.events.store');
     Route::post('/eo/events/{id}/submit', [EventController::class, 'submitForReview'])->name('eo.events.submit');
-
     Route::get('/eo/events/{id}', [EventController::class, 'eoShow'])->name('eo.events.show');
-
     Route::get('/eo/events/{id}/edit', [EventController::class, 'edit'])->name('eo.events.edit');
     Route::put('/eo/events/{id}', [EventController::class, 'update'])->name('eo.events.update');
-    Route::get('/eo/events/{event}/detail', [EventController::class, 'eoShow'])
-        ->name('eo.events.show');
-
+    Route::get('/eo/events/{event}/detail', [EventController::class, 'eoShow'])->name('eo.events.show');
     Route::post('/eo/logout', [EOAuthController::class, 'logout'])->name('eo.logout');
 });
 
-// Route Panitia
+// Panitia Routes
+Route::middleware(['guest'])->group(function () {
+    Route::get('/login-panitia', [PanitiaAuthController::class, 'login'])->name('panitia.login');
+    Route::post('/login-panitia', [PanitiaAuthController::class, 'authenticate'])->name('panitia.login.authenticate');
+});
+
 Route::middleware([])->group(function () {
+    Route::get('/panitia/dashboard', [PanitiaDashboardController::class, 'index'])->name('panitia.dashboard');
     Route::get('/panitia', [PanitiaController::class, 'index'])->name('panitia.index');
     Route::post('/panitia/store', [PanitiaController::class, 'store'])->name('panitia.store');
     Route::delete('/panitia/{id}', [PanitiaController::class, 'destroy'])->name('panitia.destroy');
+    Route::post('/logout-panitia', [PanitiaAuthController::class, 'logout'])->name('panitia.logout');
 });
-
 
 // ADMIN ROUTES
 Route::middleware(['guest'])->group(function () {
@@ -99,15 +101,16 @@ Route::middleware([])->group(function () {
 
 
 // PAYMENT ROUTES
-Route::middleware([])->group(function () {
-    Route::post('/checkout/process', [PaymentController::class, 'store'])->name('checkout.store');
-
-    Route::post('/midtrans/callback', [PaymentController::class, 'callback'])->name('midtrans.callback');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/payment/checkout', [PaymentController::class, 'checkout'])->name('checkout');
+    Route::get('/payment/finish', [PaymentController::class, 'finish'])->name('payment.finish');
 });
 
-Route::get('/orders/{orderCode}/ticket', [PaymentController::class, 'showTicket'])->name('orders.ticket');
+Route::middleware([])->group(function () {
+    Route::post('/checkout/process', [PaymentController::class, 'store'])->name('checkout.store');
+    Route::post('/midtrans/callback', [PaymentController::class, 'callback'])->name('midtrans.callback');
 
-Route::get('/events/{slug}/checkout', [CheckoutController::class, 'show'])
-    ->name('checkout.show');
-Route::post('/checkout', [CheckoutController::class, 'store'])
-    ->name('checkout.store');
+    Route::get('/orders/{orderCode}/ticket', [PaymentController::class, 'showTicket'])->name('orders.ticket');
+    Route::get('/events/{slug}/checkout', [CheckoutController::class, 'show'])->name('checkout.show');
+    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+});
