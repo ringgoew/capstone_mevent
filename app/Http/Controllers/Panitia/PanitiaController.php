@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\EO;
+namespace App\Http\Controllers\Panitia;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Panitia; // Import model yang baru dibuat
+use App\Models\Panitia;
 use Illuminate\Support\Facades\Hash;
 
 class PanitiaController extends Controller
