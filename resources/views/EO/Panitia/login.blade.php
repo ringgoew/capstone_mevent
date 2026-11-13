@@ -28,8 +28,8 @@
             @csrf
 
             <div class="form-group">
-                <label>Email Terdaftar</label>
-                <input type="email" name="email" required placeholder="Masukkan email panitia Anda" autofocus>
+                <label>Name</label>
+                <input type="name" name="name" required placeholder="Masukkan nama panitia Anda" autofocus>
             </div>
 
             <div class="form-group">
