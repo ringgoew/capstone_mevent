@@ -11,7 +11,7 @@ class PanitiaAuthController extends Controller
     // Menampilkan halaman form login
     public function login()
     {
-        return view('panitia.login');
+        return view('eo.panitia.login');
     }
 
     // Memproses data login
@@ -19,7 +19,7 @@ class PanitiaAuthController extends Controller
     {
         // Validasi input
         $credentials = $request->validate([
-            'email' => 'required|email',
+            'name' => 'required',
             'password' => 'required'
         ]);
 

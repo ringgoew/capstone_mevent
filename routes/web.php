@@ -19,6 +19,7 @@ use App\Http\Controllers\EO\EventController;
 // Panitia Controllers
 use App\Http\Controllers\Panitia\PanitiaAuthController;
 use App\Http\Controllers\Panitia\PanitiaController;
+use App\Http\Controllers\Panitia\PanitiaDashboardController;
 
 // Payment Controller
 use App\Http\Controllers\PaymentController;
@@ -70,9 +71,11 @@ Route::middleware(['guest'])->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/panitia/dashboard', [PanitiaDashboardController::class, 'index'])->name('panitia.dashboard');
     Route::get('/panitia', [PanitiaController::class, 'index'])->name('panitia.index');
     Route::post('/panitia/store', [PanitiaController::class, 'store'])->name('panitia.store');
     Route::delete('/panitia/{id}', [PanitiaController::class, 'destroy'])->name('panitia.destroy');
+    Route::post('/logout-panitia', [PanitiaAuthController::class, 'logout'])->name('panitia.logout');
 });
 
 // ADMIN ROUTES
