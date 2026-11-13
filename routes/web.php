@@ -57,7 +57,6 @@ Route::middleware([])->group(function () {
     Route::get('/eo/events/create', [EventController::class, 'create'])->name('eo.events.create');
     Route::post('/eo/events', [EventController::class, 'store'])->name('eo.events.store');
     Route::post('/eo/events/{id}/submit', [EventController::class, 'submitForReview'])->name('eo.events.submit');
-<<<<<<< HEAD
 
     // Laporan Keseluruhan (untuk menu sidebar Laporan)
 Route::get('/eo/reports', [EoReportController::class, 'index'])->name('eo.reports.index');
@@ -72,11 +71,9 @@ Route::get('/eo/events/{id}/report', [EoReportController::class, 'salesReport'])
     Route::get('/eo/events/{event}/detail', [EventController::class, 'eoShow'])
         ->name('eo.events.show');
 
-=======
     Route::get('/eo/events/{id}', [EventController::class, 'eoShow'])->name('eo.events.show');
     Route::get('/eo/events/{id}/edit', [EventController::class, 'edit'])->name('eo.events.edit');
     Route::put('/eo/events/{id}', [EventController::class, 'update'])->name('eo.events.update');
->>>>>>> akun_panitia
     Route::post('/eo/logout', [EOAuthController::class, 'logout'])->name('eo.logout');
 
 // Panitia Routes
@@ -119,16 +116,13 @@ Route::middleware([])->group(function () {
 
 
 // PAYMENT ROUTES
-<<<<<<< HEAD
 Route::middleware([])->group(function () {
     Route::post('/checkout/process', [PaymentController::class, 'store'])->name('checkout.store');
 
     Route::post('/midtrans/callback', [PaymentController::class, 'callback'])->name('midtrans.callback');
-=======
 Route::middleware(['auth'])->group(function () {
     Route::get('/payment/checkout', [PaymentController::class, 'checkout'])->name('checkout');
     Route::get('/payment/finish', [PaymentController::class, 'finish'])->name('payment.finish');
->>>>>>> akun_panitia
 });
 
 Route::get('/orders/{orderCode}/ticket', [PaymentController::class, 'showTicket'])->name('orders.ticket');
