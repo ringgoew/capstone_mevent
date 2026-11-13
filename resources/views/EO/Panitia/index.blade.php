@@ -1,83 +1,104 @@
 @extends('layouts.eo')
+
+@section('title', 'Manajemen Akun Panitia - M!VENT')
+
 @section('content')
-    <div class="container">
-        <h2>Manajemen Akun Panitia & Hak Akses</h2>
+    <div class="panitia-wrapper">
 
-        @if (session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
+        <!-- Topbar Header (Selaras dengan Dashboard) -->
+        <div class="topbar">
+            <div>
+                <h1>Manajemen Akun Panitia</h1>
+                <p class="subtitle">Tambah, pantau, dan kelola hak akses panitia untuk membantu event Anda.</p>
             </div>
-        @endif
-
-        <!-- Form Add Panitia -->
-        <div class="card mb-4">
-            <div class="card-header">Tambah Panitia Baru</div>
-            <div class="card-body">
-                <form action="{{ route('panitia.store') }}" method="POST">
-                    @csrf
-                    <div class="mb-3">
-                        <label>Nama Lengkap</label>
-                        <input type="text" name="name" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label>Email</label>
-                        <input type="email" name="email" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label>Password</label>
-                        <input type="password" name="password" class="form-control" required>
-                    </div>
-                    <!-- Menentukan Hak Akses-->
-                    <div class="mb-3">
-                        <label>Hak Akses (Role)</label>
-                        <select name="role" class="form-control" required>
-                            <option value="panitia_tiket">Panitia Tiket (Check-in)</option>
-                            <option value="panitia_acara">Panitia Acara</option>
-                            <option value="keamanan">Keamanan</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Simpan Akun</button>
-                </form>
+            <div class="profile">
+                {{ session('eo_nama', 'Event Organizer') }}
             </div>
         </div>
 
-        <!-- Menampilkan Daftar Akun Panitia -->
-        <div class="card">
-            <div class="card-header" style="text-align: center;">Daftar Akun Panitia</div>
-            <div class="card-body">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Nama</th>
-                            <th>Email</th>
-                            <th>Hak Akses</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($panitia as $p)
-                            <tr>
-                                <td>{{ $p->name }}</td>
-                                <td>{{ $p->email }}</td>
-                                <td>{{ $p->role }}</td>
-                                <td>
-                                    <!-- Aksi Delete Panitia -->
-                                    <form action="{{ route('panitia.destroy', $p->id) }}" method="POST"
-                                        style="display:inline-block;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <!-- Meminta konfirmasi yakin ingin menghapus -->
-                                        <button type="submit" class="btn btn-danger btn-sm"
-                                            onclick="return confirm('Apakah Anda yakin ingin menghapus akun ini?');">
-                                            Hapus
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+        <!-- Notifikasi -->
+        @if (session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+        @if (session('error'))
+            <div class="alert alert-error">{{ session('error') }}</div>
+        @endif
+
+        <div class="panitia-layout-grid">
+
+            <!-- BAGIAN KIRI: Form Tambah Panitia -->
+            <div class="panitia-card">
+                <h2 class="panitia-card-title">Tambah Panitia Baru</h2>
+
+                <form action="{{ route('panitia.store') }}" method="POST">
+                    @csrf
+                    <div class="form-group">
+                        <label>Nama Lengkap</label>
+                        <input type="text" name="name" required placeholder="Contoh: Budiono Siregar">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email Aktif</label>
+                        <input type="email" name="email" required placeholder="panitia@gmail.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Password Sementara</label>
+                        <input type="password" name="password" required minlength="6" placeholder="Minimal 6 Karakter">
+                    </div>
+
+                    <!-- Menggunakan tag button bawaan eo.css -->
+                    <button type="submit">Simpan Akun Panitia</button>
+                </form>
             </div>
+
+            <!-- BAGIAN KANAN: Tabel Daftar Panitia -->
+            <div class="panitia-card">
+                <h2 class="panitia-card-title">Daftar Akun Panitia Aktif</h2>
+
+                <div class="table-responsive">
+                    <table class="panitia-table">
+                        <thead>
+                            <tr>
+                                <th>Nama Lengkap</th>
+                                <th>Email</th>
+                                <th style="text-align: center;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($panitia as $p)
+                                <tr>
+                                    <td style="font-weight: 600;">{{ $p->name }}</td>
+                                    <td>{{ $p->email }}</td>
+                                    <td style="text-align: center;">
+                                        <form action="{{ route('panitia.destroy', $p->id) }}" method="POST"
+                                            style="margin: 0;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn-delete"
+                                                onclick="return confirm('Peringatan: Apakah Anda yakin ingin menghapus akun panitia {{ $p->name }}?');">
+                                                Hapus
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3">
+                                        <div class="empty-tickets" style="border: none; padding: 30px;">
+                                            <p style="margin-bottom: 5px; font-weight: 600; color: #111;">Belum ada panitia
+                                                yang terdaftar</p>
+                                            <p style="font-size: 13px;">Gunakan form di sebelah kiri untuk menambahkan akun
+                                                panitia.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
     </div>
 @endsection

@@ -24,7 +24,6 @@ class PanitiaController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
-            'role' => 'required'
         ]);
 
         // Siapkan array data, lalu kirim ke fungsi tambahPanitia di Model
@@ -32,7 +31,7 @@ class PanitiaController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role,
+            'role' => 'panitia',
             'status' => 'active',
             'created_at' => now(),
             'updated_at' => now(),
