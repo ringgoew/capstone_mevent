@@ -58,7 +58,7 @@
                     <h2>Pilih Tiket</h2>
 
                     <div class="checkout-ticket-list">
-                        @forelse ($tickets as $ticket)
+                        @forelse ($e_tickets as $ticket)
                         @php
                         $available = max(
                         0,

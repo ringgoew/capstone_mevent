@@ -77,7 +77,7 @@ class PaymentController extends Controller
                 'total_amount'   => $totalPrice,
                 'platform_fee'   => 0,
                 'grand_total'    => $totalPrice,
-                'status'         => 'pending',
+                'status'         => 'paid',
                 'created_at'     => now(),
                 'updated_at'     => now(),
             ]);
@@ -95,20 +95,23 @@ class PaymentController extends Controller
                     'updated_at'     => now(),
                 ]);
 
-                // Generate tiket & QR code individual per quantity
-                for ($i = 0; $i < $item['quantity']; $i++) {
-                    $ticketCode = 'TKT-' . strtoupper(\Illuminate\Support\Str::random(10));
-                    
-                    DB::table('tickets')->insert([
-                        'order_id'       => $orderId,
-                        'ticket_type_id' => $item['ticket_type_id'],
-                        'ticket_code'    => $ticketCode,
-                        'qr_code'        => $ticketCode,
-                        'status'         => 'active',
-                        'created_at'     => now(),
-                        'updated_at'     => now(),
-                    ]);
-                }
+               // Generate e-tiket sejumlah quantity yang dibeli ke tabel e_tickets
+for ($i = 0; $i < $item['quantity']; $i++) {
+    $ticketCode = 'TKT-' . strtoupper(\Illuminate\Support\Str::random(10));
+    
+    DB::table('e_tickets')->insert([
+        'order_id'       => $orderId,
+        'order_item_id'  => $orderItemId,
+        'ticket_code'    => $ticketCode,
+        'qr_code_hash'   => md5($ticketCode), // Sesuai kolom di e_tickets
+        'attendee_name'  => $request->buyer_name,
+        'attendee_email' => $request->buyer_email,
+        'attendee_phone' => $request->buyer_phone,
+        'status'         => 'valid', // Sesuai default status di e_tickets ('valid')
+        'created_at'     => now(),
+        'updated_at'     => now(),
+    ]);
+}
 
                 $midtransItems[] = [
                     'id'       => (string) $item['ticket_type_id'],
@@ -124,7 +127,7 @@ class PaymentController extends Controller
                 'payment_gateway' => 'midtrans',
                 'payment_method'  => 'bank_transfer',
                 'amount'          => $totalPrice,
-                'status'          => 'pending',
+                'status'          => 'paid',
                 'created_at'      => now(),
                 'updated_at'      => now(),
             ]);
@@ -267,10 +270,10 @@ class PaymentController extends Controller
             ->get();
 
         // Ambil data tiket individual beserta QR code-nya dari tabel tickets
-        $tickets = DB::table('tickets')
+        $e_tickets = DB::table('e_tickets')
             ->where('order_id', $order->id)
             ->get();
 
-        return view('ticket_success', compact('order', 'items', 'tickets'));
+        return view('ticket_success', compact('order', 'items', 'e_tickets'));
     }
 }

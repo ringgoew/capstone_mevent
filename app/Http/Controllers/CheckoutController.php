@@ -22,12 +22,12 @@ class CheckoutController extends Controller
             abort(404, 'Event tidak ditemukan.');
         }
 
-        $tickets = DB::table('ticket_types')
+        $e_tickets = DB::table('ticket_types')
             ->where('event_id', $event->id)
             ->orderBy('price', 'asc')
             ->get();
 
-        return view('checkout_tiket', compact('event', 'tickets'));
+        return view('checkout_tiket', compact('event', 'e_tickets'));
     }
 
     // Memproses checkout dan membuat transaksi Midtrans
@@ -62,14 +62,14 @@ class CheckoutController extends Controller
                     throw new \Exception('Pilih minimal satu tiket.');
                 }
 
-                $tickets = DB::table('ticket_types')
+                $e_tickets = DB::table('ticket_types')
                     ->where('event_id', $event->id)
                     ->whereIn('id', $quantities->keys())
                     ->lockForUpdate()
                     ->get()
                     ->keyBy('id');
 
-                if ($tickets->count() != $quantities->count()) {
+                if ($e_tickets->count() != $quantities->count()) {
                     throw new \Exception('Jenis tiket tidak valid.');
                 }
 
@@ -77,7 +77,7 @@ class CheckoutController extends Controller
                 $items = [];
 
                 foreach ($quantities as $ticketId => $quantity) {
-                    $ticket = $tickets[$ticketId];
+                    $ticket = $e_tickets[$ticketId];
                     $quantity = (int) $quantity;
 
                     $available = $ticket->quota
@@ -127,33 +127,36 @@ class CheckoutController extends Controller
                     'updated_at' => now(),
                 ]);
 
-                // 2. Menyimpan detail order_items & Generate Tiket / QR Code
-                foreach ($items as $item) {
-                    $orderItemId = DB::table('order_items')->insertGetId([
-                        'order_id' => $orderId,
-                        'ticket_type_id' => $item['ticket']->id,
-                        'quantity' => $item['quantity'],
-                        'price' => $item['ticket']->price,
-                        'subtotal' => $item['subtotal'],
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
+                // 2. Menyimpan detail order_items Sekaligus GENERATE E-TIKET & QR CODE
+foreach ($items as $item) {
+    $orderItemId = DB::table('order_items')->insertGetId([
+        'order_id' => $orderId,
+        'ticket_type_id' => $item['ticket']->id,
+        'quantity' => $item['quantity'],
+        'price' => $item['ticket']->price,
+        'subtotal' => $item['subtotal'],
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
 
-                    // Generate tiket sejumlah quantity yang dibeli
-                    for ($i = 0; $i < $item['quantity']; $i++) {
-                        $ticketCode = 'TKT-' . strtoupper(Str::random(10));
-                        
-                        DB::table('tickets')->insert([
-                            'order_id'       => $orderId,
-                            'ticket_type_id' => $item['ticket']->id,
-                            'ticket_code'    => $ticketCode,
-                            'qr_code'        => $ticketCode,
-                            'status'         => 'active',
-                            'created_at'     => now(),
-                            'updated_at'     => now(),
-                        ]);
-                    }
-                }
+    // Generate e-tiket sejumlah quantity yang dibeli
+    for ($i = 0; $i < $item['quantity']; $i++) {
+        $ticketCode = 'TKT-' . strtoupper(Str::random(10));
+        
+        DB::table('e_tickets')->insert([
+            'order_id'       => $orderId,
+            'order_item_id'  => $orderItemId, // Wajib di e_tickets
+            'ticket_code'    => $ticketCode,
+            'qr_code_hash'   => md5($ticketCode), // Hash unik untuk QR code
+            'attendee_name'  => $validated['buyer_name'], // Nama pemesan/pengunjung
+            'attendee_email' => $validated['buyer_email'], // Email pemesan
+            'attendee_phone' => $validated['buyer_phone'], // No HP pemesan
+            'status'         => 'valid',    // Default status di e_tickets adalah 'valid'
+            'created_at'     => now(),
+            'updated_at'     => now(),
+        ]);
+    }
+}
 
                 return DB::table('orders')->where('id', $orderId)->first();
             });
