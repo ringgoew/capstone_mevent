@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use App\Mail\SendTicketEmail;
 use Midtrans\Config;
 use Midtrans\Snap;
 use Midtrans\Notification;
@@ -196,21 +199,57 @@ class PaymentController extends Controller
                         ->increment('sold_quota', $item->quantity);
                 }
             });
-        } else if (in_array($transactionStatus, ['expire', 'deny', 'cancel'])) {
-            DB::transaction(function () use ($order) {
-                DB::table('orders')->where('id', $order->id)->update(['status' => 'cancelled', 'updated_at' => now()]);
-                DB::table('payments')->where('order_id', $order->id)->update(['status' => 'failed', 'updated_at' => now()]);
 
-                // Kembalikan kuota reserved jika transaksi batal
-                $items = DB::table('order_items')->where('order_id', $order->id)->get();
-                foreach ($items as $item) {
-                    DB::table('ticket_types')
-                        ->where('id', $item->ticket_type_id)
-                        ->decrement('reserved_quota', $item->quantity);
-                }
-            });
+            // --- KIRIM EMAIL OTOMATIS KETIKA PEMBAYARAN BERHASIL ---
+        //     try {
+        //         $orderComplete = DB::table('orders')
+        //             ->join('events', 'orders.event_id', '=', 'events.id')
+        //             ->select('orders.*', 'events.title as event_title', 'events.start_time', 'events.venue_name')
+        //             ->where('orders.id', $order->id)
+        //             ->first();
+
+        //         if ($orderComplete && $orderComplete->customer_email) {
+        //             Mail::to($orderComplete->customer_email)->send(new SendTicketEmail($orderComplete, null));
+        //         }
+        //     } catch (\Exception $e) {
+        //         Log::error('Gagal mengirim email tiket: ' . $e->getMessage());
+        //     }
+        // } else if (in_array($transactionStatus, ['expire', 'deny', 'cancel'])) {
+        //     DB::transaction(function () use ($order) {
+        //         DB::table('orders')->where('id', $order->id)->update(['status' => 'cancelled', 'updated_at' => now()]);
+        //         DB::table('payments')->where('order_id', $order->id)->update(['status' => 'failed', 'updated_at' => now()]);
+
+        //         // Kembalikan kuota reserved jika transaksi batal
+        //         $items = DB::table('order_items')->where('order_id', $order->id)->get();
+        //         foreach ($items as $item) {
+        //             DB::table('ticket_types')
+        //                 ->where('id', $item->ticket_type_id)
+        //                 ->decrement('reserved_quota', $item->quantity);
+        //         }
+        //     });
         }
 
-        return response()->json(['message' => 'Callback diproses successfully']);
+        // return response()->json(['message' => 'Callback diproses successfully']);
+    }
+
+    public function showTicket($orderCode)
+    {
+        $order = DB::table('orders')
+            ->join('events', 'orders.event_id', '=', 'events.id')
+            ->select('orders.*', 'events.title as event_title', 'events.start_time', 'events.venue_name')
+            ->where('orders.order_code', $orderCode)
+            ->first();
+
+        if (!$order) {
+            abort(404, 'Tiket tidak ditemukan.');
+        }
+
+        $items = DB::table('order_items')
+            ->join('ticket_types', 'order_items.ticket_type_id', '=', 'ticket_types.id')
+            ->select('order_items.*', 'ticket_types.name as ticket_name')
+            ->where('order_items.order_id', $order->id)
+            ->get();
+
+        return view('ticket_success', compact('order', 'items'));
     }
 }

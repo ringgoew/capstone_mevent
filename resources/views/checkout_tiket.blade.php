@@ -13,7 +13,7 @@
         <div class="checkout-main-content">
             <form action="{{ route('checkout.store') }}" method="POST" id="checkout-form">
                 @csrf
-                
+
                 {{-- PERBAIKAN: Tambahkan hidden input event_id yang diwajibkan oleh Controller --}}
                 <input type="hidden" name="event_id" value="{{ $event->id }}">
 
@@ -172,7 +172,7 @@
         function updateCheckout() {
             let totalQuantity = 0;
             let totalPrice = 0;
-            
+
             // PERBAIKAN: Gunakan innerHTML agar lebih kompatibel daripada replaceChildren()
             selectedTickets.innerHTML = '';
 
@@ -262,7 +262,7 @@
                         errorMsg = Object.values(result.errors).flat().join('\n');
                     }
                     alert(errorMsg);
-                    
+
                     submitButton.disabled = false;
                     submitButton.textContent = 'Lanjutkan Pembayaran';
                     return;
@@ -271,7 +271,7 @@
                 window.snap.pay(result.snap_token, {
                     onSuccess: function(res) {
                         alert('Pembayaran berhasil!');
-                        window.location.href = '/';
+                        window.location.href = '/orders/' + result.order_code + '/ticket';
                     },
                     onPending: function(res) {
                         alert('Silakan selesaikan pembayaran Anda.');
