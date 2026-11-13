@@ -58,9 +58,7 @@ Route::middleware([])->group(function () {
     Route::get('/eo/events/{id}', [EventController::class, 'eoShow'])->name('eo.events.show');
     Route::get('/eo/events/{id}/edit', [EventController::class, 'edit'])->name('eo.events.edit');
     Route::put('/eo/events/{id}', [EventController::class, 'update'])->name('eo.events.update');
-    Route::get('/eo/events/{event}/detail', [EventController::class, 'eoShow'])
-    ->name('eo.events.show');
-
+    Route::get('/eo/events/{event}/detail', [EventController::class, 'eoShow'])->name('eo.events.show');
     Route::post('/eo/logout', [EOAuthController::class, 'logout'])->name('eo.logout');
 });
 
@@ -70,7 +68,7 @@ Route::middleware(['guest'])->group(function () {
     Route::post('/login-panitia', [PanitiaAuthController::class, 'authenticate'])->name('panitia.login.authenticate');
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware([])->group(function () {
     Route::get('/panitia/dashboard', [PanitiaDashboardController::class, 'index'])->name('panitia.dashboard');
     Route::get('/panitia', [PanitiaController::class, 'index'])->name('panitia.index');
     Route::post('/panitia/store', [PanitiaController::class, 'store'])->name('panitia.store');
@@ -84,7 +82,7 @@ Route::middleware(['guest'])->group(function () {
     Route::post('/admin/authenticate', [AdminAuthController::class, 'authenticate'])->name('admin.authenticate');
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware([])->group(function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'dashboard'])->name('admin.dashboard');
 
     Route::get('/admin/kyc', [AdminKycController::class, 'index'])->name('admin.kyc.index');
@@ -108,6 +106,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/payment/finish', [PaymentController::class, 'finish'])->name('payment.finish');
 });
 
+Route::middleware([])->group(function () {
+    Route::post('/checkout/process', [PaymentController::class, 'store'])->name('checkout.store');
+    Route::post('/midtrans/callback', [PaymentController::class, 'callback'])->name('midtrans.callback');
 
-Route::get('/events/{slug}/checkout', [CheckoutController::class, 'show'])
-    ->name('checkout.show');
+    Route::get('/orders/{orderCode}/ticket', [PaymentController::class, 'showTicket'])->name('orders.ticket');
+    Route::get('/events/{slug}/checkout', [CheckoutController::class, 'show'])->name('checkout.show');
+    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+});
