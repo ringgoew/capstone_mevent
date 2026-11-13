@@ -49,19 +49,14 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
-// EO ROUTES & Panitia
+// EO ROUTES
 Route::middleware([])->group(function () {
-    // EO Routes
     Route::get('/eo/dashboard', [EODashboardController::class, 'dashboard'])->name('eo.dashboard');
     Route::get('/eo/events', [EventController::class, 'index'])->name('eo.events.index');
     Route::get('/eo/events/create', [EventController::class, 'create'])->name('eo.events.create');
     Route::post('/eo/events', [EventController::class, 'store'])->name('eo.events.store');
     Route::post('/eo/events/{id}/submit', [EventController::class, 'submitForReview'])->name('eo.events.submit');
-
-    // Laporan Keseluruhan (untuk menu sidebar Laporan)
-Route::get('/eo/reports', [EoReportController::class, 'index'])->name('eo.reports.index');
-
-// Laporan Detail Per Event (yang sebelumnya sudah kita buat)
+    // Laporan Detail Per Event (yang sebelumnya sudah kita buat)
 Route::get('/eo/events/{id}/report', [EoReportController::class, 'salesReport'])->name('eo.reports.sales');
     Route::get('/eo/events/{id}', [EventController::class, 'eoShow'])->name('eo.events.show');
     Route::get('/eo/events/{id}/report', [EoReportController::class, 'salesReport'])
@@ -75,6 +70,10 @@ Route::get('/eo/events/{id}/report', [EoReportController::class, 'salesReport'])
     Route::get('/eo/events/{id}/edit', [EventController::class, 'edit'])->name('eo.events.edit');
     Route::put('/eo/events/{id}', [EventController::class, 'update'])->name('eo.events.update');
     Route::post('/eo/logout', [EOAuthController::class, 'logout'])->name('eo.logout');
+
+    // Laporan Keseluruhan (untuk menu sidebar Laporan)
+Route::get('/eo/reports', [EoReportController::class, 'index'])->name('eo.reports.index');
+});
 
 // Panitia Routes
 Route::middleware(['guest'])->group(function () {
@@ -120,10 +119,13 @@ Route::middleware([])->group(function () {
     Route::post('/checkout/process', [PaymentController::class, 'store'])->name('checkout.store');
 
     Route::post('/midtrans/callback', [PaymentController::class, 'callback'])->name('midtrans.callback');
+});
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/payment/checkout', [PaymentController::class, 'checkout'])->name('checkout');
     Route::get('/payment/finish', [PaymentController::class, 'finish'])->name('payment.finish');
 });
+
 
 Route::get('/orders/{orderCode}/ticket', [PaymentController::class, 'showTicket'])->name('orders.ticket');
 
