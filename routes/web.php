@@ -17,7 +17,9 @@ use App\Http\Controllers\EO\EODashboardController;
 use App\Http\Controllers\EO\EventController;
 
 // Panitia Controllers
-use App\Http\Controllers\EO\PanitiaController;
+use App\Http\Controllers\Panitia\PanitiaAuthController;
+use App\Http\Controllers\Panitia\PanitiaController;
+use App\Http\Controllers\Panitia\PanitiaDashboardController;
 
 // Payment Controller
 use App\Http\Controllers\PaymentController;
@@ -59,10 +61,18 @@ Route::middleware([])->group(function () {
     Route::put('/eo/events/{id}', [EventController::class, 'update'])->name('eo.events.update');
     Route::post('/eo/logout', [EOAuthController::class, 'logout'])->name('eo.logout');
 
-    // Panitia Routes
+// Panitia Routes
+Route::middleware(['guest'])->group(function () {
+    Route::get('/login-panitia', [PanitiaAuthController::class, 'login'])->name('panitia.login');
+    Route::post('/login-panitia', [PanitiaAuthController::class, 'authenticate'])->name('panitia.login.authenticate');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/panitia/dashboard', [PanitiaDashboardController::class, 'index'])->name('panitia.dashboard');
     Route::get('/panitia', [PanitiaController::class, 'index'])->name('panitia.index');
     Route::post('/panitia/store', [PanitiaController::class, 'store'])->name('panitia.store');
     Route::delete('/panitia/{id}', [PanitiaController::class, 'destroy'])->name('panitia.destroy');
+    Route::post('/logout-panitia', [PanitiaAuthController::class, 'logout'])->name('panitia.logout');
 });
 
 
