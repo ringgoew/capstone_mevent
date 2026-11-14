@@ -65,8 +65,13 @@ class EODashboardController extends Controller
             ->selectRaw('COALESCE(SUM(ticket_types.sold_quota * ticket_types.price), 0) as total')
             ->value('total');
 
-        // Data kehadiran belum dihitung karena perlu tabel kehadiran/check-in.
-        $totalPesertaHadir = 0;
+        // Statistik peserta hadir (check-in) dari tabel e_tickets
+$totalPesertaHadir = DB::table('e_tickets')
+    ->join('orders', 'e_tickets.order_id', '=', 'orders.id')
+    ->join('events', 'orders.event_id', '=', 'events.id')
+    ->where('events.user_id', $eoId)
+    ->where('e_tickets.status', 'used')
+    ->count();
 
         $stats = [
             'total_event' => $totalEvent,

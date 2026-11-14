@@ -21,6 +21,7 @@ use App\Http\Controllers\EO\EoReportController;
 use App\Http\Controllers\Panitia\PanitiaAuthController;
 use App\Http\Controllers\Panitia\PanitiaController;
 use App\Http\Controllers\Panitia\PanitiaDashboardController;
+use App\Http\Controllers\Panitia\PanitiaScanController;
 
 // Payment Controller
 use App\Http\Controllers\PaymentController;
@@ -80,7 +81,12 @@ Route::get('/eo/reports', [EoReportController::class, 'index'])->name('eo.report
 Route::middleware(['guest'])->group(function () {
     Route::get('/login-panitia', [PanitiaAuthController::class, 'login'])->name('panitia.login');
     Route::post('/login-panitia', [PanitiaAuthController::class, 'authenticate'])->name('panitia.login.authenticate');
-});
+    });
+
+Route::middleware(['auth'])->prefix('panitia')->name('panitia.')->group(function () {
+    Route::get('/scan', [PanitiaScanController::class, 'index'])->name('scan.index');
+    Route::post('panitia/scan/process', [PanitiaScanController::class, 'processScan'])->name('scan.process');
+    });
 
 Route::middleware([])->group(function () {
     Route::get('/panitia/dashboard', [PanitiaDashboardController::class, 'index'])->name('panitia.dashboard');

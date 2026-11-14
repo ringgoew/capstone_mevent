@@ -39,16 +39,16 @@
             <!-- Menu Aksi Panitia -->
             <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
 
-                <!-- Tombol Contoh Fitur Panitia (Misal: Scan Tiket) -->
+                <!-- Tombol Menu Scan Tiket (Sudah Terhubung ke Route Scan) -->
                 <div style="border: 1px solid #e4e4e7; padding: 25px; border-radius: 10px; width: 260px; text-align: center; transition: 0.3s;"
                     onmouseover="this.style.borderColor='#111'" onmouseout="this.style.borderColor='#e4e4e7'">
                     <h3 style="margin-bottom: 10px; font-size: 18px; color: #111;">📷 Scan Tiket Peserta</h3>
                     <p style="font-size: 13px; color: #777; margin-bottom: 20px; line-height: 1.5;">Validasi kehadiran
                         peserta event di pintu masuk menggunakan QR Code.</p>
-                    <button
-                        style="width: 100%; padding: 12px; background: #111; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+                    <a href="{{ route('panitia.scan.index') }}"
+                       style="display: block; width: 100%; padding: 12px; background: #111; color: #fff; border: none; border-radius: 6px; text-decoration: none; font-weight: bold; text-align: center;">
                         Mulai Scan Tiket
-                    </button>
+                    </a>
                 </div>
 
                 <!-- Kartu Logout -->

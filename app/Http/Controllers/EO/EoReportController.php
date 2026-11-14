@@ -98,6 +98,25 @@ class EoReportController extends Controller
             )
             ->get();
 
-        return view('EO.Reports.sales', compact('event', 'salesSummary', 'ticketPerformances'));
+            // Daftar Detail Peserta & Status Check-in (Untuk tabel kehadiran di laporan)
+        $attendees = DB::table('e_tickets')
+            ->join('orders', 'e_tickets.order_id', '=', 'orders.id')
+            ->join('order_items', 'e_tickets.order_item_id', '=', 'order_items.id')
+            ->join('ticket_types', 'order_items.ticket_type_id', '=', 'ticket_types.id')
+            ->where('orders.event_id', $event->id)
+            ->where('orders.status', 'paid')
+            ->select(
+                'orders.order_code',
+                'e_tickets.ticket_code',
+                'e_tickets.attendee_name',
+                'e_tickets.attendee_email',
+                'ticket_types.name as ticket_type',
+                'e_tickets.status as check_in_status',
+                'e_tickets.checked_in_at'
+            )
+            ->orderBy('e_tickets.updated_at', 'desc')
+            ->get();
+
+        return view('EO.Reports.sales', compact('event', 'salesSummary', 'ticketPerformances', 'attendees'));
     }
 }
