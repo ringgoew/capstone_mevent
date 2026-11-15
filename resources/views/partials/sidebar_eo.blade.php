@@ -20,7 +20,7 @@
     📊 Laporan
     </a>
 
-    <a href="{{ route('eo.dashboard') }}">
+    <a href="{{ route('eo.payout.index') }}" class="{{ request()->routeIs('eo.payout.index') ? 'active' : '' }}">
         Payout
     </a>
 
