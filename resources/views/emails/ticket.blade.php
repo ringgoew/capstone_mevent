@@ -1,120 +1,128 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
     <meta charset="utf-8">
-    <title>E-Ticket - {{ $order->order_code }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Tiket M!VENT - {{ $order->order_code }}</title>
     <style>
         body {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
+            background-color: #F8FAFC;
+            color: #0F172A;
             margin: 0;
-            padding: 20px;
+            padding: 24px 16px;
         }
         .email-container {
-            max-width: 600px;
+            max-width: 580px;
             margin: 0 auto;
-            background-color: #1a1a1a;
-            border-radius: 8px;
+            background-color: #FFFFFF;
+            border-radius: 16px;
             overflow: hidden;
-            border: 1px solid #333333;
+            border: 1px solid #E2E8F0;
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.05);
         }
         .header {
-            padding: 20px;
-            background-color: #1e1e1e;
-            border-bottom: 1px solid #333333;
+            padding: 24px 30px;
+            background-color: #0F172A;
+            color: #FFFFFF;
         }
-        .header h2 {
+        .header h1 {
             margin: 0;
-            color: #ccff00; /* Hijau neon */
-            font-size: 20px;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+        .header h1 span {
+            color: #38BDF8;
         }
         .content {
-            padding: 20px;
+            padding: 28px 30px;
+        }
+        .greeting {
+            font-size: 15px;
+            color: #475569;
+            margin-bottom: 20px;
+            line-height: 1.5;
         }
         .ticket-box {
-            background-color: #0b0b0b;
-            border: 2px solid #ccff00;
-            border-radius: 6px;
-            margin-bottom: 20px;
+            background-color: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 14px;
+            margin-bottom: 24px;
             overflow: hidden;
         }
         .ticket-header {
-            background-color: #141414;
-            padding: 10px 15px;
-            font-size: 11px;
-            color: #aaaaaa;
-            border-bottom: 1px solid #222222;
+            background-color: #F1F5F9;
+            padding: 12px 18px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #64748B;
+            border-bottom: 1px solid #E2E8F0;
             display: flex;
             justify-content: space-between;
         }
         .ticket-body {
-            padding: 20px;
-            display: table;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        .ticket-left {
-            display: table-cell;
-            vertical-align: top;
-            width: 65%;
-        }
-        .ticket-right {
-            display: table-cell;
-            vertical-align: middle;
-            text-align: center;
-            width: 35%;
-            border-left: 1px dashed #333333;
-            padding-left: 15px;
+            padding: 20px 18px;
         }
         .event-title {
-            font-size: 22px;
-            font-weight: bold;
-            color: #ccff00;
-            margin: 5px 0 15px 0;
-            text-transform: uppercase;
+            font-size: 20px;
+            font-weight: 700;
+            color: #0F172A;
+            margin: 0 0 14px 0;
+        }
+        .info-row {
+            margin-bottom: 10px;
+            font-size: 14px;
+            line-height: 1.5;
         }
         .info-label {
-            font-size: 10px;
-            color: #888888;
+            font-size: 11px;
+            font-weight: 700;
             text-transform: uppercase;
-            margin-bottom: 2px;
+            color: #64748B;
+            letter-spacing: 0.05em;
         }
         .info-value {
-            font-size: 13px;
-            font-weight: bold;
-            color: #ffffff;
-            margin-bottom: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #0F172A;
         }
-        .badge {
-            background-color: #ccff00;
-            color: #000000;
-            font-size: 10px;
-            font-weight: bold;
-            padding: 4px 8px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            display: inline-block;
-            margin-bottom: 10px;
+        .qr-section {
+            text-align: center;
+            background: #FFFFFF;
+            border: 1px dashed #CBD5E1;
+            border-radius: 12px;
+            padding: 18px;
+            margin: 18px 0;
         }
-        .qr-placeholder {
-            background-color: #ffffff;
-            padding: 10px;
-            display: inline-block;
-            border-radius: 4px;
-        }
-        .qr-placeholder img {
-            width: 90px;
-            height: 90px;
+        .qr-section img {
             display: block;
+            margin: 0 auto;
+        }
+        .badge-verified {
+            display: inline-block;
+            background-color: #DCFCE7;
+            color: #166534;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            margin-bottom: 12px;
         }
         .footer-note {
-            font-size: 11px;
-            color: #888888;
-            line-height: 1.4;
-            margin-top: 15px;
-            border-top: 1px solid #2a2a2a;
-            padding-top: 12px;
+            font-size: 12px;
+            color: #64748B;
+            line-height: 1.5;
+            padding-top: 16px;
+            border-top: 1px solid #E2E8F0;
+        }
+        .footer-brand {
+            background-color: #F8FAFC;
+            padding: 16px;
+            text-align: center;
+            font-size: 12px;
+            color: #94A3B8;
+            border-top: 1px solid #E2E8F0;
         }
     </style>
 </head>
@@ -123,65 +131,57 @@
     <div class="email-container">
         <!-- Header Email -->
         <div class="header">
-            <h2>Here's Your Ticket! 🎉</h2>
-            <p style="font-size: 13px; color: #bbbbbb; margin: 5px 0 0 0;">Halo {{ $order->customer_name }}, pembayaranmu telah berhasil dikonfirmasi.</p>
+            <h1>M<span>!</span>VENT</h1>
         </div>
 
         <!-- Bagian Konten Tiket -->
         <div class="content">
+            <p class="greeting">
+                Halo <strong>{{ $order->customer_name }}</strong>,<br>
+                Pembayaran Anda telah berhasil diverifikasi. Berikut adalah e-tiket resmi Anda:
+            </p>
+
             <div class="ticket-box">
-                <!-- Baris Informasi Pembelian (Atas Tiket) -->
                 <div class="ticket-header">
-                    <span>PURCHASED BY: <strong>{{ $order->customer_name }}</strong></span>
+                    <span>PEMESAN: <strong>{{ $order->customer_name }}</strong></span>
                     <span>ORDER ID: <strong>{{ $order->order_code }}</strong></span>
                 </div>
 
-                <!-- Bagian Utama Tiket -->
                 <div class="ticket-body">
-                    <div class="ticket-left">
-                        <div class="info-label">Event</div>
-                        <div class="event-title">{{ $order->event_title ?? 'Nama Event' }}</div>
+                    <span class="badge-verified">✓ TIKET VALID & AKTIF</span>
+                    <h2 class="event-title">{{ $order->event_title ?? 'Nama Event' }}</h2>
 
+                    <div class="info-row">
                         <div class="info-label">Jadwal & Waktu</div>
-                        <div class="info-value">{{ \Carbon\Carbon::parse($order->start_time ?? now())->format('F d, Y - H:i') }} WIB</div>
-
-                        <div class="info-label">Lokasi Venue</div>
-                        <div class="info-value" style="margin-bottom: 0;">{{ $order->venue_name ?? 'Lokasi Event' }}</div>
+                        <div class="info-value">{{ \Carbon\Carbon::parse($order->start_time ?? now())->translatedFormat('l, d F Y - H:i') }} WIB</div>
                     </div>
 
-                    <div class="ticket-right">
-                        <div class="badge">General Admission</div>
-                        
-                        <!-- QR Code yang berisi link verifikasi tiket untuk discan petugas -->
-                        <div class="qr-placeholder">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ url('/admin/verify-ticket/' . $order->order_code) }}" alt="QR Code Tiket">
+                    <div class="info-row">
+                        <div class="info-label">Lokasi / Venue</div>
+                        <div class="info-value">{{ $order->venue_name ?? 'Lokasi Event' }}</div>
+                    </div>
+
+                    <div class="qr-section">
+                        @if(isset($qrPng) && isset($message))
+                            <img src="{{ $message->embedData($qrPng, 'qr-tiket.png', 'image/png') }}" alt="QR Tiket" width="180" height="180">
+                        @else
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data={{ $order->order_code }}" alt="QR Code Tiket" width="180" height="180">
+                        @endif
+                        <div style="margin-top: 8px; font-family: monospace; font-size: 14px; font-weight: 700; color: #0F172A;">
+                            {{ $order->order_code }}
                         </div>
-                        <div style="font-size: 10px; color: #888; margin-top: 5px;">Scan saat masuk</div>
+                        <div style="font-size: 12px; color: #64748B; margin-top: 4px;">Tunjukkan QR Code ini kepada petugas di pintu masuk (gate)</div>
                     </div>
                 </div>
             </div>
 
-            <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto;">
-    <h2>Pembayaran Berhasil 🎉</h2>
-    <p>Halo {{ $order->customer_name }}, tiket Anda untuk <strong>{{ $order->event_title }}</strong> sudah aktif.</p>
-
-    <p>
-        <strong>Kode Order:</strong> {{ $order->order_code }}<br>
-        <strong>Tempat:</strong> {{ $order->venue_name }}<br>
-        <strong>Waktu:</strong> {{ \Carbon\Carbon::parse($order->start_time)->translatedFormat('d F Y, H:i') }}
-    </p>
-
-    <p>Tunjukkan QR code ini di pintu masuk:</p>
-    {{-- embedData membuat gambar inline (CID), lebih andal daripada data URI di Gmail/Outlook --}}
-    <img src="{{ $message->embedData($qrPng, 'qr-tiket.png', 'image/png') }}"
-         alt="QR Tiket" width="250" height="250">
-</div>
-
-
-            <!-- Catatan Kaki / Instruksi -->
             <div class="footer-note">
-                <strong>Penting:</strong> Harap tunjukkan e-ticket atau QR Code di atas kepada petugas saat memasuki area event. Tiket ini hanya berlaku untuk satu kali penukaran.
+                <strong>Catatan Penting:</strong> Harap simpan e-tiket ini atau tangkapan layarnya di ponsel Anda. Tiket ini hanya sah untuk satu kali penukaran/pindai per kuota yang dibeli.
             </div>
+        </div>
+
+        <div class="footer-brand">
+            &copy; {{ date('Y') }} M!VENT Event Management Platform. All rights reserved.
         </div>
     </div>
 

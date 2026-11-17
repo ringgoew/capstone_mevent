@@ -9,24 +9,14 @@ use Illuminate\Support\Facades\Hash;
 
 class PanitiaController extends Controller
 {
-    public function index()
-    {
-        // Memanggil Query Builder dari Model
-        $panitia = Panitia::getDaftarPanitia();
-
-        return view('eo.panitia.index', compact('panitia'));
-    }
-
     public function store(Request $request)
     {
-        // Validasi input
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
         ]);
 
-        // Siapkan array data, lalu kirim ke fungsi tambahPanitia di Model
         $dataPanitia = [
             'name' => $request->name,
             'email' => $request->email,
@@ -36,18 +26,18 @@ class PanitiaController extends Controller
             'created_at' => now(),
             'updated_at' => now(),
         ];
+
         Panitia::tambahPanitia($dataPanitia);
 
-        return redirect()->route('panitia.index')
+        return redirect()->back()
             ->with('success', 'Berhasil: Akun panitia baru telah ditambahkan.');
     }
 
     public function destroy($id)
     {
-        // Memanggil Query Builder delete dari Model
         Panitia::hapusPanitia($id);
 
-        return redirect()->route('panitia.index')
+        return redirect()->back()
             ->with('success', 'Berhasil: Akun panitia telah dihapus.');
     }
 }

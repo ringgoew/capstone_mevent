@@ -4,7 +4,6 @@
 
 @section('content')
 <div style="max-width: 1000px; margin: 20px auto; padding: 20px;">
-    
     <h2 style="margin-bottom: 5px; color: #1e293b;">Pencairan Dana (Payout)</h2>
     <p style="color: #64748b; margin-bottom: 25px; font-size: 14px;">
         Ajukan pencairan hasil penjualan tiket event Anda ke rekening bank pribadi atau perusahaan.
@@ -37,7 +36,6 @@
     <!-- FORM PENGAJUAN PAYOUT -->
     <div style="background: #fff; padding: 25px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 35px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
         <h3 style="margin-top: 0; font-size: 18px; color: #1e293b; margin-bottom: 15px;">➕ Buat Pengajuan Payout Baru</h3>
-        
         <form action="{{ route('eo.payout.store') }}" method="POST">
             @csrf
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px;">
@@ -75,7 +73,6 @@
     <!-- TABEL RIWAYAT PAYOUT -->
     <div style="background: #fff; padding: 25px; border-radius: 10px; border: 1px solid #e2e8f0; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
         <h3 style="margin-top: 0; font-size: 18px; color: #1e293b; margin-bottom: 15px;">📋 Riwayat Pengajuan Payout</h3>
-        
         <div style="overflow-x: auto;">
             <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
                 <thead>

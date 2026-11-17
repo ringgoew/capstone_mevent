@@ -3,6 +3,10 @@
 @section('title', $event->title . ' - M!VENT')
 
 @section('content')
+@php
+$eventCategory = $category ?? $event->category ?? null;
+@endphp
+
 <div class="detail-page-wrapper">
     <div class="detail-container">
         <!-- Tombol Kembali -->
@@ -18,13 +22,13 @@
         <div class="event-hero-card">
             @if ($event->banner_image)
             <div class="banner-wrapper">
-                <img src="{{ asset('storage/' . $event->banner_image) }}" alt="{{ $event->title }}" class="banner-img">
+                <img src="{{ asset('storage/' . $event->banner_image) }}" alt="{{ $event->title }}" class="banner-img" loading="lazy">
             </div>
             @endif
 
             <div class="event-hero-body">
-                @if ($category)
-                <span class="category-badge">{{ $category->name }}</span>
+                @if ($eventCategory)
+                <span class="category-badge">{{ $eventCategory->name }}</span>
                 @endif
 
                 <h1 class="event-title">{{ $event->title }}</h1>
@@ -90,7 +94,11 @@
                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="12" cy="7" r="4"></circle>
                             </svg>
+                            @if ($ticket->quota > 0)
                             Tersedia {{ $ticket->quota }} tiket
+                            @else
+                            Tiket habis
+                            @endif
                         </p>
                     </div>
                     <div class="ticket-action">
@@ -101,10 +109,14 @@
                             Gratis
                             @endif
                         </span>
-                        <a href="{{ route('checkout.show', $event->slug) }}"
-                            class="btn-buy-ticket">
+
+                        @if ($ticket->quota > 0)
+                        <a href="{{ route('checkout.show', $event->slug) }}" class="btn-buy-ticket">
                             Beli Tiket
                         </a>
+                        @else
+                        <span class="status-badge rejected">Habis</span>
+                        @endif
                     </div>
                 </div>
                 @empty

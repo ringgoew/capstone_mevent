@@ -1,17 +1,16 @@
 @extends('admin.event-verification.layout')
 
-@section('title', 'Pemeriksaan Pengajuan Event')
+@section('title', 'Pemeriksaan Pengajuan Event — M!VENT Admin')
 
 @section('content')
 
-<h1>Pemeriksaan Pengajuan Event</h1>
-
-<p>
-    Periksa kelayakan event yang diajukan EO sebelum dipublikasikan.
-</p>
+<div class="header">
+    <h1>Pemeriksaan Pengajuan Event</h1>
+    <p>Tinjau dan verifikasi kelayakan event yang diajukan oleh Event Organizer sebelum dipublikasikan ke publik.</p>
+</div>
 
 <div class="card">
-    <h3>Daftar Event Menunggu Review</h3>
+    <h3 style="font-size: 17px; font-weight: 700; color: #0F172A; margin-bottom: 16px;">Daftar Event Menunggu Review</h3>
 
     <div class="table-wrap">
         <table>
@@ -29,28 +28,25 @@
             <tbody>
                 @forelse($events as $event)
                     <tr>
-                        <td>{{ $event->title }}</td>
+                        <td style="font-weight: 600; color: #0F172A;">{{ $event->title }}</td>
                         <td>{{ $event->eo_name }}</td>
-                        <td>{{ $event->category_name }}</td>
-                        <td>{{ $event->start_time }}</td>
+                        <td><span class="badge" style="background: #F0F9FF; color: #0369A1;">{{ $event->category_name }}</span></td>
+                        <td>{{ \Carbon\Carbon::parse($event->start_time)->translatedFormat('d M Y, H:i') }}</td>
                         <td>
                             <span class="badge pending">
                                 PENDING REVIEW
                             </span>
                         </td>
                         <td>
-                            <a
-                                href="{{ route('admin.event-verification.show', $event->id) }}"
-                                class="btn btn-dark"
-                            >
-                                Periksa
+                            <a href="{{ route('admin.event-verification.show', $event->id) }}" class="btn btn-dark" style="font-size: 13px; padding: 7px 14px;">
+                                Periksa Kelayakan →
                             </a>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6">
-                            Tidak ada pengajuan event yang menunggu review.
+                        <td colspan="6" style="text-align: center; padding: 36px; color: #94A3B8;">
+                            Tidak ada pengajuan event yang sedang menunggu review.
                         </td>
                     </tr>
                 @endforelse

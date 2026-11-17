@@ -1,16 +1,19 @@
 @extends('layouts.admin')
-@section('title', 'Detail KYC EO')
+@section('title', 'Detail Verifikasi KYC EO — M!VENT Admin')
 @section('content')
 
-<a href="{{ route('admin.kyc.index') }}" class="btn btn-gray">
+<a href="{{ route('admin.kyc.index') }}" class="btn btn-gray" style="margin-bottom: 20px;">
     &larr; Kembali ke Daftar KYC
 </a>
 
-<h1 style="margin-top:24px;">Pemeriksaan Dokumen EO</h1>
+<div class="header">
+    <h1>Pemeriksaan Dokumen KYC</h1>
+    <p>Organisasi: <strong>{{ $profile->organization_name }}</strong> &bull; Penanggung Jawab: <strong>{{ $profile->user_name }}</strong></p>
+</div>
 
 {{-- Notifikasi Error / Success --}}
 @if(session('error'))
-<div style="background: #fff5f5; color: #dc3545; padding: 12px; border-radius: 6px; margin-bottom: 20px; border-left: 5px solid #dc3545;">
+<div class="alert error">
     {{ session('error') }}
 </div>
 @endif
@@ -20,110 +23,125 @@
     @csrf
 
     {{-- CARD KTP --}}
-    <div class="card" id="card-ktp" style="transition: all 0.3s ease; margin-bottom: 20px;">
-        <h2>Dokumen KTP</h2>
+    <div class="card" id="card-ktp" style="transition: all 0.3s ease;">
+        <h2 style="font-size: 18px; font-weight: 700; color: #0F172A; margin-bottom: 16px;">Dokumen KTP</h2>
         <div class="field">
             <label>Nomor KTP</label>
-            <p>{{ $profile->ktp_number }}</p>
+            <p style="font-size: 16px; font-weight: 600; color: #0F172A;">{{ $profile->ktp_number }}</p>
         </div>
         <div class="field">
             <label>Foto/Scan KTP</label>
             @if ($profile->ktp_image)
             <a href="{{ route('admin.kyc.document', ['id' => $profile->id, 'type' => 'ktp']) }}" target="_blank" rel="noopener" class="btn btn-dark">
-                Buka Dokumen KTP
+                📄 Buka Dokumen KTP
             </a>
             @else
-            <p>Dokumen KTP belum tersedia.</p>
+            <p style="color: #94A3B8;">Dokumen KTP belum tersedia.</p>
             @endif
         </div>
 
         @if ($profile->verification_status === 'pending')
-        <div class="validation-box" style="margin-top:15px; padding:10px; background:#f9f9f9; border-radius:6px;">
-            <strong>Tandai Status Dokumen <span style="color: red;">*</span>:</strong><br>
-            <label style="margin-right:15px; cursor:pointer;">
-                <input type="radio" name="ktp_check" value="valid" required onchange="setIndicator('card-ktp', 'valid')"> Valid
+        <div class="validation-box" style="margin-top: 16px; padding: 12px 16px; background: #F8FAFC; border-radius: 8px; border: 1px solid #E2E8F0;">
+            <strong style="display: block; margin-bottom: 8px; font-size: 13px;">Tandai Validitas Dokumen <span style="color: #EF4444;">*</span>:</strong>
+            <label style="margin-right: 20px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-weight: 500;">
+                <input type="radio" name="ktp_check" value="valid" required onchange="setIndicator('card-ktp', 'valid')">
+                <span style="color: #166534; font-weight: 700;">✓ Valid</span>
             </label>
-            <label style="cursor:pointer;">
-                <input type="radio" name="ktp_check" value="invalid" required onchange="setIndicator('card-ktp', 'invalid')"> Tidak Valid
+            <label style="cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-weight: 500;">
+                <input type="radio" name="ktp_check" value="invalid" required onchange="setIndicator('card-ktp', 'invalid')">
+                <span style="color: #991B1B; font-weight: 700;">✕ Tidak Valid</span>
             </label>
         </div>
         @endif
     </div>
 
     {{-- CARD NPWP --}}
-    <div class="card" id="card-npwp" style="transition: all 0.3s ease; margin-bottom: 20px;">
-        <h2>Dokumen NPWP</h2>
+    <div class="card" id="card-npwp" style="transition: all 0.3s ease;">
+        <h2 style="font-size: 18px; font-weight: 700; color: #0F172A; margin-bottom: 16px;">Dokumen NPWP</h2>
         <div class="field">
             <label>Nomor NPWP</label>
-            <p>{{ $profile->npwp_number ?: 'Tidak diisi' }}</p>
+            <p style="font-size: 16px; font-weight: 600; color: #0F172A;">{{ $profile->npwp_number ?: 'Tidak diisi' }}</p>
         </div>
         <div class="field">
             <label>Foto/Scan NPWP</label>
             @if ($profile->npwp_image)
             <a href="{{ route('admin.kyc.document', ['id' => $profile->id, 'type' => 'npwp']) }}" target="_blank" rel="noopener" class="btn btn-dark">
-                Buka Dokumen NPWP
+                📄 Buka Dokumen NPWP
             </a>
             @else
-            <p>Dokumen NPWP tidak tersedia.</p>
+            <p style="color: #94A3B8;">Dokumen NPWP tidak tersedia.</p>
             @endif
         </div>
 
         @if ($profile->verification_status === 'pending')
-        <div class="validation-box" style="margin-top:15px; padding:10px; background:#f9f9f9; border-radius:6px;">
-            <strong>Tandai Status Dokumen <span style="color: red;">*</span>:</strong><br>
-            <label style="margin-right:15px; cursor:pointer;">
-                <input type="radio" name="npwp_check" value="valid" required onchange="setIndicator('card-npwp', 'valid')"> Valid
+        <div class="validation-box" style="margin-top: 16px; padding: 12px 16px; background: #F8FAFC; border-radius: 8px; border: 1px solid #E2E8F0;">
+            <strong style="display: block; margin-bottom: 8px; font-size: 13px;">Tandai Validitas Dokumen <span style="color: #EF4444;">*</span>:</strong>
+            <label style="margin-right: 20px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-weight: 500;">
+                <input type="radio" name="npwp_check" value="valid" required onchange="setIndicator('card-npwp', 'valid')">
+                <span style="color: #166534; font-weight: 700;">✓ Valid</span>
             </label>
-            <label style="cursor:pointer;">
-                <input type="radio" name="npwp_check" value="invalid" required onchange="setIndicator('card-ktp', 'invalid')"> Tidak Valid
+            <label style="cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-weight: 500;">
+                <input type="radio" name="npwp_check" value="invalid" required onchange="setIndicator('card-npwp', 'invalid')">
+                <span style="color: #991B1B; font-weight: 700;">✕ Tidak Valid</span>
             </label>
         </div>
         @endif
     </div>
 
     {{-- CARD INFORMASI REKENING BANK --}}
-    <div class="card" style="transition: all 0.3s ease; margin-bottom: 20px;">
-        <h2>Informasi Rekening Bank</h2>
-        <div class="field" style="margin-bottom: 10px;">
-            <label style="font-weight: bold; color: #555;">Nama Bank</label>
-            <p>{{ $profile->bank_name ?: 'Tidak diisi' }}</p>
-        </div>
-        <div class="field" style="margin-bottom: 10px;">
-            <label style="font-weight: bold; color: #555;">Nomor Rekening</label>
-            <p>{{ $profile->bank_account_number ?: 'Tidak diisi' }}</p>
-        </div>
-        <div class="field">
-            <label style="font-weight: bold; color: #555;">Nama Pemilik Rekening</label>
-            <p>{{ $profile->bank_account_holder ?: 'Tidak diisi' }}</p>
+    <div class="card">
+        <h2 style="font-size: 18px; font-weight: 700; color: #0F172A; margin-bottom: 16px;">Informasi Rekening Bank</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+            <div class="field" style="margin-bottom: 0;">
+                <label>Nama Bank</label>
+                <p style="font-weight: 600; color: #0F172A;">{{ $profile->bank_name ?: '-' }}</p>
+            </div>
+            <div class="field" style="margin-bottom: 0;">
+                <label>Nomor Rekening</label>
+                <p style="font-weight: 600; color: #0F172A;">{{ $profile->bank_account_number ?: '-' }}</p>
+            </div>
+            <div class="field" style="margin-bottom: 0;">
+                <label>Nama Pemilik Rekening</label>
+                <p style="font-weight: 600; color: #0F172A;">{{ $profile->bank_account_holder ?: '-' }}</p>
+            </div>
         </div>
     </div>
 
     {{-- TOMBOL AKSI & MODAL / FORM PENOLAKAN (Jika Status Pending) --}}
     @if ($profile->verification_status === 'pending')
-    <div class="card" style="background: #fff; padding: 20px;">
-        <h3>Keputusan Verifikasi KYC</h3>
+    <div class="card" style="border: 1.5px solid #BAE6FD; background: #F0F9FF;">
+        <h3 style="font-size: 17px; font-weight: 700; color: #0F172A; margin-bottom: 14px;">Keputusan Verifikasi KYC</h3>
 
         {{-- Input Alasan Penolakan (Hidden secara default, muncul jika klik Tolak) --}}
-        <div id="rejectionSection" style="display: none; margin-bottom: 15px;">
-            <label for="rejection_reason" style="font-weight: bold; color: #dc3545;">Alasan Penolakan <span style="color: red;">*</span>:</label>
-            <textarea name="rejection_reason" id="rejection_reason" rows="4" class="form-control" style="width: 100%; margin-top: 5px; padding: 8px;" placeholder="Tuliskan alasan penolakan dokumen/KYC di sini..."></textarea>
+        <div id="rejectionSection" style="display: none; margin-bottom: 16px;">
+            <label for="rejection_reason" style="font-weight: 700; color: #991B1B; margin-bottom: 6px; display: block;">
+                Alasan Penolakan <span style="color: #EF4444;">*</span>:
+            </label>
+            <textarea name="rejection_reason" id="rejection_reason" rows="4" placeholder="Tuliskan catatan detail alasan penolakan dokumen untuk EO..."></textarea>
         </div>
 
-        <div style="display: flex; gap: 10px; margin-top: 15px;">
-            <button type="button" id="btnApproveAction" class="btn" style="background: #28a745; color: white;"
+        <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <button type="button" id="btnApproveAction" class="btn btn-green"
                 data-url="{{ route('admin.kyc.approve', $profile->id) }}" onclick="submitApprove(this)">
-                Approve / Verifikasi Akun
+                ✓ Setujui (Approve Akun)
             </button>
 
-            <button type="button" id="btnRejectToggle" class="btn" style="background: #dc3545; color: white;" onclick="toggleRejectForm()">
-                Tolak Pengajuan
+            <button type="button" id="btnRejectToggle" class="btn btn-red" onclick="toggleRejectForm()">
+                ✕ Tolak Pengajuan
             </button>
 
-            <button type="button" id="btnSubmitReject" class="btn" style="background: #dc3545; color: white; display: none;"
+            <button type="button" id="btnSubmitReject" class="btn btn-red" style="display: none;"
                 data-url="{{ route('admin.kyc.reject', $profile->id) }}" onclick="submitReject(this)">
                 Konfirmasi Penolakan
             </button>
         </div>
+    </div>
+    @else
+    <div class="card" style="display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 14px; color: #64748B;">Status saat ini:</span>
+        <span class="badge {{ $profile->verification_status }}">
+            {{ strtoupper($profile->verification_status) }}
+        </span>
     </div>
     @endif
 </form>
@@ -131,28 +149,43 @@
 <script>
     function setIndicator(cardId, status) {
         const card = document.getElementById(cardId);
+        if (!card) return;
         if (status === 'valid') {
-            card.style.borderLeft = '6px solid #28a745';
-            card.style.backgroundColor = '#f4fdf6';
+            card.style.borderLeft = '6px solid #16A34A';
+            card.style.backgroundColor = '#F0FDF4';
         } else if (status === 'invalid') {
-            card.style.borderLeft = '6px solid #dc3545';
-            card.style.backgroundColor = '#fff5f5';
+            card.style.borderLeft = '6px solid #DC2626';
+            card.style.backgroundColor = '#FEF2F2';
         }
     }
 
-    // Validasi sebelum Approve: Pastikan semua dokumen sudah diperiksa (dipilih radio button-nya) dan bernilai 'valid'
-    // Fungsi Approve
+    function toggleRejectForm() {
+        const section = document.getElementById('rejectionSection');
+        const submitBtn = document.getElementById('btnSubmitReject');
+        const toggleBtn = document.getElementById('btnRejectToggle');
+        if (section.style.display === 'none' || !section.style.display) {
+            section.style.display = 'block';
+            submitBtn.style.display = 'inline-flex';
+            toggleBtn.textContent = 'Batal';
+            document.getElementById('rejection_reason').focus();
+        } else {
+            section.style.display = 'none';
+            submitBtn.style.display = 'none';
+            toggleBtn.textContent = '✕ Tolak Pengajuan';
+        }
+    }
+
     function submitApprove(button) {
         const ktpValid = document.querySelector('input[name="ktp_check"]:checked');
         const npwpValid = document.querySelector('input[name="npwp_check"]:checked');
 
         if (!ktpValid || !npwpValid) {
-            alert('Mohon tandai status validasi untuk semua dokumen (KTP & NPWP) terlebih dahulu.');
+            alert('Mohon periksa dan tandai status validasi untuk semua dokumen (KTP & NPWP) terlebih dahulu.');
             return;
         }
 
         if (ktpValid.value === 'invalid' || npwpValid.value === 'invalid') {
-            alert('Tidak dapat melakukan Approve jika masih ada dokumen yang berstatus "Tidak Valid". Silakan gunakan tombol Tolak Pengajuan.');
+            alert('Tidak dapat menyetujui jika ada dokumen yang "Tidak Valid". Silakan gunakan opsi Tolak Pengajuan.');
             return;
         }
 
@@ -163,11 +196,10 @@
         form.submit();
     }
 
-    // Fungsi Reject yang Benar
     function submitReject(button) {
         const reason = document.getElementById('rejection_reason').value.trim();
         if (!reason) {
-            alert('Alasan penolakan wajib diisi.');
+            alert('Alasan penolakan wajib diisi agar EO dapat memperbaikinya.');
             document.getElementById('rejection_reason').focus();
             return;
         }

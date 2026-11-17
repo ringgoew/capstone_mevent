@@ -1,9 +1,223 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans:
+        "Instrument Sans", ui-sans-serif, system-ui, sans-serif,
+        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+        "Noto Color Emoji";
+    --color-primary: #38bdf8;
+    --color-primary-hover: #0ea5e9;
+    --color-primary-dark: #0c4a6e;
+    --color-primary-accent: #0284c7;
+    --color-bg-main: #f8fafc;
+    --color-slate-dark: #0f172a;
+    --color-slate-text: #64748b;
+    --color-status-published: #dcfce7;
+    --color-status-published-text: #166534;
+    --color-status-pending: #fef3c7;
+    --color-status-pending-text: #92400e;
+    --color-status-rejected: #fee2e2;
+    --color-status-rejected-text: #991b1b;
+}
+
+/* ==========================================================================
+   M!VENT Shared Standard Components (Design System)
+   ========================================================================== */
+
+:root {
+    --primary: #38bdf8;
+    --primary-hover: #0ea5e9;
+    --primary-dark: #0c4a6e;
+    --primary-accent: #0284c7;
+    --primary-soft: #e0f2fe;
+    --bg-main: #f8fafc;
+    --text-primary: #0f172a;
+    --text-secondary: #64748b;
+    --border-color: #e2e8f0;
+    --card-bg: #ffffff;
+}
+
+/* 1. .btn-primary */
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border-radius: 10px;
+    background-color: var(--primary);
+    color: var(--primary-dark);
+    font-weight: 700;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition:
+        transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+        background-color 0.2s ease,
+        box-shadow 0.2s ease;
+    font-family: inherit;
+    box-shadow: 0 2px 6px rgba(56, 189, 248, 0.25);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(56, 189, 248, 0.35);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-primary:disabled {
+    background-color: #cbd5e1;
+    color: #64748b;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* 2. .card-event */
+.card-event {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.05);
+    transition:
+        transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.3s ease,
+        border-color 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-event:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 32px -8px rgba(15, 23, 42, 0.12);
+    border-color: #bae6fd;
+}
+
+.card-event-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background-color: #f1f5f9;
+}
+
+.card-event-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.card-event-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    line-height: 1.35;
+}
+
+.card-event-price {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--primary-accent);
+    margin-top: auto;
+    padding-top: 12px;
+}
+
+/* 3. .status-badge */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-transform: capitalize;
+    white-space: nowrap;
+}
+
+.status-badge.published,
+.status-badge.verified,
+.status-badge.success {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.status-badge.pending,
+.status-badge.draft,
+.status-badge.warning {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.status-badge.rejected,
+.status-badge.danger,
+.status-badge.failed {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.status-badge.completed {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+/* 4. .form-group */
+.form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--text-primary);
+    background-color: #ffffff;
+    outline: none;
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+}
+
+.form-group .input-error {
+    border-color: #ef4444;
+}
+
+.form-group .error-message {
+    color: #dc2626;
+    font-size: 12px;
+    margin-top: 4px;
 }
