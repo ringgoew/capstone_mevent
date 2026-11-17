@@ -91,9 +91,9 @@
                 </div>
             @endforeach
         </div>
-            🖨️ Cetak / Simpan PDF
+
         <button onclick="window.print()" style="margin-top: 20px; padding: 12px 24px; background: #2563eb; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px;">
-         
+                     🖨️ Cetak / Simpan PDF
         </button>
     </div>
 
