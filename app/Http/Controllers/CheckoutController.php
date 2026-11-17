@@ -143,7 +143,7 @@ foreach ($items as $item) {
     // Generate e-tiket sejumlah quantity yang dibeli
     for ($i = 0; $i < $item['quantity']; $i++) {
         $ticketCode = 'TKT-' . strtoupper(Str::random(10));
-        
+
         DB::table('e_tickets')->insert([
             'order_id'       => $orderId,
             'order_item_id'  => $orderItemId, // Wajib di e_tickets

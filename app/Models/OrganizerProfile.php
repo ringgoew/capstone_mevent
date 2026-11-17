@@ -2,56 +2,64 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class OrganizerProfile
+class OrganizerProfile extends Model
 {
-    // Daftar KYC EO untuk Admin
+    protected $table = 'organizer_profiles';
+
+    protected $guarded = ['id'];
+
     public static function getForAdmin(?string $status = null)
     {
-        $query = DB::table('organizer_profiles as op')
-            ->join('users as u', 'u.id', '=', 'op.user_id')
+        return DB::table('organizer_profiles')
+            ->join('users', 'organizer_profiles.user_id', '=', 'users.id')
+            ->where('users.role', 'organizer')
             ->select(
-                'op.*',
-                'u.name as user_name',
-                'u.email as user_email'
+                'organizer_profiles.*',
+                'users.name as user_name',
+                'users.email as user_email',
+                'users.status as user_status'
             )
-            ->orderByDesc('op.created_at');
-
-        if (in_array($status, ['pending', 'verified', 'rejected'])) {
-            $query->where('op.verification_status', $status);
-        }
-
-        return $query->get();
+            ->when($status, function ($query, $status) {
+                return $query->where('organizer_profiles.verification_status', $status);
+            })
+            ->orderByRaw("
+                CASE organizer_profiles.verification_status
+                    WHEN 'pending' THEN 1
+                    WHEN 'rejected' THEN 2
+                    WHEN 'verified' THEN 3
+                    ELSE 4
+                END
+            ")
+            ->orderByDesc('organizer_profiles.updated_at')
+            ->get();
     }
 
-    // Detail profil KYC berdasarkan ID
-    public static function findForAdmin(int $id): ?object
+    public static function findForAdmin(int $id)
     {
-        return DB::table('organizer_profiles as op')
-            ->join('users as u', 'u.id', '=', 'op.user_id')
+        return DB::table('organizer_profiles')
+            ->join('users', 'organizer_profiles.user_id', '=', 'users.id')
+            ->where('organizer_profiles.id', $id)
             ->select(
-                'op.*',
-                'u.name as user_name',
-                'u.email as user_email'
+                'organizer_profiles.*',
+                'users.name as user_name',
+                'users.email as user_email',
+                'users.status as user_status'
             )
-            ->where('op.id', $id)
             ->first();
     }
 
-    // Verifikasi atau tolak profil yang masih pending
-    public static function updatePendingStatus(
-        int $id,
-        string $status,
-        ?string $reason = null
-    ): bool {
+    public static function updatePendingStatus(int $id, string $newStatus, ?string $rejectionReason = null): bool
+    {
         return DB::table('organizer_profiles')
             ->where('id', $id)
             ->where('verification_status', 'pending')
             ->update([
-                'verification_status' => $status,
-                'rejection_reason' => $reason,
+                'verification_status' => $newStatus,
+                'rejection_reason' => $rejectionReason,
                 'updated_at' => now(),
-            ]) === 1;
+            ]) > 0;
     }
 }

@@ -63,7 +63,7 @@ class PayoutController extends Controller
         }
 
         $grossAmount = $request->amount;
-        $commissionFee = 0; 
+        $commissionFee = 0;
         $netAmount = $grossAmount - $commissionFee;
 
         $payoutCode = 'PAY-' . strtoupper(Str::random(10));

@@ -98,7 +98,7 @@ class PaymentController extends Controller
                 // Generate e-tiket sejumlah quantity yang dibeli ke tabel e_tickets
                 for ($i = 0; $i < $item['quantity']; $i++) {
                     $ticketCode = 'TKT-' . strtoupper(\Illuminate\Support\Str::random(10));
-                    
+
                     DB::table('e_tickets')->insert([
                         'order_id'       => $orderId,
                         'order_item_id'  => $orderItemId,
@@ -227,7 +227,7 @@ class PaymentController extends Controller
                     DB::table('ticket_types')
                         ->where('id', $item->ticket_type_id)
                         ->decrement('reserved_quota', $item['quantity'] ?? $item->quantity);
-                    
+
                     // Kurangi sold_quota jika sebelumnya sudah terhitung
                     DB::table('ticket_types')
                         ->where('id', $item->ticket_type_id)

@@ -28,9 +28,26 @@ class AdminKycController extends Controller
 
         $profiles = OrganizerProfile::getForAdmin($status);
 
-        return view('admin.kyc.index', compact('profiles', 'status'));
-    }
+        // Hitung ringkasan seluruh status KYC di organizer_profiles
+        $allProfiles = OrganizerProfile::getForAdmin(null);
+        $counts = [
+            'pending'  => $allProfiles->where('verification_status', 'pending')->count(),
+            'verified' => $allProfiles->where('verification_status', 'verified')->count(),
+            'rejected' => $allProfiles->where('verification_status', 'rejected')->count(),
+        ];
 
+        // Ambil akun EO di tabel users yang statusnya pending namun belum submit berkas KYC
+        $incompleteOrganizers = DB::table('users')
+            ->leftJoin('organizer_profiles', 'users.id', '=', 'organizer_profiles.user_id')
+            ->where('users.role', 'organizer')
+            ->whereNull('organizer_profiles.id')
+            ->select('users.id', 'users.name', 'users.email', 'users.status')
+            ->orderByDesc('users.id')
+            ->get();
+
+        return view('admin.kyc.index', compact('profiles', 'status', 'counts', 'incompleteOrganizers'));
+    }
+    
     public function show(int $id)
     {
         if (!session('admin_login')) {
@@ -86,7 +103,7 @@ class AdminKycController extends Controller
 
         if (!$updated) {
             return redirect()
-                ->route('admin.kyc.show', $id)  
+                ->route('admin.kyc.show', $id)
                 ->with('error', 'KYC tidak dapat diproses. Periksa status terbaru.');
         }
 
