@@ -312,4 +312,8 @@
     </script>
 </body>
 
+<<<<<<< HEAD
 </html>
+=======
+</html>
+>>>>>>> 70943e8ae6096bbf560365ef76d3c418a055cad2
