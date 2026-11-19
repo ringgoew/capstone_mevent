@@ -413,7 +413,26 @@ class EventController extends Controller
             ->orderBy('price', 'asc')
             ->get();
 
-        return view('eo.events.detail', compact('event', 'category', 'tickets'));
+        // Gunakan leftJoin agar data tiket tetap tampil meskipun order_item_id bernilai NULL
+        $presensi = DB::table('e_tickets')
+            ->join('orders', 'e_tickets.order_id', '=', 'orders.id')
+            ->leftJoin('order_items', 'e_tickets.order_item_id', '=', 'order_items.id')
+            ->leftJoin('ticket_types', 'order_items.ticket_type_id', '=', 'ticket_types.id')
+            ->where('orders.event_id', $id)
+            ->select(
+                'e_tickets.id',
+                'e_tickets.ticket_code',
+                'e_tickets.status',
+                'e_tickets.attendee_name',
+                'e_tickets.attendee_email',
+                'e_tickets.checked_in_at',
+                DB::raw("COALESCE(ticket_types.name, '-') as ticket_type_name")
+            )
+            ->orderByRaw("CASE WHEN e_tickets.status = 'used' THEN 1 ELSE 2 END")
+            ->orderByDesc('e_tickets.checked_in_at')
+            ->get();
+
+        return view('eo.events.detail', compact('event', 'category', 'tickets', 'presensi'));
     }
 
     private function validateTicketQuota(array $tickets): void

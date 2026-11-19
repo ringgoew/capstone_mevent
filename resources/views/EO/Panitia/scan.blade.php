@@ -174,9 +174,33 @@
     <script>
         const html5QrCode = new Html5Qrcode("reader");
         let isScanning = false;
+        let isProcessing = false; // Pengunci agar tidak mengirim request berulang saat jeda
+        const JEDA_SCAN_DETIK = 3; // Durasi jeda 3 detik agar panitia bisa membaca hasil scan
+
+        // Fungsi mengaktifkan kembali kamera setelah jeda selesai
+        function jedaKameraDanReset() {
+            setTimeout(() => {
+                isProcessing = false;
+                try {
+                    if (isScanning && html5QrCode.getState() === 3) { // 3 = PAUSED
+                        html5QrCode.resume();
+                    }
+                } catch (e) {}
+            }, JEDA_SCAN_DETIK * 1000);
+        }
 
         // Fungsi kirim kode tiket ke server
         function processTicket(code) {
+            if (isProcessing) return;
+            isProcessing = true;
+
+            // Bekukan (pause) gambar kamera sementara agar tidak membaca QR yang sama berkali-kali
+            try {
+                if (isScanning && html5QrCode.getState() === 2) { // 2 = SCANNING
+                    html5QrCode.pause(true);
+                }
+            } catch (e) {}
+
             $.ajax({
                 url: "{{ route('panitia.scan.process') }}",
                 type: "POST",
@@ -186,24 +210,36 @@
                 },
                 success: function(response) {
                     $('#alert-box').html(`
-                    <div style="background: #dcfce7; color: #166534; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #bbf7d0; font-size: 14px;">
-                        <strong>✅ ${response.message}</strong><br>
-                        <strong>Nama:</strong> ${response.data.attendee_name}<br>
-                        <strong>Event:</strong> ${response.data.event_title}<br>
-                        <strong>Tipe:</strong> ${response.data.ticket_type}<br>
-                        <strong>Waktu:</strong> ${response.data.checked_in_at}
-                    </div>
-                `);
+                        <div style="background: #dcfce7; color: #166534; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 2px solid #22c55e; font-size: 14px;">
+                            <div style="font-size: 16px; font-weight: 800; margin-bottom: 6px;">✅ TIKET LOLOS — ${response.message}</div>
+                            <strong>Nama:</strong> ${response.data.attendee_name}<br>
+                            <strong>Event:</strong> ${response.data.event_title}<br>
+                            <strong>Tipe:</strong> ${response.data.ticket_type}<br>
+                            <strong>Waktu:</strong> ${response.data.checked_in_at}
+                            <div style="margin-top: 8px; font-size: 12px; color: #15803d; font-weight: 600;">
+                                ⏳ Kamera dijeda ${JEDA_SCAN_DETIK} detik untuk pengecekan...
+                            </div>
+                        </div>
+                    `);
                     $('#ticket_code').val('');
+                    jedaKameraDanReset();
                 },
                 error: function(xhr) {
                     let res = xhr.responseJSON;
                     let errorMsg = res ? res.message : 'Kode tiket tidak valid atau sudah digunakan.';
+                    let isWarning = res && res.status === 'warning';
+
                     $('#alert-box').html(`
-                    <div style="background: #fee2e2; color: #991b1b; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #fecaca; font-size: 14px;">
-                        <strong>❌ Gagal:</strong> ${errorMsg}
-                    </div>
-                `);
+                        <div style="background: ${isWarning ? '#fef9c3' : '#fee2e2'}; color: ${isWarning ? '#854d0e' : '#991b1b'}; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 2px solid ${isWarning ? '#eab308' : '#ef4444'}; font-size: 14px;">
+                            <div style="font-size: 15px; font-weight: 800; margin-bottom: 4px;">${isWarning ? '⚠️ PERINGATAN:' : '❌ GAGAL:'}</div>
+                            ${errorMsg}
+                            <div style="margin-top: 8px; font-size: 12px; opacity: 0.85;">
+                                ⏳ Kamera akan aktif kembali dalam ${JEDA_SCAN_DETIK} detik...
+                            </div>
+                        </div>
+                    `);
+                    $('#ticket_code').val('');
+                    jedaKameraDanReset();
                 }
             });
         }
@@ -221,12 +257,14 @@
                     }
                 },
                 (decodedText) => {
+                    if (isProcessing) return; // Abaikan pembacaan kamera selama jeda 3 detik
                     $('#ticket_code').val(decodedText);
                     processTicket(decodedText);
                 },
                 (errorMessage) => {}
             ).then(() => {
                 isScanning = true;
+                isProcessing = false;
                 $('#camera-status').hide();
                 $('#btn-start-cam').hide();
                 $('#btn-stop-cam').show();
@@ -247,6 +285,7 @@
             if (isScanning) {
                 html5QrCode.stop().then(() => {
                     isScanning = false;
+                    isProcessing = false;
                     $('#camera-status').text('Kamera dimatikan.').show();
                     $('#btn-stop-cam').hide();
                     $('#btn-start-cam').show();

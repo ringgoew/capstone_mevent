@@ -1,4 +1,4 @@
-@extends('admin.event-verification.layout')
+@extends('layouts.admin')
 
 @section('title', 'Pemeriksaan Pengajuan Event — M!VENT Admin')
 

@@ -3,8 +3,10 @@
     <div class="sidebar-brand">
         <a href="{{ route('admin.dashboard') }}" class="logo-link">
             <span class="logo-icon" aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                        d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
                     <path d="M13 5v2" />
                     <path d="M13 17v2" />
                     <path d="M13 11v2" />
@@ -15,7 +17,8 @@
         </a>
 
         <button type="button" class="sidebar-close-btn" aria-label="Tutup Menu" onclick="toggleAdminSidebar(false)">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
@@ -29,7 +32,8 @@
         <a href="{{ route('admin.dashboard') }}"
             class="sidebar-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
             <span class="sidebar-link-left">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
                     <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
                     <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
                     <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
@@ -42,7 +46,8 @@
         <a href="{{ route('admin.kyc.index') }}"
             class="sidebar-link {{ request()->routeIs('admin.kyc.*') ? 'active' : '' }}">
             <span class="sidebar-link-left">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
                     <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
                     <circle cx="9" cy="7" r="4"></circle>
                     <polyline points="16 11 18 13 22 9"></polyline>
@@ -54,7 +59,8 @@
         <a href="{{ route('admin.event-verification.index') }}"
             class="sidebar-link {{ request()->routeIs('admin.event-verification.*') ? 'active' : '' }}">
             <span class="sidebar-link-left">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                     <line x1="16" y1="2" x2="16" y2="6"></line>
                     <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -64,15 +70,28 @@
                 <span>Verifikasi Event</span>
             </span>
             @if (isset($data['event_pending']) && $data['event_pending'] > 0)
-            <span class="sidebar-count-badge">{{ $data['event_pending'] }}</span>
+                <span class="sidebar-count-badge">{{ $data['event_pending'] }}</span>
             @endif
+        </a>
+
+        <a href="{{ route('admin.payout.index') }}"
+            class="sidebar-link {{ request()->routeIs('admin.payout.*') ? 'active' : '' }}">
+            <span class="sidebar-link-left">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                    <line x1="2" y1="10" x2="22" y2="10"></line>
+                </svg>
+                <span>Audit &amp; Approval Payout</span>
+            </span>
         </a>
 
         <div class="sidebar-section-label">Monitoring</div>
 
         <a href="{{ route('admin.dashboard') }}#ringkasan-operasional" class="sidebar-link">
             <span class="sidebar-link-left">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <line x1="18" y1="20" x2="18" y2="10"></line>
                     <line x1="12" y1="20" x2="12" y2="4"></line>
                     <line x1="6" y1="20" x2="6" y2="14"></line>
@@ -99,7 +118,8 @@
         </form>
 
         <button type="button" onclick="confirmAdminLogout()" class="sidebar-logout-btn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                 <polyline points="16 17 21 12 16 7"></polyline>
                 <line x1="21" y1="12" x2="9" y2="12"></line>

@@ -5,73 +5,117 @@ namespace App\Http\Controllers\EO;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class PayoutController extends Controller
 {
-    // Menampilkan halaman utama Payout EO (Riwayat & Tombol Ajukan)
+    // Menampilkan halaman utama Payout EO (Saldo Per Event, Riwayat & Form Ajukan)
     public function index()
     {
-        // Ambil ID dari session kustom EO
         $userId = session('eo_user_id');
 
-        // Jika belum login/sesi habis, arahkan ke login EO
         if (!$userId) {
             return redirect()->route('eo.login')->with('error', 'Sesi login habis, silahkan login ulang.');
         }
 
-        // Ambil riwayat pengajuan payout EO ini
-        $payouts = DB::table('payouts')
+        $eventNameCol = Schema::hasColumn('events', 'nama') ? 'nama' : 'title';
+
+        // 1. Ambil daftar event milik EO ini beserta rincian saldo masing-masing event
+        $events = DB::table('events')
             ->where('user_id', $userId)
+            ->select('id', "{$eventNameCol} as event_name")
             ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($event) {
+                $gross = (float) DB::table('orders')
+                    ->where('event_id', $event->id)
+                    ->where('status', 'paid')
+                    ->sum('grand_total');
+
+                $requested = (float) DB::table('payouts')
+                    ->where('event_id', $event->id)
+                    ->whereIn('status', ['pending', 'approved', 'completed', 'transferred'])
+                    ->sum('gross_amount');
+
+                $event->gross_revenue     = $gross;
+                $event->available_balance = max(0, $gross - $requested);
+
+                return $event;
+            });
+
+        $totalRevenue     = $events->sum('gross_revenue');
+        $availableBalance = $events->sum('available_balance');
+
+        // 2. Ambil riwayat pengajuan payout EO beserta nama event-nya
+        $payouts = DB::table('payouts')
+            ->leftJoin('events', 'payouts.event_id', '=', 'events.id')
+            ->where('payouts.user_id', $userId)
+            ->select('payouts.*', "events.{$eventNameCol} as event_name")
+            ->orderBy('payouts.created_at', 'desc')
             ->get();
 
-        // Hitung total pendapatan dari event milik EO ini yang statusnya 'paid'
-        $totalRevenue = DB::table('orders')
-            ->join('events', 'orders.event_id', '=', 'events.id')
-            ->where('events.user_id', $userId)
-            ->where('orders.status', 'paid')
-            ->sum('orders.grand_total');
-
-        // Hitung total yang sudah dicairkan/diajukan sebelumnya agar sisa saldo akurat
-        $totalRequested = DB::table('payouts')
-            ->where('user_id', $userId)
-            ->whereIn('status', ['pending', 'approved', 'transferred'])
-            ->sum('gross_amount');
-
-        $availableBalance = max(0, $totalRevenue - $totalRequested);
-
-        return view('eo.payout.index', compact('payouts', 'availableBalance', 'totalRevenue'));
+        return view('eo.payout.index', compact('events', 'payouts', 'availableBalance', 'totalRevenue'));
     }
 
-    // Menyimpan pengajuan payout baru ke database
+    // Menyimpan pengajuan payout baru per event ke database
     public function store(Request $request)
     {
         $request->validate([
-            'amount'                => 'required|numeric|min:10000',
-            'bank_name'             => 'required|string|max:100',
-            'bank_account_number'   => 'required|string|max:50',
-            'bank_account_holder'   => 'required|string|max:100',
-            'event_id'              => 'nullable|integer',
+            'event_id'            => 'required|integer|exists:events,id',
+            'amount'              => 'required|numeric|min:10000',
+            'bank_name'           => 'required|string|max:100',
+            'bank_account_number' => 'required|string|max:50',
+            'bank_account_holder' => 'required|string|max:100',
+        ], [
+            'event_id.required' => 'Silakan pilih event yang ingin dicairkan dananya.',
         ]);
 
-        // Ambil ID dari session kustom EO
         $userId = session('eo_user_id');
 
         if (!$userId) {
             return redirect()->route('eo.login')->with('error', 'Sesi login habis, silahkan login ulang.');
         }
 
-        $grossAmount = $request->amount;
-        $commissionFee = 0;
-        $netAmount = $grossAmount - $commissionFee;
+        // Pastikan event yang dipilih benar-benar milik EO yang sedang login
+        $event = DB::table('events')
+            ->where('id', $request->event_id)
+            ->where('user_id', $userId)
+            ->first();
 
-        $payoutCode = 'PAY-' . strtoupper(Str::random(10));
+        if (!$event) {
+            return back()->withInput()->with('error', 'Event tidak valid atau bukan milik akun Anda.');
+        }
+
+        // Hitung saldo tersedia khusus untuk event yang dipilih
+        $grossEvent = (float) DB::table('orders')
+            ->where('event_id', $event->id)
+            ->where('status', 'paid')
+            ->sum('grand_total');
+
+        $requestedEvent = (float) DB::table('payouts')
+            ->where('event_id', $event->id)
+            ->whereIn('status', ['pending', 'approved', 'completed', 'transferred'])
+            ->sum('gross_amount');
+
+        $availableEventBalance = max(0, $grossEvent - $requestedEvent);
+
+        if ((float) $request->amount > $availableEventBalance) {
+            return back()->withInput()->with(
+                'error',
+                'Nominal pengajuan melebihi saldo tersedia pada event ini (Maksimal: Rp ' . number_format($availableEventBalance, 0, ',', '.') . ').'
+            );
+        }
+
+        $grossAmount   = (float) $request->amount;
+        $commissionFee = 0;
+        $netAmount     = $grossAmount - $commissionFee;
+        $payoutCode    = 'PAY-' . strtoupper(Str::random(10));
 
         DB::table('payouts')->insert([
             'payout_code'         => $payoutCode,
             'user_id'             => $userId,
-            'event_id'            => $request->event_id,
+            'event_id'            => $event->id,
             'gross_amount'        => $grossAmount,
             'commission_fee'      => $commissionFee,
             'net_amount'          => $netAmount,
@@ -84,6 +128,6 @@ class PayoutController extends Controller
             'updated_at'          => now(),
         ]);
 
-        return redirect()->route('eo.payout.index')->with('success', 'Pengajuan payout berhasil dikirim! Menunggu verifikasi Admin.');
+        return redirect()->route('eo.payout.index')->with('success', 'Pengajuan payout untuk event tersebut berhasil dikirim! Menunggu verifikasi Admin.');
     }
 }

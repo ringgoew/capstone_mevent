@@ -3,31 +3,27 @@
 namespace App\Http\Controllers\Panitia;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Panitia;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
 
 class PanitiaController extends Controller
 {
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6',
+        $eoId = session('eo_user_id');
+
+        if (!$eoId) {
+            return redirect()->route('eo.login')
+                ->with('error', 'Sesi login EO telah berakhir, silakan login ulang.');
+        }
+
+        $validated = $request->validate([
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6',
         ]);
 
-        $dataPanitia = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'panitia',
-            'status' => 'active',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ];
-
-        Panitia::tambahPanitia($dataPanitia);
+        Panitia::tambahPanitia($validated, $eoId);
 
         return redirect()->back()
             ->with('success', 'Berhasil: Akun panitia baru telah ditambahkan.');
@@ -35,7 +31,19 @@ class PanitiaController extends Controller
 
     public function destroy($id)
     {
-        Panitia::hapusPanitia($id);
+        $eoId = session('eo_user_id');
+
+        if (!$eoId) {
+            return redirect()->route('eo.login')
+                ->with('error', 'Sesi login EO telah berakhir, silakan login ulang.');
+        }
+
+        $deleted = Panitia::hapusPanitia($id, $eoId);
+
+        if (!$deleted) {
+            return redirect()->back()
+                ->with('error', 'Gagal: Akun panitia tidak ditemukan atau bukan milik akun EO Anda.');
+        }
 
         return redirect()->back()
             ->with('success', 'Berhasil: Akun panitia telah dihapus.');

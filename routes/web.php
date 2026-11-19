@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminKycController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminEventVerificationController;
+use App\Http\Controllers\Admin\AdminPayoutController;
 
 // Payment & Checkout Controllers
 use App\Http\Controllers\PaymentController;
@@ -135,6 +136,12 @@ Route::group([], function () {
     Route::get('/admin/event-verification/{id}', [AdminEventVerificationController::class, 'show'])->name('admin.event-verification.show');
     Route::post('/admin/event-verification/{id}/publish', [AdminEventVerificationController::class, 'publish'])->name('admin.event-verification.publish');
     Route::post('/admin/event-verification/{id}/reject', [AdminEventVerificationController::class, 'reject'])->name('admin.event-verification.reject');
+
+    // Rute Audit Payout & Approval Transfer Dana
+    Route::get('/admin/payout', [AdminPayoutController::class, 'index'])->name('admin.payout.index');
+    Route::get('/admin/payout/{id}', [AdminPayoutController::class, 'show'])->name('admin.payout.show');
+    Route::post('/admin/payout/{id}/approve', [AdminPayoutController::class, 'approve'])->name('admin.payout.approve');
+    Route::post('/admin/payout/{id}/reject', [AdminPayoutController::class, 'reject'])->name('admin.payout.reject');
 
     Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 });
